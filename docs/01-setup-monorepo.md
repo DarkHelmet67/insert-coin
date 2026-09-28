@@ -26,7 +26,7 @@ Per trasformarlo in un messaggio esplicito già durante `pnpm install`:
 Se hai già eseguito `pnpm install` con un Node troppo vecchio, aggiornare Node non basta. pnpm aveva saltato in silenzio i pacchetti opzionali incompatibili, tra cui il motore nativo di Rolldown (`@rolldown/binding-darwin-arm64` su Mac Apple Silicon), che richiede Node 20.19+ o 22.12+. Il sintomo è `Error: Cannot find native binding` all'avvio di `pnpm dev`. La soluzione è reinstallare da zero:
 
 ```bash
-pnpm clean     # cancella tutti i node_modules e pnpm-lock.yaml
+pnpm clean     # cancella tutti i node_modules (il lockfile resta)
 pnpm install
 ```
 

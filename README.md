@@ -25,7 +25,9 @@ pnpm dev      # avvia Space Invaders con hot reload su http://localhost:5173
 pnpm build    # build di produzione di tutti i giochi (games/*/dist)
 ```
 
-Altri comandi: `pnpm test` (Vitest), `pnpm typecheck`, `pnpm lint`, `pnpm format`, `pnpm clean` (cancella tutti i `node_modules` e `pnpm-lock.yaml`; poi serve `pnpm install`).
+Altri comandi: `pnpm test` (Vitest), `pnpm typecheck`, `pnpm lint`, `pnpm format`, `pnpm clean` (cancella tutti i `node_modules`), `pnpm clean:all` (anche `pnpm-lock.yaml`, per ricalcolare da zero le versioni delle dipendenze). Dopo entrambi serve `pnpm install`.
+
+Dopo ogni `git pull` conviene eseguire `pnpm install`: se è arrivato un nuovo pacchetto `@arcade/*`, crea i collegamenti che gli servono.
 
 ## Struttura
 

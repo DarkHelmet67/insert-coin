@@ -79,3 +79,5 @@ Registro delle decisioni prese insieme a Claude, dei prompt significativi e dell
 **Diagnosi:** il gioco dichiarava la dipendenza, ma in `games/space-invaders/node_modules/@arcade/` mancava il collegamento al nuovo pacchetto: `pnpm install` non era stato rieseguito dopo averlo aggiunto.
 
 **Correzione:** su richiesta dell'autore, nuovo script `pnpm clean` che cancella tutti i `node_modules` e `pnpm-lock.yaml`; `pnpm clean && pnpm install` ha risolto. La guida 01 usa lo script al posto del `rm -rf` scritto a mano.
+
+**Revisione:** l'AI ha fatto notare che cancellare `pnpm-lock.yaml` a ogni pulizia rende le installazioni non riproducibili: le versioni delle dipendenze vengono ricalcolate e possono cambiare senza che nessuno se ne accorga. Su decisione dell'autore gli script sono diventati due: `pnpm clean` cancella solo i `node_modules`, mentre `pnpm clean:all` cancella anche il lockfile, da usare solo quando si vogliono aggiornare le dipendenze di proposito. Il README ricorda di eseguire `pnpm install` dopo ogni `git pull`.
