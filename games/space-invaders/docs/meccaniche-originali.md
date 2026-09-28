@@ -33,20 +33,26 @@ export const stepFleet = (fleet: FleetState): FleetState => {
 
 Altri dettagli dell'originale:
 
-| Regola                                                                               | Valore                          | Dove                             |
-| ------------------------------------------------------------------------------------ | ------------------------------- | -------------------------------- |
-| Ordine di marcia                                                                     | dal basso, da sinistra a destra | `createFormation` in `aliens.ts` |
-| Passo orizzontale                                                                    | 2 pixel                         | `STEP_X`                         |
-| L'ultimo alieno: a destra 3 pixel, a sinistra 2 (un'asimmetria del codice originale) | 3 / 2                           | `LAST_ALIEN_STEP_RIGHT`          |
-| Discesa quando la formazione tocca un bordo                                          | 8 pixel                         | `STEP_DOWN`                      |
-| Altezza di partenza per ondata (ondate 1-8, poi il ciclo riparte)                    | sempre più in basso             | `ROUND_START_BOTTOM_Y`           |
-| Fine partita se gli alieni arrivano all'altezza del cannone                          |                                 | `isGameOver` in `playing.ts`     |
+| Regola                                                                                                                      | Valore                            | Dove                             |
+| --------------------------------------------------------------------------------------------------------------------------- | --------------------------------- | -------------------------------- |
+| Ordine di marcia                                                                                                            | dal basso, da sinistra a destra   | `createFormation` in `aliens.ts` |
+| Passo orizzontale                                                                                                           | 2 pixel                           | `STEP_X`                         |
+| L'ultimo alieno: a destra 3 pixel, a sinistra 2 (un'asimmetria del codice originale)                                        | 3 / 2                             | `LAST_ALIEN_STEP_RIGHT`          |
+| Discesa quando la formazione tocca un bordo                                                                                 | 8 pixel                           | `STEP_DOWN`                      |
+| Altezza di partenza per ondata: 128 nella prima, poi 152, 168, 176, 176, 176, 184, 184, 184; dalla decima si riparte da 152 | un po' più in basso a ogni ondata | `startBottomY`                   |
+| Fine partita se gli alieni arrivano all'altezza del cannone                                                                 |                                   | `isGameOver` in `playing.ts`     |
 
 Quando un alieno viene colpito, `removeAlien` corregge il cursore: l'alieno che doveva muoversi dopo continua a essere il prossimo, e la marcia non "salta un colpo".
 
 ### La marcia a quattro note
 
 Il suono di sottofondo è una sequenza di quattro note basse, una per ogni passo completo della formazione: accelera insieme agli alieni. Le note sono misurate sulle registrazioni originali: 60, 56, 52 e 69 Hz (vedi la sezione 8). Per non trasformare la marcia in un ronzio quando resta un solo alieno, fra due note passano almeno 5 frame (`MIN_BEAT_FRAMES`, scelta nostra).
+
+### Quanto più in basso a ogni ondata
+
+Nel codice originale la prima ondata parte da un valore fisso (0x78 nelle coordinate ruotate dell'originale), le successive da una tabella all'indirizzo 0x1DA3: `60 50 48 48 48 40 40 40`. Convertita nelle nostre coordinate, la riga più bassa parte a 128 pixel dall'alto, poi 152, 168, 176 per tre ondate e 184 per altre tre; dalla decima ondata la tabella ricomincia da 152. Ogni valore è una riga di alieni (16 pixel) o mezza riga più in basso: la difficoltà cresce, ma senza mai partire sotto i 184 pixel.
+
+La prima versione del remake saltava il primo valore della tabella e alla seconda ondata partiva già a 168: due discese in meno per il giocatore, abbastanza da rendere il secondo livello quasi impossibile. L'errore l'ha trovato l'autore giocando; la tabella è stata ricontrollata su un'analisi del codice originale ([Ron Jeffries, Space Invaders 66](https://ronjeffries.com/articles/020-invaders-50ff/i-66/)).
 
 ## 2. Le bombe degli alieni
 

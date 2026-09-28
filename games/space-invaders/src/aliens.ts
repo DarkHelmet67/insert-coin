@@ -24,12 +24,16 @@ export const FORMATION_COLUMNS = 11;
 export const CELL_SIZE = 16;
 export const FORMATION_LEFT = 24;
 
+/** Height of the bottom row in the first round (0x78 in the original's rotated coordinates). */
+export const FIRST_ROUND_BOTTOM_Y = 128;
+
 /**
- * Height of the bottom row at the start of each round (rounds 1 to 8, then the cycle repeats).
- * Every new round starts lower, so the invaders arrive sooner: from the original's start table,
- * converted from its rotated coordinates to ours.
+ * Height of the bottom row at the start of rounds 2 to 9, from the original's table at 0x1DA3
+ * (0x60, 0x50, 0x48, 0x48, 0x48, 0x40, 0x40, 0x40) converted to our coordinates. Every new round
+ * starts lower, but never below 184. From round 10 the table starts over at its first entry:
+ * the first round's height is never used again.
  */
-export const ROUND_START_BOTTOM_Y: readonly number[] = [128, 168, 176, 176, 176, 184, 184, 184];
+export const ROUND_START_BOTTOM_Y: readonly number[] = [152, 168, 176, 176, 176, 184, 184, 184];
 
 /** Width of the widest invader: narrower ones are centered in that space. */
 const WIDEST_ALIEN = 12;
@@ -50,7 +54,9 @@ const centerOffset = (kind: AlienKind): number =>
 
 /** Height of the bottom row at the start of `round` (1-based). */
 export const startBottomY = (round: number): number =>
-  ROUND_START_BOTTOM_Y[(round - 1) % ROUND_START_BOTTOM_Y.length] ?? 128;
+  round <= 1
+    ? FIRST_ROUND_BOTTOM_Y
+    : (ROUND_START_BOTTOM_Y[(round - 2) % ROUND_START_BOTTOM_Y.length] ?? FIRST_ROUND_BOTTOM_Y);
 
 /**
  * The full formation of 55 invaders at the start of `round`.

@@ -20,12 +20,13 @@ describe('createFormation', () => {
     expect(squid && octopus && squid.x - octopus.x).toBe(2);
   });
 
-  it('starts lower in later rounds', () => {
-    expect(startBottomY(2)).toBeGreaterThan(startBottomY(1));
+  it('starts one row lower in round 2, as in the original table', () => {
+    expect([1, 2, 3].map(startBottomY)).toEqual([128, 152, 168]);
     expect(createFormation(2)[0]?.y).toBe(startBottomY(2));
   });
 
-  it('repeats the start heights after round 8', () => {
-    expect(startBottomY(9)).toBe(startBottomY(1));
+  it('never starts below 184, and starts over from round 2 height at round 10', () => {
+    expect(Math.max(...Array.from({ length: 20 }, (_, i) => startBottomY(i + 1)))).toBe(184);
+    expect(startBottomY(10)).toBe(startBottomY(2));
   });
 });

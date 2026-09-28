@@ -177,3 +177,13 @@ Documento: [prompt unico](prompt-unico.md).
 **Divisione del file:** con i nuovi valori `sounds.ts` superava le 190 righe; i dati sono passati in `sound-bank.ts`, la logica `soundsFor` è rimasta in `sounds.ts`.
 
 **Non misurati:** UFO colpito e vita extra (registrazioni non disponibili); la moneta non esiste nell'originale.
+
+## 2026-09-28 · Correzione: altezza delle ondate
+
+**Segnalazione dell'autore:** finito il primo livello, nel secondo gli alieni ripartono troppo in basso e il gioco diventa quasi impossibile. Il principio è giusto (ogni ondata parte più vicina alla base), la quantità no.
+
+**Causa, trovata dall'AI:** errore di trascrizione. La tabella originale delle altezze di partenza (0x1DA3: `60 50 48 48 48 40 40 40`, usata dalla seconda ondata in poi, mentre la prima parte da 0x78) era stata copiata senza il primo valore. Così la seconda ondata partiva dall'altezza della terza, 16 pixel più in basso del dovuto. Anche il ciclo era sbagliato: dopo l'ottava ondata il remake tornava all'altezza della prima, mentre l'originale riparte dalla seconda.
+
+**Correzione:** tabella completa, verificata sull'analisi del codice originale di Ron Jeffries; nuovi test che controllano le prime tre altezze, il limite di 184 pixel e il ciclo dalla decima ondata.
+
+**Lezione:** i valori trascritti da una fonte vanno confrontati uno a uno con la fonte, non solo con il ricordo di averla letta. Un test che fissa i valori attesi ("128, 152, 168") rende l'errore visibile a chiunque legga il codice.
