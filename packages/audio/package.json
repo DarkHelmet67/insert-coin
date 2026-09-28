@@ -1,0 +1,10 @@
+{
+  "name": "@arcade/audio",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Web Audio API sound effects synthesized in code.",
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

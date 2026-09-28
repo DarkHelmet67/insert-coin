@@ -1,0 +1,10 @@
+{
+  "name": "@arcade/render",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Canvas setup, crisp pixel scaling, bitmap sprites and pixel font.",
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

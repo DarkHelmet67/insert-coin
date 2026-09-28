@@ -1,0 +1,10 @@
+{
+  "name": "@arcade/math",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Vectors, clamping, seeded random numbers.",
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

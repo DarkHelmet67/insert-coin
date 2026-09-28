@@ -1,0 +1,10 @@
+{
+  "name": "@arcade/input",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Keyboard input state (pressed, just pressed, just released).",
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

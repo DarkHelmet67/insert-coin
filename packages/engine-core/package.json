@@ -1,0 +1,10 @@
+{
+  "name": "@arcade/engine-core",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Fixed-timestep game loop and scene/state management.",
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

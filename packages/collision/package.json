@@ -1,0 +1,10 @@
+{
+  "name": "@arcade/collision",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "AABB and pixel-perfect collision helpers.",
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

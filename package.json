@@ -1,0 +1,27 @@
+{
+  "name": "insert-coin",
+  "private": true,
+  "type": "module",
+  "description": "1980s coin-op arcade games rebuilt from scratch in TypeScript on HTML5 Canvas.",
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @arcade/space-invaders dev",
+    "build": "pnpm -r --filter \"./games/*\" build",
+    "typecheck": "pnpm -r exec tsc -p tsconfig.json",
+    "test": "vitest run",
+    "lint": "eslint .",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.11.0",
+    "prettier": "^3.9.9",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.70.1",
+    "vite": "^8.3.1",
+    "vitest": "^5.0.2"
+  }
+}

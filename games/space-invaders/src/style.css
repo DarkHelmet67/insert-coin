@@ -1,0 +1,17 @@
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: #000;
+}
+
+body {
+  display: grid;
+  place-items: center;
+}
+
+/* The original screen is 224x256: scale it up without blurring the pixels. */
+#screen {
+  height: min(100vh, calc(100vw * 256 / 224));
+  image-rendering: pixelated;
+}
