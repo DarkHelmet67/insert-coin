@@ -1,5 +1,24 @@
 # insert-coin
 
+<p align="center">
+  <a href="https://darkhelmet67.github.io/insert-coin/space-invaders/"><img src="docs/images/games/space-invaders.svg" alt="Space Invaders" title="Space Invaders (Taito, 1978): gioca online" width="120"></a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/DarkHelmet67/insert-coin/actions/workflows/deploy.yml"><img src="https://github.com/DarkHelmet67/insert-coin/actions/workflows/deploy.yml/badge.svg" alt="Deploy to GitHub Pages"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="Licenza MIT"></a>
+  <br>
+  <img src="https://img.shields.io/badge/TypeScript-6.0_strict-3178C6?logo=typescript&logoColor=white" alt="TypeScript 6.0 strict">
+  <img src="https://img.shields.io/badge/HTML5-Canvas-E34F26?logo=html5&logoColor=white" alt="HTML5 Canvas">
+  <img src="https://img.shields.io/badge/Node.js-24_LTS-5FA04E?logo=nodedotjs&logoColor=white" alt="Node.js 24 LTS">
+  <img src="https://img.shields.io/badge/pnpm-10_workspaces-F69220?logo=pnpm&logoColor=white" alt="pnpm 10 workspaces">
+  <img src="https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white" alt="Vite 8">
+  <img src="https://img.shields.io/badge/Vitest-5-6E9F18?logo=vitest&logoColor=white" alt="Vitest 5">
+  <img src="https://img.shields.io/badge/ESLint-10-4B32C3?logo=eslint&logoColor=white" alt="ESLint 10">
+  <img src="https://img.shields.io/badge/Prettier-3-F7B93E?logo=prettier&logoColor=black" alt="Prettier 3">
+  <img src="https://img.shields.io/badge/built_with-Claude-D97757?logo=claude&logoColor=white" alt="Sviluppato con Claude">
+</p>
+
 Giochi arcade coin-op degli anni '80 ricostruiti da zero in **TypeScript** su **HTML5 Canvas**, con l'aiuto di Claude (AI) come compagno di sviluppo.
 
 Il progetto ha due obiettivi:

@@ -141,3 +141,11 @@ Registro delle decisioni prese insieme a Claude, dei prompt significativi e dell
 **Limite:** il prompt non è stato ancora eseguito da capo a fine in una cartella vuota; è stato controllato confrontando ogni valore con il codice.
 
 Documento: [prompt unico](prompt-unico.md).
+
+## 2026-09-28 · Icone dei giochi e badge
+
+**Richiesta dell'autore:** sotto il titolo del README, un'immagine per ogni gioco (per Space Invaders il classico alieno, da un PNG trovato online) e i badge degli strumenti del monorepo.
+
+**Proposta dell'AI:** invece di scaricare il PNG, un'icona SVG generata dallo stesso sprite ASCII del crab usato nel gioco. Il README dichiara che nessun asset originale o di terzi è incluso, e l'immagine proposta non aveva una licenza chiara; lo sprite nostro è identico nella forma, pesa meno di 1 KB e resta nitido a ogni dimensione. Sfondo nero con bordi arrotondati, così si legge sia nel tema chiaro sia in quello scuro di GitHub.
+
+**Badge:** stato reale del workflow di deploy (si aggiorna da solo), licenza, e badge statici shields.io per TypeScript, HTML5 Canvas, Node, pnpm, Vite, Vitest, ESLint, Prettier e Claude. Le versioni nei badge statici vanno aggiornate a mano quando cambiano gli strumenti.
