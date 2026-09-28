@@ -65,6 +65,8 @@ Ogni pacchetto ha una sola responsabilità e non conosce i giochi: i giochi dipe
 | 07 · Build e deploy                                  | _in arrivo_                                        |
 | [Diario AI](docs/ai-workflow.md)                     | Prompt, decisioni e correzioni durante lo sviluppo |
 
-## Nota sui diritti
+## Licenza e diritti
+
+Il codice è distribuito con licenza [MIT](LICENSE).
 
 I giochi sono remake a scopo didattico. Grafica e suoni sono ricreati da zero; nessun asset originale è incluso. I nomi dei giochi appartengono ai rispettivi proprietari.
