@@ -1,2 +1,12 @@
-// Placeholder: the public API of this package is built step by step in the how-to guides.
-export {};
+export { arcadeFont } from './arcade-font';
+export { clearScreen, drawSprite, type DrawingContext } from './draw';
+export {
+  createPixelFont,
+  drawCenteredText,
+  drawText,
+  textWidth,
+  type FontDefinition,
+  type PixelFont,
+} from './font';
+export { getCanvasContext } from './screen';
+export { isPixelOn, parseSprite, PIXEL_ON, spriteRuns, type PixelRun, type Sprite } from './sprite';

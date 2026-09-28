@@ -18,3 +18,10 @@ export const updateAttract = (state: AttractState, dt: number): AttractState => 
 /** Whether the blinking "INSERT COIN" text is visible: on for the first half of each period. */
 export const isInsertCoinVisible = ({ time }: AttractState): boolean =>
   time % BLINK_PERIOD < BLINK_PERIOD / 2;
+
+/** Seconds each animation frame of the invaders stays on screen in the score table. */
+export const ALIEN_FRAME_DURATION = 0.5;
+
+/** Which of the two invader animation frames to show (0 or 1). */
+export const alienFrame = ({ time }: AttractState): 0 | 1 =>
+  Math.floor(time / ALIEN_FRAME_DURATION) % 2 === 0 ? 0 : 1;

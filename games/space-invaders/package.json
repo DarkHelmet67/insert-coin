@@ -12,6 +12,7 @@
   "dependencies": {
     "@arcade/engine-core": "workspace:*",
     "@arcade/input": "workspace:*",
-    "@arcade/math": "workspace:*"
+    "@arcade/math": "workspace:*",
+    "@arcade/render": "workspace:*"
   }
 }

@@ -61,3 +61,13 @@ Registro delle decisioni prese insieme a Claude, dei prompt significativi e dell
 **Lezione:** quando l'AI lavora in un ambiente diverso da quello dell'utente, i requisiti di runtime vanno dichiarati e verificati esplicitamente fin dal primo commit.
 
 **Seguito:** con Node 24 è comparso un secondo errore, `Cannot find native binding` di Rolldown. L'AI ha letto il log sul computer dell'autore tramite Remote Control, in sola lettura. Il file di installazione di pnpm mostrava `@rolldown/binding-darwin-arm64` fra i pacchetti _saltati_. Causa: la prima installazione era avvenuta con il Node vecchio, e pnpm aveva escluso quel pacchetto opzionale perché il suo `engines` richiede Node 20.19+ o 22.12+. Cambiare Node non lo reinstalla: serve cancellare `node_modules` e ripetere `pnpm install`. Aggiunto alla guida 01.
+
+## 2026-09-28 · Rendering e sprite
+
+**Proposta dell'AI:** niente file immagine. Sprite e font sono scritti come "ASCII art" nel codice, disegnati con un rettangolo per ogni sequenza di pixel accesi. Le funzioni di disegno dipendono da un sottoinsieme minimo del contesto canvas, così i test girano in Node con un contesto finto che registra i rettangoli.
+
+**Grafica:** gli sprite degli alieni, del cannone e dell'UFO e il font 5×7 sono stati ridisegnati a mano nello stile dell'originale, rispettandone le dimensioni.
+
+**Verifica:** 19 nuovi test; screenshot in Chromium della tabella dei punteggi e del cannone, usato anche nel README.
+
+**Nota di processo:** durante questo passo il controllo di sicurezza automatico dei comandi di shell non era disponibile per qualche minuto; l'AI ha continuato scrivendo i file con gli strumenti di modifica e ha eseguito i controlli appena la shell è tornata disponibile.

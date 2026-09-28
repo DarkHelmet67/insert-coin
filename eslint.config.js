@@ -6,7 +6,7 @@ import tseslint from 'typescript-eslint';
 
 // Rules follow the "code for humans" guidelines in CLAUDE.md.
 const SOURCE = ['packages/*/src/**/*.ts', 'games/*/src/**/*.ts'];
-const TESTS = ['**/*.test.ts'];
+const TESTS = ['**/*.test.ts', '**/test-*.ts'];
 
 export default tseslint.config(
   { ignores: ['**/dist/**', '**/node_modules/**'] },

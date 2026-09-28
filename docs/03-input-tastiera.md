@@ -118,4 +118,4 @@ pnpm test   # test di key-state, bindings, keyboard e dei controlli del gioco
 pnpm dev    # premi C, poi muovi il cannone con le frecce o A/D
 ```
 
-Prossima guida: **04 · Rendering e sprite**.
+Prossima guida: [04 · Rendering e sprite](04-rendering-sprite.md).

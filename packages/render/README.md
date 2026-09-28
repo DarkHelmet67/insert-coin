@@ -2,4 +2,4 @@
 
 Canvas setup, crisp pixel scaling, bitmap sprites and pixel font.
 
-Stato: segnaposto. Il codice arriva nei prossimi passi (vedi [docs/](../../docs/)).
+Stato: disponibile. Guida: [04 · Rendering e sprite](../../docs/04-rendering-sprite.md).

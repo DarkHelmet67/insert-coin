@@ -2,7 +2,7 @@
 
 Remake di _Space Invaders_ (Taito, 1978) su HTML5 Canvas, costruito sui pacchetti condivisi `@arcade/*`.
 
-Stato: schermata d'attesa con "INSERT COIN" lampeggiante; con **C** (o **5**) si inserisce una moneta e il cannone (per ora un rettangolo) si muove con le frecce o **A**/**D**.
+Stato: schermata d'attesa con la tabella dei punteggi e gli alieni animati; con **C** (o **5**) si inserisce una moneta e il cannone si muove con le frecce o **A**/**D**.
 
 ```bash
 pnpm dev     # dalla root del monorepo

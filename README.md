@@ -9,6 +9,8 @@ Il progetto ha due obiettivi:
 
 ## Giochi
 
+![Space Invaders: schermata d\'attesa](docs/images/space-invaders-attract.png)
+
 | Gioco                                   | Anno originale | Stato          |
 | --------------------------------------- | -------------- | -------------- |
 | [Space Invaders](games/space-invaders/) | 1978, Taito    | In costruzione |
@@ -57,17 +59,17 @@ Il codice è scritto per essere letto da persone (_code for humans, not for AI_)
 
 ## Documentazione
 
-| Guida                                                | Argomento                                          |
-| ---------------------------------------------------- | -------------------------------------------------- |
-| [00 · Introduzione](docs/00-introduzione.md)         | Obiettivi e metodo di lavoro con l'AI              |
-| [01 · Setup del monorepo](docs/01-setup-monorepo.md) | Creare il monorepo da zero, passo per passo        |
-| [02 · Game loop](docs/02-game-loop.md)               | Loop a timestep fisso, testabile senza timer reali |
-| [03 · Input da tastiera](docs/03-input-tastiera.md)  | Stato della tastiera, azioni, un poll per passo    |
-| 04 · Rendering e sprite                              | _in arrivo_                                        |
-| 05 · Collisioni                                      | _in arrivo_                                        |
-| 06 · Audio                                           | _in arrivo_                                        |
-| 07 · Build e deploy                                  | _in arrivo_                                        |
-| [Diario AI](docs/ai-workflow.md)                     | Prompt, decisioni e correzioni durante lo sviluppo |
+| Guida                                                  | Argomento                                          |
+| ------------------------------------------------------ | -------------------------------------------------- |
+| [00 · Introduzione](docs/00-introduzione.md)           | Obiettivi e metodo di lavoro con l'AI              |
+| [01 · Setup del monorepo](docs/01-setup-monorepo.md)   | Creare il monorepo da zero, passo per passo        |
+| [02 · Game loop](docs/02-game-loop.md)                 | Loop a timestep fisso, testabile senza timer reali |
+| [03 · Input da tastiera](docs/03-input-tastiera.md)    | Stato della tastiera, azioni, un poll per passo    |
+| [04 · Rendering e sprite](docs/04-rendering-sprite.md) | Sprite come testo, font bitmap, test senza browser |
+| 05 · Collisioni                                        | _in arrivo_                                        |
+| 06 · Audio                                             | _in arrivo_                                        |
+| 07 · Build e deploy                                    | _in arrivo_                                        |
+| [Diario AI](docs/ai-workflow.md)                       | Prompt, decisioni e correzioni durante lo sviluppo |
 
 ## Licenza e diritti
 

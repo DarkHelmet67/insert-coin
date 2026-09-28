@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { initialAttractState, isInsertCoinVisible, updateAttract } from './attract';
+import { alienFrame, initialAttractState, isInsertCoinVisible, updateAttract } from './attract';
 
 describe('attract screen', () => {
   it('advances time without modifying the previous state', () => {
@@ -12,5 +12,9 @@ describe('attract screen', () => {
     expect(isInsertCoinVisible({ time: 0.2 })).toBe(true);
     expect(isInsertCoinVisible({ time: 0.7 })).toBe(false);
     expect(isInsertCoinVisible({ time: 1.2 })).toBe(true);
+  });
+
+  it('alternates the invader animation frame every half second', () => {
+    expect([0.1, 0.6, 1.1, 1.6].map((time) => alienFrame({ time }))).toEqual([0, 1, 0, 1]);
   });
 });

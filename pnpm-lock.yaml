@@ -47,6 +47,9 @@ importers:
       '@arcade/math':
         specifier: workspace:*
         version: link:../../packages/math
+      '@arcade/render':
+        specifier: workspace:*
+        version: link:../../packages/render
 
   packages/audio: {}
 
