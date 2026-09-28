@@ -25,7 +25,7 @@ pnpm dev      # avvia Space Invaders con hot reload su http://localhost:5173
 pnpm build    # build di produzione di tutti i giochi (games/*/dist)
 ```
 
-Altri comandi: `pnpm test` (Vitest), `pnpm typecheck`, `pnpm lint`, `pnpm format`.
+Altri comandi: `pnpm test` (Vitest), `pnpm typecheck`, `pnpm lint`, `pnpm format`, `pnpm clean` (cancella tutti i `node_modules` e `pnpm-lock.yaml`; poi serve `pnpm install`).
 
 ## Struttura
 

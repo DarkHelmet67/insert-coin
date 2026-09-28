@@ -8,12 +8,13 @@
     "node": "^22.13.0 || ^24.0.0 || >=26.0.0"
   },
   "scripts": {
-    "dev": "pnpm --filter @arcade/space-invaders dev",
     "build": "pnpm -r --filter \"./games/*\" build",
-    "typecheck": "pnpm -r exec tsc -p tsconfig.json",
-    "test": "vitest run",
+    "clean": "rm -rf node_modules packages/*/node_modules games/*/node_modules pnpm-lock.yaml",
+    "dev": "pnpm --filter @arcade/space-invaders dev",
+    "format": "prettier --write .",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "test": "vitest run",
+    "typecheck": "pnpm -r exec tsc -p tsconfig.json"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

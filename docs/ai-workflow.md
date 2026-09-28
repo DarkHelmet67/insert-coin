@@ -71,3 +71,11 @@ Registro delle decisioni prese insieme a Claude, dei prompt significativi e dell
 **Verifica:** 19 nuovi test; screenshot in Chromium della tabella dei punteggi e del cannone, usato anche nel README.
 
 **Nota di processo:** durante questo passo il controllo di sicurezza automatico dei comandi di shell non era disponibile per qualche minuto; l'AI ha continuato scrivendo i file con gli strumenti di modifica e ha eseguito i controlli appena la shell è tornata disponibile.
+
+## 2026-09-28 · Script `pnpm clean`
+
+**Problema segnalato dall'autore:** dopo l'aggiunta di `@arcade/render`, `pnpm build` falliva con `Rolldown failed to resolve import "@arcade/render"`.
+
+**Diagnosi:** il gioco dichiarava la dipendenza, ma in `games/space-invaders/node_modules/@arcade/` mancava il collegamento al nuovo pacchetto: `pnpm install` non era stato rieseguito dopo averlo aggiunto.
+
+**Correzione:** su richiesta dell'autore, nuovo script `pnpm clean` che cancella tutti i `node_modules` e `pnpm-lock.yaml`; `pnpm clean && pnpm install` ha risolto. La guida 01 usa lo script al posto del `rm -rf` scritto a mano.
