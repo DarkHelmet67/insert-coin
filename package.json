@@ -9,6 +9,7 @@
   },
   "scripts": {
     "build": "pnpm -r --filter \"./games/*\" build",
+    "build:site": "pnpm build && node scripts/assemble-site.js",
     "clean": "rm -rf node_modules packages/*/node_modules games/*/node_modules",
     "clean:all": "pnpm clean && rm -f pnpm-lock.yaml",
     "dev": "pnpm --filter @arcade/space-invaders dev",

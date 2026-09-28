@@ -9,6 +9,8 @@ Il progetto ha due obiettivi:
 
 ## Giochi
 
+**▶ [Gioca online](https://darkhelmet67.github.io/insert-coin/)**: i giochi sono pubblicati su GitHub Pages a ogni push su `main`.
+
 ![Space Invaders in gioco](docs/images/space-invaders-gameplay.png)
 
 | Gioco                                   | Anno originale | Stato    |
@@ -23,6 +25,7 @@ Servono **Node.js 22.13+ o 24 LTS** (consigliato; con nvm basta `nvm use`, la ve
 pnpm install
 pnpm dev      # avvia Space Invaders con hot reload su http://localhost:5173
 pnpm build    # build di produzione di tutti i giochi (games/*/dist)
+pnpm build:site  # build + sito completo in _site/, come su GitHub Pages
 ```
 
 Altri comandi: `pnpm test` (Vitest), `pnpm typecheck`, `pnpm lint`, `pnpm format`, `pnpm clean` (cancella tutti i `node_modules`), `pnpm clean:all` (anche `pnpm-lock.yaml`, per ricalcolare da zero le versioni delle dipendenze). Dopo entrambi serve `pnpm install`.
@@ -41,8 +44,11 @@ insert-coin/
 │   ├── audio/            effetti sonori con Web Audio API
 │   ├── collision/        AABB e collisione pixel-perfect
 │   └── math/             vettori, clamp, random con seed
-└── games/
-    └── space-invaders/   un gioco = un'app Vite che usa i pacchetti @arcade/*
+├── games/
+│   └── space-invaders/   un gioco = un'app Vite che usa i pacchetti @arcade/*
+├── site/                 pagina iniziale del sito pubblicato
+├── scripts/              script di build del sito
+└── .github/workflows/    controlli e deploy su GitHub Pages
 ```
 
 Ogni pacchetto ha una sola responsabilità e non conosce i giochi: i giochi dipendono dai pacchetti, mai il contrario.
@@ -70,7 +76,7 @@ Il codice è scritto per essere letto da persone (_code for humans, not for AI_)
 | [04 · Rendering e sprite](docs/04-rendering-sprite.md)                           | Sprite come testo, font bitmap, test senza browser                    |
 | [05 · Collisioni](docs/05-collisioni.md)                                         | Rettangoli, pixel per pixel, tunneling                                |
 | [06 · Audio](docs/06-audio.md)                                                   | Suoni sintetizzati con Web Audio, autoplay, suoni dedotti dallo stato |
-| 07 · Build e deploy                                                              | _in arrivo_                                                           |
+| [07 · Build e deploy](docs/07-build-deploy.md)                                   | Build di produzione, sito multi-gioco, GitHub Actions e Pages         |
 | [Space Invaders · meccaniche](games/space-invaders/docs/meccaniche-originali.md) | Marcia, bombe, bunker, UFO: come funzionava l'originale               |
 | [Diario AI](docs/ai-workflow.md)                                                 | Prompt, decisioni e correzioni durante lo sviluppo                    |
 

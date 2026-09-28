@@ -116,4 +116,4 @@ pnpm test   # test di suoni, sintetizzatore, autoplay e muto, e di soundsFor
 pnpm dev    # C per la moneta, spazio per sparare, M per il muto
 ```
 
-Prossima guida: **07 · Build e deploy**.
+Prossima guida: [07 · Build e deploy](07-build-deploy.md).

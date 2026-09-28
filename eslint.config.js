@@ -9,7 +9,7 @@ const SOURCE = ['packages/*/src/**/*.ts', 'games/*/src/**/*.ts'];
 const TESTS = ['**/*.test.ts', '**/test-*.ts'];
 
 export default tseslint.config(
-  { ignores: ['**/dist/**', '**/node_modules/**'] },
+  { ignores: ['**/dist/**', '**/node_modules/**', '_site/**'] },
   js.configs.recommended,
   ...tseslint.configs.strict,
 

@@ -119,3 +119,13 @@ Registro delle decisioni prese insieme a Claude, dei prompt significativi e dell
 **Architettura:** un modulo puro per ogni meccanica (`fleet`, `bombs`, `shields`, `ufo`, `effects`) e le collisioni come lista di regole `(stato) => nuovoStato` applicate in ordine. Nel pacchetto `@arcade/collision` è arrivata `eraseBitmap`, riusabile per ogni terreno distruttibile; scrivendola l'AI ha trovato e corretto un difetto di `isSolidAt`, che per coordinate fuori dal bordo destro leggeva i pixel della riga successiva.
 
 **Verifica:** 149 test in totale; partita di prova di 30 secondi in Chromium: marcia, bombe, bunker sgretolati, UFO in arrivo, nessun errore.
+
+## 2026-09-28 · Build e deploy
+
+**Decisione dell'autore:** il gioco completo è l'MVP; le modifiche arriveranno in modo incrementale, dopo la pubblicazione.
+
+**Proposta dell'AI:** pubblicare su GitHub Pages con GitHub Actions invece che da un branch `gh-pages`: niente file generati nel repository, e il deploy dipende dai controlli. Il job di build esegue typecheck, lint e test prima di costruire, quindi un push rotto non arriva al sito. Il sito è pensato per più giochi: una pagina iniziale statica e una cartella per gioco, montate da uno script Node che non va aggiornato quando arriva un nuovo gioco.
+
+**Passaggio manuale:** l'attivazione di Pages (Settings → Pages → Source: GitHub Actions) spetta al proprietario del repository; l'AI non ha i permessi per farlo e non li ha chiesti.
+
+**Verifica:** `pnpm build:site` in locale produce `_site/` con la pagina iniziale e il gioco; l'anteprima nella pagina iniziale è uno screenshot a risoluzione originale (224×256) preso in Chromium durante una partita.

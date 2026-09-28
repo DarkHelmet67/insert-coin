@@ -1,0 +1,139 @@
+# 07 · Build e deploy
+
+Obiettivo: pubblicare i giochi su **GitHub Pages**, gratis e senza server, in modo che ogni push su `main` aggiorni il sito da solo. Alla fine Space Invaders è giocabile all'indirizzo <https://darkhelmet67.github.io/insert-coin/space-invaders/>.
+
+File coinvolti: [`games/space-invaders/vite.config.ts`](../games/space-invaders/vite.config.ts), [`scripts/assemble-site.js`](../scripts/assemble-site.js), [`site/`](../site/), [`.github/workflows/deploy.yml`](../.github/workflows/deploy.yml).
+
+## 1. Cosa produce la build di un gioco
+
+Dalla [guida 01](01-setup-monorepo.md) ogni gioco si costruisce con Vite in tre file:
+
+```bash
+pnpm build
+# games/space-invaders/dist/index.html   0.4 kB
+# games/space-invaders/dist/game.css     0.2 kB
+# games/space-invaders/dist/game.js     ~22 kB (circa 8 kB compresso)
+```
+
+Tutto il gioco (logica, grafica, font e suoni) sta in un solo modulo JavaScript di una ventina di KB: gli sprite sono testo e i suoni sono generati al volo, quindi non ci sono immagini né file audio da scaricare.
+
+Un dettaglio della configurazione conta molto per il deploy:
+
+```ts
+export default defineConfig({
+  base: './',
+  // ...
+});
+```
+
+Con `base: './'` l'HTML richiama `./game.js` con un percorso **relativo**. Per questo la stessa build funziona in `http://localhost:4173/`, in `https://darkhelmet67.github.io/insert-coin/space-invaders/` o in qualsiasi altra cartella, senza configurare l'indirizzo finale.
+
+Per provare la build di produzione in locale:
+
+```bash
+pnpm build
+pnpm --filter @arcade/space-invaders preview   # http://localhost:4173
+```
+
+## 2. Un sito con più giochi
+
+GitHub Pages pubblica **una cartella**. Il monorepo avrà più giochi, quindi il sito è organizzato così:
+
+```
+_site/
+├── index.html            pagina iniziale con l'elenco dei giochi (da site/)
+├── style.css
+├── space-invaders.png    anteprima del gioco
+└── space-invaders/       la build del gioco (da games/space-invaders/dist)
+    ├── index.html
+    ├── game.css
+    └── game.js
+```
+
+La pagina iniziale è HTML e CSS statici nella cartella [`site/`](../site/): non serve un framework per un elenco di link.
+
+La cartella `_site` la monta un piccolo script Node, [`scripts/assemble-site.js`](../scripts/assemble-site.js). Copia `site/` e poi la cartella `dist` di ogni gioco che ha una build:
+
+```js
+const builtGames = () =>
+  readdirSync(GAMES).filter((name) => existsSync(join(GAMES, name, 'dist', 'index.html')));
+
+rmSync(SITE, { recursive: true, force: true });
+cpSync(LANDING, SITE, { recursive: true });
+builtGames().forEach((name) => {
+  cpSync(join(GAMES, name, 'dist'), join(SITE, name), { recursive: true });
+});
+```
+
+Un nuovo gioco in `games/` finisce nel sito senza toccare lo script; basta aggiungere la sua scheda in `site/index.html`.
+
+Lo script è in JavaScript e non in TypeScript perché Node lo esegue direttamente, senza passare dalla compilazione. Il commento `// @ts-check` in cima chiede comunque all'editor di controllarne i tipi. Nel `package.json` della root:
+
+```json
+"build:site": "pnpm build && node scripts/assemble-site.js"
+```
+
+`_site/` è nel `.gitignore` e fra i file ignorati da ESLint e Prettier: è un risultato della build, non codice da versionare.
+
+## 3. GitHub Actions: controllo e pubblicazione automatici
+
+Il workflow [`.github/workflows/deploy.yml`](../.github/workflows/deploy.yml) parte a ogni push su `main` e ha due job.
+
+**`build`** ripete i controlli che facciamo prima di ogni commit, poi costruisce il sito:
+
+```yaml
+- uses: actions/checkout@v5
+- uses: pnpm/action-setup@v4 # legge la versione di pnpm da "packageManager"
+- uses: actions/setup-node@v5
+  with:
+    node-version-file: .nvmrc
+    cache: pnpm
+- run: pnpm install --frozen-lockfile
+- run: pnpm typecheck
+- run: pnpm lint
+- run: pnpm test
+- run: pnpm build:site
+- uses: actions/upload-pages-artifact@v4
+  with:
+    path: _site
+```
+
+Tre dettagli:
+
+- La versione di Node viene da `.nvmrc` e quella di pnpm da `packageManager`: la CI usa gli stessi strumenti di chi sviluppa, senza numeri ripetuti in due posti.
+- `--frozen-lockfile` fa fallire l'installazione se `pnpm-lock.yaml` non corrisponde al `package.json`: in CI le versioni devono essere esattamente quelle provate in locale.
+- Se un test fallisce, il job si ferma e **il sito resta alla versione precedente**. Un push rotto non arriva mai ai giocatori.
+
+**`deploy`** parte solo se `build` è andato a buon fine e pubblica l'artefatto:
+
+```yaml
+deploy:
+  needs: build
+  environment:
+    name: github-pages
+    url: ${{ steps.deployment.outputs.page_url }}
+  steps:
+    - id: deployment
+      uses: actions/deploy-pages@v4
+```
+
+I permessi del workflow sono i minimi necessari: `contents: read` per leggere il codice, `pages: write` e `id-token: write` per pubblicare. Il blocco `concurrency` evita due deploy contemporanei.
+
+## 4. Attivare GitHub Pages (una volta sola)
+
+Il workflow non può attivare Pages da solo. Serve un passaggio manuale sul repository:
+
+1. **Settings → Pages**.
+2. In **Build and deployment → Source** scegliere **GitHub Actions**.
+3. Da **Actions → Deploy to GitHub Pages** avviare il workflow con **Run workflow**, oppure fare un nuovo push su `main`.
+
+Dopo un minuto circa il sito è online. L'indirizzo compare nel riepilogo del job `deploy` e sotto **Settings → Pages**.
+
+## 5. Verifica
+
+- Il job `build` è verde: typecheck, lint, test e build sono passati.
+- <https://darkhelmet67.github.io/insert-coin/> mostra l'elenco dei giochi.
+- <https://darkhelmet67.github.io/insert-coin/space-invaders/> si gioca: **C** per la moneta, frecce e spazio.
+- Nel pannello Network del browser la pagina scarica tre file: HTML, CSS e JavaScript.
+
+Da qui in poi pubblicare è solo `git push`.

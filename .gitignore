@@ -5,3 +5,4 @@ dist/
 coverage/
 logs/
 *.log
+_site/
