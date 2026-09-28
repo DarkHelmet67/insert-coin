@@ -32,6 +32,10 @@ Altri comandi: `pnpm test` (Vitest), `pnpm typecheck`, `pnpm lint`, `pnpm format
 
 Dopo ogni `git pull` conviene eseguire `pnpm install`: se è arrivato un nuovo pacchetto `@arcade/*`, crea i collegamenti che gli servono.
 
+## Rifallo tu, con un solo prompt
+
+Il progetto è nato da una lunga conversazione con l'AI. Per ripetere l'esperimento non serve rifarla: il [prompt unico](docs/prompt-unico.md) riassume tutte le decisioni prese e chiede a un assistente AI (per esempio Claude Code) di ricostruire il progetto da zero, fase per fase, con le stesse regole e la stessa documentazione.
+
 ## Struttura
 
 ```
@@ -78,6 +82,7 @@ Il codice è scritto per essere letto da persone (_code for humans, not for AI_)
 | [06 · Audio](docs/06-audio.md)                                                   | Suoni sintetizzati con Web Audio, autoplay, suoni dedotti dallo stato |
 | [07 · Build e deploy](docs/07-build-deploy.md)                                   | Build di produzione, sito multi-gioco, GitHub Actions e Pages         |
 | [Space Invaders · meccaniche](games/space-invaders/docs/meccaniche-originali.md) | Marcia, bombe, bunker, UFO: come funzionava l'originale               |
+| [Prompt unico](docs/prompt-unico.md)                                             | Un solo prompt per ricreare l'intero progetto con un assistente AI    |
 | [Diario AI](docs/ai-workflow.md)                                                 | Prompt, decisioni e correzioni durante lo sviluppo                    |
 
 ## Licenza e diritti

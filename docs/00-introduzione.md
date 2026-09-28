@@ -13,3 +13,7 @@
 ## Come leggere le guide
 
 Le guide sono numerate e vanno lette in ordine: ognuna parte dal risultato della precedente e aggiunge un pezzo al motore condiviso. Le guide specifiche di un gioco stanno in `games/<gioco>/docs/`.
+
+## Vuoi rifarlo da zero?
+
+Il [prompt unico](prompt-unico.md) contiene in un solo messaggio tutte le decisioni prese durante lo sviluppo: incollato in un assistente AI con accesso al terminale, ricostruisce il progetto fase per fase. Le guide restano il modo per capire _perché_ ogni pezzo è fatto così.

@@ -129,3 +129,15 @@ Registro delle decisioni prese insieme a Claude, dei prompt significativi e dell
 **Passaggio manuale:** l'attivazione di Pages (Settings → Pages → Source: GitHub Actions) spetta al proprietario del repository; l'AI non ha i permessi per farlo e non li ha chiesti.
 
 **Verifica:** `pnpm build:site` in locale produce `_site/` con la pagina iniziale e il gioco; l'anteprima nella pagina iniziale è uno screenshot a risoluzione originale (224×256) preso in Chromium durante una partita.
+
+## 2026-09-28 · Il prompt unico
+
+**Richiesta dell'autore:** il progetto è nato in modo interattivo, con molte domande e risposte; chi vuole sperimentare in prima persona ha bisogno di un unico prompt capace di generare l'intero progetto così com'è.
+
+**Proposta dell'AI:** un prompt ricavato a posteriori dal codice e da questo diario, diviso in otto fasi che ricalcano le guide, con un riepilogo e una pausa alla fine di ognuna. Contiene le decisioni dell'autore, i numeri dell'originale con le fonti, e gli errori già incontrati (TypeScript 7, l'opzione deprecata di Vite, Node vecchio, `pnpm install` dimenticato), così chi lo usa non li ripete. Dichiara apertamente che il risultato non sarà identico carattere per carattere.
+
+**Regola nuova:** il prompt descrive il progetto com'è adesso, quindi ogni modifica significativa va riportata anche lì. La regola è in `CLAUDE.md`.
+
+**Limite:** il prompt non è stato ancora eseguito da capo a fine in una cartella vuota; è stato controllato confrontando ogni valore con il codice.
+
+Documento: [prompt unico](prompt-unico.md).

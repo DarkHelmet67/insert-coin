@@ -37,6 +37,7 @@ Se una regola diventa un ostacolo reale, si discute e si aggiorna questo file, i
 - Ogni gioco separa **stato puro** (tipi e funzioni `update`), **disegno** (`render`) e **collegamento** (`main.ts`).
 - Ogni nuovo pacchetto o funzionalità arriva con test Vitest e con la sua guida in `docs/`.
 - Ogni decisione significativa presa con l'AI va nel [diario AI](docs/ai-workflow.md).
+- Ogni modifica significativa (regole, strumenti, pacchetti, meccaniche, giochi) va riportata anche nel [prompt unico](docs/prompt-unico.md), che deve sempre poter ricreare il progetto com'è.
 
 ## Prima di ogni commit
 

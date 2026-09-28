@@ -1,0 +1,156 @@
+# Il prompt unico
+
+Il progetto è nato in modo interattivo: molte domande, proposte, correzioni, tutte raccolte nel [diario AI](ai-workflow.md). Chi vuole ripetere l'esperimento non deve rifare quel percorso: il prompt qui sotto riassume **tutte le decisioni prese** e chiede a un assistente AI di ricostruire il progetto da zero, fase per fase, con le stesse regole e la stessa documentazione.
+
+## Come usarlo
+
+1. Crea una cartella vuota (e, se vuoi pubblicare, un repository GitHub vuoto).
+2. Apri in quella cartella un assistente AI che può creare file ed eseguire comandi: il prompt è scritto per [Claude Code](https://claude.com/claude-code), ma funziona con qualsiasi agente di sviluppo con accesso al terminale.
+3. Copia **tutto** il blocco qui sotto e incollalo come primo messaggio.
+4. Lascia lavorare l'assistente: si ferma alla fine di ogni fase con un riepilogo. Rispondi "continua" per passare alla fase successiva, oppure correggi quello che non ti convince.
+
+Cosa aspettarsi:
+
+- **Il risultato non sarà identico carattere per carattere.** Un modello linguistico non è un compilatore: nomi di funzioni, disegni degli sprite o testo delle guide possono cambiare. Struttura, regole, meccaniche di gioco e numeri dell'originale invece sono fissati dal prompt.
+- **Serve tempo.** Sono otto fasi, con test e verifiche a ogni passo: conviene una sessione lunga, oppure più sessioni ripartendo con "continua dalla fase N: leggi il diario AI e i file già presenti".
+- **Le versioni degli strumenti invecchiano.** Il prompt indica quelle usate a settembre 2026 e chiede di verificarle prima di installarle; gli errori di compatibilità già incontrati sono elencati, così l'assistente non li ripete.
+- **Le fasi 6 e 7 richiedono te.** Per pubblicare servono un repository GitHub tuo e l'attivazione di GitHub Pages, che solo il proprietario del repository può fare.
+
+Un buon esercizio: confronta il progetto che ottieni con questo repository e annota le differenze nel tuo diario.
+
+## Il prompt
+
+```text
+Sei il mio compagno di sviluppo. Costruisci da zero, in questa cartella vuota, il progetto "insert-coin": un monorepo TypeScript di remake di giochi arcade coin-op anni '80, su HTML5 Canvas puro, con documentazione didattica in italiano. Il primo (e per ora unico) gioco è Space Invaders (Taito, 1978).
+
+Lavora per FASI, nell'ordine indicato in fondo. Alla fine di ogni fase: esegui tutti i controlli, fai un commit, aggiorna il diario AI, mostrami un breve riepilogo e aspetta il mio "continua". Se una fase fallisce, correggi e riprova prima di fermarti. Se una mia richiesta contraddice queste istruzioni, chiedimi conferma.
+
+=====================================================================
+1. OBIETTIVI
+=====================================================================
+- Progetto "scolastico" da portfolio: deve insegnare come ricostruire un vecchio videogioco in TypeScript con l'aiuto dell'AI. Documentazione abbondante: README generale, guide passo-passo numerate in docs/, guide specifiche del gioco, diario delle decisioni prese con l'AI.
+- Tutto il codice "generale" sta in pacchetti riusabili @arcade/*: i giochi futuri li riuseranno.
+- Ogni gioco si costruisce in UNA pagina HTML, UN file CSS, UN modulo JavaScript ES moderno. Nessuna compatibilità con browser vecchi.
+- Nessun asset esterno: sprite e font sono "ASCII art" nel codice, i suoni sono sintetizzati con la Web Audio API. Niente immagini o audio dell'originale.
+- Licenza MIT. Grafica e suoni ricreati da zero; nel README spiega che i nomi dei giochi appartengono ai rispettivi proprietari.
+
+=====================================================================
+2. STRUMENTI (versioni usate a settembre 2026: verifica le ultime compatibili prima di installare)
+=====================================================================
+- Node 24 LTS (supportati: "^22.13.0 || ^24.0.0 || >=26.0.0" nel campo engines), .nvmrc con "24", .npmrc con "engine-strict=true" così un Node vecchio fallisce subito con un errore chiaro.
+- pnpm 10 workspaces (campo "packageManager" nel package.json). pnpm-workspace.yaml con packages/* e games/*.
+- TypeScript ~6.0 (NON la 7: typescript-eslint supporta TypeScript < 6.1). tsconfig.base.json: target ES2022, module ESNext, moduleResolution Bundler, lib ES2022 + DOM + DOM.Iterable, strict, noUncheckedIndexedAccess, noImplicitOverride, exactOptionalPropertyTypes, isolatedModules, verbatimModuleSyntax, skipLibCheck, noEmit. Ogni pacchetto e gioco ha un tsconfig.json che lo estende.
+- Vite 8 (usa Rolldown). Configurazione del gioco: base './' (percorsi relativi, così la build funziona in qualsiasi sottocartella), build.target 'es2022', cssCodeSplit false, assetsInlineLimit 0, build.rolldownOptions.output = { codeSplitting: false, entryFileNames: 'game.js', assetFileNames: 'game.[ext]' }. Non usare inlineDynamicImports: è deprecato.
+- Vitest 5, un solo vitest.config.ts nella root che include packages/*/src/**/*.test.ts e games/*/src/**/*.test.ts.
+- ESLint 10 flat config con typescript-eslint strict, eslint-plugin-functional, eslint-plugin-jsdoc. Prettier con { "singleQuote": true, "printWidth": 100 }; .prettierignore con pnpm-lock.yaml e _site.
+- I pacchetti @arcade/* sono sorgenti TypeScript collegati con "workspace:*" (niente build dei pacchetti: il campo exports punta a src/index.ts).
+- Script nella root: build (pnpm -r --filter "./games/*" build), build:site, clean (cancella tutti i node_modules), clean:all (clean + cancella pnpm-lock.yaml), dev (avvia Space Invaders), format, lint, test (vitest run), typecheck (pnpm -r exec tsc -p tsconfig.json).
+- Nel README ricorda di eseguire "pnpm install" dopo ogni git pull: un nuovo pacchetto @arcade/* non viene collegato finché non lo si fa (errore tipico: "Rolldown failed to resolve import @arcade/...").
+
+=====================================================================
+3. REGOLE DI SVILUPPO "AI FOR HUMANS" (scrivile in CLAUDE.md, in italiano)
+=====================================================================
+Il codice sarà letto da persone: "code for humans, not for AI".
+- Pattern noti e best practice, niente soluzioni furbe. Niente file monolitici: file e funzioni piccoli con una sola responsabilità; un file oltre un paio di centinaia di righe va diviso. Molte piccole funzioni helper testabili. Commenti sul PERCHÉ nelle parti complesse.
+- Programmazione funzionale, niente classi: dati come oggetti readonly, logica come funzioni pure (stato, input) => nuovoStato. Verificato da functional/no-classes e functional/no-this-expressions.
+- Dati immutabili: functional/immutable-data, functional/readonly-type ('keyword'), functional/prefer-property-signatures, functional/no-let con allowInFunctions (let solo come stato privato di una closure).
+- Solo arrow function ES6: no-restricted-syntax su FunctionDeclaration e FunctionExpression, prefer-arrow-callback, arrow-body-style 'as-needed', prefer-const, no-var.
+- Un commento TSDoc su ogni funzione (anche interna), interfaccia e tipo: jsdoc/require-jsdoc con publicOnly false e contesti per ArrowFunctionExpression, TSInterfaceDeclaration, TSTypeAliasDeclaration; jsdoc/check-param-names.
+- TypeScript strict, nessun any, nessun ! non giustificato.
+- Eccezioni documentate (sono ammesse quando una regola renderebbe il codice più difficile da leggere; vanno scritte in CLAUDE.md, mai aggirate con eslint-disable):
+  * il contesto canvas si chiama sempre ctx ed è l'unica mutazione ammessa (ignoreAccessorPattern 'ctx.*');
+  * i nodi Web Audio si configurano per assegnamento: immutable-data disattivata solo per packages/audio/src/synth.ts;
+  * il "guscio" imperativo (game loop, adattatori verso il browser) tiene lo stato in let privati a una closure;
+  * nei file *.test.ts e test-*.ts (fixture condivise dei test) mock e fixture mutabili sono ammessi.
+- Codice e commenti in inglese; documentazione (README, docs/) in italiano.
+- packages/ non importa mai da games/. Ogni gioco separa stato puro (tipi e funzioni update), disegno (render) e collegamento (main.ts).
+- Ogni pacchetto o funzionalità arriva con test Vitest e con la sua guida. Ogni decisione significativa va nel diario AI.
+- Prima di ogni commit: pnpm typecheck && pnpm lint && pnpm test && pnpm build.
+
+=====================================================================
+4. PACCHETTI CONDIVISI (packages/, nome @arcade/<cartella>)
+=====================================================================
+- math: clamp(value, min, max).
+- engine-core: game loop a TIMESTEP FISSO. clock.ts puro: createClockConfig({ step = 1/60, maxFrameTime }) , advanceClock(config, clock, elapsedSeconds) => { state, steps } con un accumulatore, clamp del tempo di frame (evita la "spirale della morte" dopo una tab in background) e tolleranza per la deriva dei float; interpolationAlpha. loop.ts: createGameLoop<State>({ initialState, update(state, dt), render(state, alpha), scheduler }) con scheduler iniettabile (requestAnimationFrame di default, finto nei test), simulateSteps, elapsedSeconds; start/stop/isRunning.
+- input: KeyState immutabile con tasti premuti e fronti "pressed"/"released" dall'ultimo poll (applyKeyEvent, clearEdges, isDown, wasPressed, wasReleased, releaseAll). bindings.ts: KeyBindings<Action> = azione → lista di KeyboardEvent.code; isActionDown, wasActionPressed, boundKeys. keyboard.ts: createKeyboard(target, { captureKeys }) ascolta keydown/keyup, preventDefault solo sui tasti usati dal gioco, rilascia tutto su blur; poll() restituisce lo stato e azzera i fronti. Il gioco fa UN poll per passo di simulazione, così ogni pressione arriva a esattamente un update.
+- render: Sprite { width, height, pixels: readonly boolean[] } creato da parseSprite(righe di testo con 'X' = acceso, '.' = spento); spriteRuns raggruppa i pixel accesi in segmenti orizzontali; drawSprite disegna un fillRect per segmento con coordinate arrotondate; clearScreen. DrawingContext = Pick<CanvasRenderingContext2D, 'fillStyle' | 'fillRect'> & { canvas: { width, height } }: il minimo indispensabile, così i test usano un contesto finto che registra i rettangoli (test-context.ts). Font bitmap 5×7 (arcadeFont: A-Z, 0-9, punteggiatura usata dal gioco, spaziatura 3 px) con createPixelFont, drawText, drawCenteredText, textWidth. getCanvasContext(selector) che lancia un errore chiaro se il canvas manca.
+- collision: Rect e rectsOverlap/intersection (AABB). Bitmap { width, height, pixels } dichiarata nel pacchetto (NON importa Sprite: grazie alla tipizzazione strutturale gli sprite sono Bitmap validi e i pacchetti restano indipendenti). PlacedBitmap { bitmap, x, y } con coordinate arrotondate come nel disegno; boundsOf; isSolidAt con controllo dei bordi (una x fuori dal bordo destro non deve leggere la riga successiva); bitmapsOverlap pixel-perfect limitato all'area condivisa; eraseBitmap(target, brush) che restituisce una nuova bitmap senza i pixel coperti dal pennello (terreno distruttibile).
+- audio: suoni come DATI: ToneSound { kind 'tone', wave, from, to (Hz), duration, volume } e NoiseSound { kind 'noise', cutoff, duration, volume }. synth.ts: playSound(ctx, sound) crea oscillatore o rumore bianco filtrato passa-basso, con volume a rampa esponenziale fino a SILENCE = 0.0001. audio.ts: createAudio() crea l'AudioContext solo al primo gesto dell'utente (keydown o pointerdown: politica di autoplay), lo riprende se sospeso, play() non fa nulla prima del gesto o in muto, toggleMute(). Test con un AudioContext finto.
+
+=====================================================================
+5. SPACE INVADERS (games/space-invaders)
+=====================================================================
+Schermo logico 224×256 come l'originale ruotato; canvas <canvas id="screen" width="224" height="256">, ingrandito via CSS con image-rendering: pixelated, centrato su sfondo nero e con altezza min(100vh, 100vw * 256 / 224). index.html in italiano che carica ./src/main.ts come modulo.
+
+Controlli (KeyboardEvent.code): frecce o A/D movimento, Spazio fuoco, C o 5 moneta (come in MAME), M muto. Controls { direction -1|0|1 (0 se entrambe), fire, coin, mute } dove fire/coin/mute sono fronti di pressione.
+
+Tutta la logica di gioco avanza a frame interi da 1/60 s. Stato del gioco:
+GameState = (attract | playing | gameOver) & { hiScore }. Attract: titolo "SPACE INVADERS", "*SCORE ADVANCE TABLE*" con UFO "= ? MYSTERY" (rosso) e alieni animati 30/20/10 POINTS, "INSERT COIN" che lampeggia (periodo 1 s), "<C> COIN". La moneta avvia la partita anche durante il game over. Game over: "GAME OVER" in rosso sopra l'ultima immagine per 300 frame, poi attract. hiScore sopravvive fra le partite della sessione.
+
+Sprite (ASCII art, dimensioni dell'originale): squid 8×8, crab 11×8, octopus 12×8, due frame di animazione ciascuno; cannone 13×8; UFO 16×7; colpo 1×4; esplosione alieno 13×8; tre bombe 3×8 (rolling, plunger, squiggly) con 4 frame ciascuna; esplosione del colpo 8×8; esplosione della bomba 6×8; esplosione del cannone 2 frame 14×8; bunker 22×16 con angoli superiori smussati e arco in basso.
+
+Meccaniche originali (cerca online e cita le fonti: computerarcheology.com/Arcade/SpaceInvaders/ con il disassemblato commentato e la pagina sull'uso della RAM, shmups.wiki/library/Space_Invaders, spaceinvaders.fandom.com/wiki/UFO; se una fonte non è raggiungibile dillo, e distingui SEMPRE nei documenti i valori confermati dalle scelte tue):
+- Formazione 5 righe × 11: squid in alto (30 punti), 2 righe crab (20), 2 righe octopus (10), celle 16×16, bordo sinistro 24, alieni stretti centrati nella colonna. Ogni alieno ha kind, column (1-11), x, y, frame.
+- MARCIA: si muove UN SOLO alieno per frame, in ordine dal basso a sinistra; l'accelerazione nasce da sola quando gli alieni diminuiscono. Passo 2 px; l'ultimo alieno rimasto fa +3 a destra e -2 a sinistra. Quando un alieno tocca il limite (8 a sinistra, 216 a destra) la formazione, al passaggio successivo, scende di 8 px e inverte direzione. Ogni alieno cambia frame quando si muove. Rimuovendo un alieno il cursore deve restare sull'alieno che doveva muoversi dopo.
+- Altezza della riga più bassa all'inizio di ogni ondata (ondate 1-8, poi ciclo): 128, 168, 176, 176, 176, 184, 184, 184 (convertite dalla tabella originale 0x78, 0x50, 0x48, 0x40 in coordinate dall'alto).
+- Marcia sonora di 4 note basse, una a ogni passaggio completo della formazione, con almeno 5 frame fra due note (scelta nostra), frequenze scelte a orecchio.
+- Cannone: 1 px per frame, x fra 16 e 224 - 16 - 13, y 216; linea verde del terreno a y 239. Un solo colpo alla volta, 4 px per frame verso l'alto, sparisce a y 32.
+- BOMBE: tre tipi, al massimo una per tipo in volo; un tipo gestito per frame a turno (ogni bomba si muove ogni 3 frame); 4 px per passo, 5 quando restano 8 alieni o meno. Rolling: dalla colonna sopra il cannone. Plunger e squiggly: da tabelle di colonne (la squiggly inizia con 11, 1, 6, 3; se non trovi la tabella completa, ricostruiscila e dichiaralo); la plunger smette con un solo alieno. Parte sempre dall'alieno più basso della colonna. Una nuova bomba parte solo quando tutte quelle in volo hanno fatto almeno N passi: N = 48 sotto 200 punti, 16 sotto 1000, 11 sotto 2000, 8 sotto 3000, poi 7.
+- BUNKER: 4, a y 192, x 32 + i × 45. Si sgretolano cancellando pixel con eraseBitmap: colpo del giocatore (pennello = esplosione del colpo centrata sulla punta), bombe (pennello = esplosione della bomba), alieni che ci passano sopra (pennello = lo sprite dell'alieno).
+- UFO: ogni 0x600 = 1536 frame (25,6 s), solo se restano almeno 8 alieni; a y 40, 1 px per frame (scelta nostra); entra da sinistra se i colpi sparati sono pari, da destra se dispari. Punteggio = [100,50,50,100,150,100,100,50,300,100,100,100,50,150,100][colpiSparati % 15]: i 300 punti tornano ogni 15 colpi (8°, 23°, 38°...); spiega perché i giocatori conoscono il trucco come "23° colpo". Quando è colpito mostra i punti in rosso al suo posto.
+- Il colpo può distruggere una bomba (si annullano a vicenda).
+- 3 vite, UNA vita extra a 1500 punti. Colpito il cannone: esplosione animata e gioco fermo per 90 frame (scelta nostra), poi nuovo cannone a sinistra senza bombe in volo. Fine partita quando non restano cannoni o quando gli alieni raggiungono l'altezza del cannone. Ondata finita: nuova formazione più bassa e bunker nuovi.
+- Collisioni pixel-perfect (bitmapsOverlap), usando il frame di animazione corrente.
+
+Struttura del codice (moduli puri piccoli, ognuno con i suoi test): aliens.ts (formazione), fleet.ts (marcia), bombs.ts, shields.ts, ufo.ts, effects.ts (esplosioni e punti a tempo), cannon.ts, shot.ts, collisions.ts (ogni regola è una funzione (stato) => nuovoStato; updatePlaying applica: movimento cannone e colpo, movimento del mondo, poi le regole in ordine con reduce), playing.ts, game.ts (schermate), controls.ts, attract.ts, score.ts (punteggi a 4 cifre), palette.ts, playfield.ts (costanti dello schermo), sprites.ts; render-attract.ts, render-hud.ts (SCORE<1> e HI-SCORE in alto; in basso numero di vite e un'icona per ogni cannone di riserva), render-playing.ts, render.ts; sounds.ts; main.ts che collega tastiera, loop, audio e canvas. Fixture condivise dei test in test-fixtures.ts.
+
+Colori: sfondo nero, testo e alieni bianchi, UFO rosso #ff3030, verde #30ff30. Riproduci le strisce di cellophane del cabinato: colorAt(y) restituisce rosso fra y 32 e 56, verde da y 184 in giù, bianco altrove; alieni, bombe, colpi ed esplosioni prendono il colore della striscia in cui si trovano.
+
+Suoni (sintetizzati, niente file): coin (tono che sale), shot (rumore breve), alienHit (tono che scende), ufo (cinguettio ripetuto ogni 8 frame mentre vola), ufoHit, cannonHit (rumore lungo e sordo), extraLife, march0-3. La logica di gioco NON conosce l'audio: la funzione pura soundsFor(statoPrima, statoDopo) deduce i suoni confrontando due stati (colpi sparati aumentati, effetto appena nato, cannone appena esploso, nuovo passo della marcia...). main.ts li suona.
+
+=====================================================================
+6. DOCUMENTAZIONE (in italiano, con esempi di codice brevi e presi dal progetto)
+=====================================================================
+- README.md: cos'è, link "Gioca online" alla pagina pubblicata, tabella dei giochi con stato e link, screenshot, avvio rapido (Node, pnpm, comandi), struttura del monorepo, scelte tecniche (perché Canvas e non Phaser, pnpm workspaces, TS strict, Vite/Vitest), regole di sviluppo (rimando a CLAUDE.md), tabella delle guide, licenza e diritti, link a questo prompt unico.
+- docs/00-introduzione.md (obiettivi, metodo di lavoro con l'AI: le decisioni restano umane, ogni passo è verificabile, gli errori dell'AI sono documentati), 01-setup-monorepo.md, 02-game-loop.md, 03-input-tastiera.md, 04-rendering-sprite.md, 05-collisioni.md, 06-audio.md, 07-build-deploy.md. Ogni guida: obiettivo, spiegazione passo per passo, codice essenziale, test, come verificarlo, link alla successiva.
+- games/space-invaders/README.md (come si gioca, tasti, stato) e games/space-invaders/docs/meccaniche-originali.md (marcia, bombe, bunker, UFO, vite, ordine delle regole, cellophane; con le fonti e le incertezze dichiarate).
+- docs/ai-workflow.md: diario datato di ogni fase: cosa è stato chiesto, cosa ha proposto l'AI, cosa è stato deciso, errori dell'AI e come sono stati trovati (di solito dai test), verifiche fatte.
+- docs/prompt-unico.md: questo prompt, con le istruzioni per usarlo.
+- Screenshot in docs/images/ presi da un browser headless (per esempio Playwright) durante una partita.
+
+=====================================================================
+7. PUBBLICAZIONE
+=====================================================================
+- site/: pagina iniziale statica (index.html in italiano + style.css in stile arcade, nero con bordi verdi e titolo rosso) con una scheda per gioco: anteprima PNG 224×256 del gioco, titolo, anno, tasti, link al repository.
+- scripts/assemble-site.js (JavaScript con // @ts-check, eseguito da Node): cancella _site/, copia site/ e poi games/<nome>/dist in _site/<nome> per ogni gioco che ha una build. Script "build:site": "pnpm build && node scripts/assemble-site.js". _site/ ignorata da git, ESLint e Prettier.
+- .github/workflows/deploy.yml: su push a main e workflow_dispatch; permessi contents: read, pages: write, id-token: write; concurrency "pages" senza cancellazione. Job build: actions/checkout, pnpm/action-setup (versione da packageManager), actions/setup-node con node-version-file .nvmrc e cache pnpm, pnpm install --frozen-lockfile, typecheck, lint, test, build:site, actions/upload-pages-artifact con path _site. Job deploy (needs: build, environment github-pages): actions/deploy-pages.
+- Dimmi di attivare GitHub Pages (Settings → Pages → Source: GitHub Actions, senza cliccare "Create your own") e di rilanciare il job fallito se il primo run è partito prima dell'attivazione.
+
+=====================================================================
+8. FASI
+=====================================================================
+0. Setup del monorepo: strumenti, configurazioni, CLAUDE.md, README, struttura vuota di packages/ e games/space-invaders con pagina nera, guida 00 e 01, diario. Chiedimi il nome dell'autore per LICENSE e l'URL del repository GitHub (se non esiste, lavora in locale).
+1. Game loop (engine-core, math) + guida 02.
+2. Input da tastiera (input) + schermata di attesa con moneta + guida 03.
+3. Rendering e sprite (render, font, tutti gli sprite degli alieni, cannone, UFO) + tabella dei punteggi animata + cannone che si muove + guida 04.
+4. Collisioni (collision) + colpo, formazione ferma, esplosioni e punteggio + guida 05.
+5. Audio (audio) + suoni di moneta, sparo, alieno colpito, muto + guida 06.
+6. Gioco completo: marcia, bombe, bunker, UFO, vite, game over, hi-score, colori delle strisce, tutti i suoni; guida delle meccaniche originali con le fonti.
+7. Build e deploy su GitHub Pages + guida 07 + link "Gioca online" nel README + questo prompt in docs/prompt-unico.md, linkato da README, guida 00 e diario.
+
+Per ogni fase: scrivi prima i test delle funzioni pure, poi il codice; prova il gioco in un browser headless (movimento, colpi, nessun errore in console) e guarda uno screenshot prima di dichiarare la fase finita. Se non puoi verificare qualcosa, dillo invece di presumere che funzioni.
+```
+
+## Come è stato scritto
+
+Il prompt non è stato scritto all'inizio: è stato **ricavato a posteriori** dal progetto finito e dal diario AI. Contiene tre tipi di informazioni:
+
+- **le decisioni dell'autore**: Canvas invece di Phaser, un HTML + un CSS + un JS, le regole "AI for humans", il nome del progetto, la pubblicazione su GitHub Pages;
+- **i fatti dell'originale** trovati durante la ricerca: marcia un alieno per frame, tabelle delle bombe, punteggi dell'UFO;
+- **gli errori già incontrati**, per non ripeterli: TypeScript 7 non supportato da typescript-eslint, l'opzione deprecata di Vite, Node troppo vecchio, `pnpm install` dimenticato dopo un nuovo pacchetto, `isSolidAt` che sconfinava nella riga successiva.
+
+Quello che il prompt **non** contiene è il dialogo: le alternative scartate, le domande, le correzioni. Per quello resta il [diario AI](ai-workflow.md).
+
+## Tenerlo aggiornato
+
+Il prompt descrive il progetto _com'è adesso_. Ogni modifica significativa (una nuova regola, un nuovo pacchetto, un nuovo gioco) va riportata anche qui, altrimenti chi lo usa otterrà una versione vecchia del progetto. La regola è scritta in [CLAUDE.md](../CLAUDE.md).
