@@ -3,6 +3,7 @@ import { createAudio } from '@arcade/audio';
 import { createGameLoop } from '@arcade/engine-core';
 import { boundKeys, createKeyboard, createTouchButtons, mergeKeyStates } from '@arcade/input';
 import { getCanvasContext } from '@arcade/render';
+import { createHiScoreStore } from '@arcade/storage';
 import { bindings, readControls } from './controls';
 import { initialGameState, updateGame, type GameState } from './game';
 import { renderGame } from './render';
@@ -12,6 +13,7 @@ const ctx = getCanvasContext('#screen');
 const keyboard = createKeyboard(window, { captureKeys: boundKeys(bindings) });
 const touch = createTouchButtons(document.querySelector('#touch-panel') ?? document.body);
 const audio = createAudio();
+const hiScores = createHiScoreStore('insert-coin/space-invaders/hi-score');
 
 /**
  * One simulation step: read the controls, update the pure game state, then play the sounds
@@ -26,11 +28,13 @@ const step = (state: GameState, dt: number): GameState => {
   soundsFor(state, next).forEach((name) => {
     audio.play(sounds[name]);
   });
+  // Saved as soon as it changes, so the record survives even if the page is closed mid-game.
+  if (next.hiScore > state.hiScore) hiScores.save(next.hiScore);
   return next;
 };
 
 createGameLoop({
-  initialState: initialGameState,
+  initialState: { ...initialGameState, hiScore: hiScores.load() },
   update: step,
   render: (state) => renderGame(ctx, state),
 }).start();

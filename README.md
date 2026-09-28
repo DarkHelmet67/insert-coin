@@ -62,10 +62,11 @@ insert-coin/
 ├── docs/                 guide passo-passo trasversali
 ├── packages/             codice condiviso fra i giochi (@arcade/*)
 │   ├── engine-core/      game loop a timestep fisso, scene/stati
-│   ├── input/            tastiera
+│   ├── input/            tastiera e pulsanti touch
 │   ├── render/           canvas, scaling nitido, sprite bitmap, font pixel
 │   ├── audio/            effetti sonori con Web Audio API
 │   ├── collision/        AABB e collisione pixel-perfect
+│   ├── storage/          record salvato nel browser
 │   └── math/             vettori, clamp, random con seed
 ├── games/
 │   └── space-invaders/   un gioco = un'app Vite che usa i pacchetti @arcade/*
@@ -101,6 +102,7 @@ Il codice è scritto per essere letto da persone (_code for humans, not for AI_)
 | [06 · Audio](docs/06-audio.md)                                                   | Suoni sintetizzati con Web Audio, autoplay, suoni dedotti dallo stato |
 | [07 · Build e deploy](docs/07-build-deploy.md)                                   | Build di produzione, sito multi-gioco, GitHub Actions e Pages         |
 | [08 · Comandi touch](docs/08-comandi-touch.md)                                   | Pannello di comandi per smartphone, tasti virtuali, multitouch        |
+| [09 · Record salvato](docs/09-record-salvato.md)                                 | Record in localStorage senza errori, fanfara del nuovo record         |
 | [Space Invaders · meccaniche](games/space-invaders/docs/meccaniche-originali.md) | Marcia, bombe, bunker, UFO: come funzionava l'originale               |
 | [Prompt unico](docs/prompt-unico.md)                                             | Un solo prompt per ricreare l'intero progetto con un assistente AI    |
 | [Diario AI](docs/ai-workflow.md)                                                 | Prompt, decisioni e correzioni durante lo sviluppo                    |

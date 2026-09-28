@@ -12,7 +12,6 @@ body {
 
 /* The original screen is 224x256: scale it up without blurring the pixels. */
 #screen {
-  grid-area: screen;
   height: min(100vh, calc(100vw * 256 / 224));
   image-rendering: pixelated;
 }
@@ -55,7 +54,12 @@ body {
     -webkit-touch-callout: none;
   }
 
+  /*
+   * The named area exists only in this grid: set outside the media query, "screen" would be an
+   * unknown name on desktop and the browser would add implicit columns, pushing the game right.
+   */
   #screen {
+    grid-area: screen;
     height: min(100dvh - var(--panel-height), 100vw * 256 / 224);
   }
 

@@ -9,6 +9,7 @@ export type SoundName =
   | 'ufoHit'
   | 'cannonHit'
   | 'extraLife'
+  | 'newRecord'
   | 'march0'
   | 'march1'
   | 'march2'
@@ -28,6 +29,22 @@ const marchNote = (frequency: number): Sound => ({
   hold: 0.075,
   fade: 'linear',
   volume: 0.35,
+});
+
+/**
+ * One beep of the new record fanfare: the same square wave as the bonus cannon's 480 Hz tone,
+ * so the two rewards sound related.
+ */
+const fanfareNote = (frequency: number, delay: number, duration: number): Sound => ({
+  kind: 'tone',
+  wave: 'square',
+  from: frequency,
+  to: frequency,
+  delay,
+  duration,
+  hold: duration * 0.7,
+  fade: 'linear',
+  volume: 0.1,
 });
 
 /**
@@ -138,6 +155,16 @@ export const sounds: Readonly<Record<SoundName, SoundEffect>> = {
     fade: 'linear',
     volume: 0.1,
   },
+  /**
+   * The hi-score beaten during play (not in the original): the bonus cannon's tone climbing
+   * a major arpeggio, 480, 600, 720 and 960 Hz, with the last note held.
+   */
+  newRecord: [
+    fanfareNote(480, 0, 0.12),
+    fanfareNote(600, 0.14, 0.12),
+    fanfareNote(720, 0.28, 0.12),
+    fanfareNote(960, 0.42, 0.6),
+  ],
   march0: marchNote(60),
   march1: marchNote(56),
   march2: marchNote(52),

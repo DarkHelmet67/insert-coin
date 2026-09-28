@@ -109,3 +109,7 @@ pnpm dev    # poi, negli strumenti per sviluppatori del browser, attiva l'emulaz
 ```
 
 Sul telefono: premi MONETA, tieni ◀ con un pollice e spara con l'altro, poi fai scivolare il pollice su ▶ senza staccarlo. Ruotando il telefono i comandi passano ai lati dello schermo. Su un computer con il mouse il pannello non compare.
+
+Un errore da evitare: la proprietà `grid-area: screen` va dichiarata solo dentro la media query, dove esiste la griglia con l'area `screen`. Scritta fuori, su desktop il nome è sconosciuto e il browser aggiunge colonne implicite: il gioco finisce spostato a destra.
+
+Prossima guida: [09 · Record salvato](09-record-salvato.md).

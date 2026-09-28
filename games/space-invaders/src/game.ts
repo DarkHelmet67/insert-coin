@@ -6,7 +6,12 @@ import { initialPlayingState, isGameOver, updatePlaying, type PlayingState } fro
 /** The screen being shown and the data of that screen. */
 export type Screen =
   | { readonly screen: 'attract'; readonly attract: AttractState }
-  | { readonly screen: 'playing'; readonly playing: PlayingState }
+  | {
+      readonly screen: 'playing';
+      readonly playing: PlayingState;
+      /** The best score when the game started: beating it deserves a celebration. */
+      readonly recordToBeat: number;
+    }
   | { readonly screen: 'gameOver'; readonly playing: PlayingState; readonly framesLeft: number };
 
 /** What survives from one game to the next: the best score and the chosen colors. */
@@ -24,7 +29,10 @@ type ScoreScreen = Screen & Pick<Session, 'hiScore'>;
 /** Frames the "GAME OVER" message stays on screen before the attract screen returns. */
 export const GAME_OVER_FRAMES = 300;
 
-/** The game as it appears when the page loads: waiting for a coin, in color. */
+/**
+ * The game as it appears when the page loads: waiting for a coin, in color.
+ * `main.ts` replaces `hiScore` with the record saved in the browser.
+ */
 export const initialGameState: GameState = {
   screen: 'attract',
   attract: initialAttractState,
@@ -36,20 +44,20 @@ export const initialGameState: GameState = {
 const startGame = (hiScore: number): ScoreScreen => ({
   screen: 'playing',
   playing: initialPlayingState(),
+  recordToBeat: hiScore,
   hiScore,
 });
 
 /** One frame of play: the game ends when `isGameOver` says so, updating the best score. */
 const updatePlayingScreen = (
-  playing: PlayingState,
+  { playing, recordToBeat, hiScore }: Extract<GameState, { screen: 'playing' }>,
   controls: Controls,
-  hiScore: number,
 ): ScoreScreen => {
   const next = updatePlaying(playing, controls);
   const best = Math.max(hiScore, next.score);
   return isGameOver(next)
     ? { screen: 'gameOver', playing: next, framesLeft: GAME_OVER_FRAMES, hiScore: best }
-    : { screen: 'playing', playing: next, hiScore: best };
+    : { screen: 'playing', playing: next, recordToBeat, hiScore: best };
 };
 
 /** Advances the current screen: attract, play or game over. */
@@ -63,7 +71,7 @@ const updateScreen = (state: GameState, controls: Controls, dt: number): ScoreSc
         hiScore: state.hiScore,
       };
     case 'playing':
-      return updatePlayingScreen(state.playing, controls, state.hiScore);
+      return updatePlayingScreen(state, controls);
     case 'gameOver':
       return state.framesLeft > 1
         ? { ...state, framesLeft: state.framesLeft - 1 }

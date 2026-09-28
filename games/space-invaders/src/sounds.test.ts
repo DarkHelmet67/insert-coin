@@ -14,6 +14,7 @@ const attract: GameState = {
 /** A playing state with some fields replaced. */
 const playing = (changes: Partial<PlayingState> = {}): GameState => ({
   screen: 'playing',
+  recordToBeat: 0,
   playing: { ...initialPlayingState(), ...changes },
   hiScore: 0,
   colorMode: 'color',
@@ -44,6 +45,25 @@ describe('soundsFor', () => {
 
   it('plays the explosion when the cannon is hit', () => {
     expect(soundsFor(playing(), playing({ cannonExplosion: 90 }))).toEqual(['cannonHit']);
+  });
+
+  it('celebrates once when the score beats the record held at the start', () => {
+    /** A game started with a record of 500, now at `score`. */
+    const withRecord = (score: number): GameState => ({
+      screen: 'playing',
+      playing: { ...initialPlayingState(), score },
+      recordToBeat: 500,
+      hiScore: Math.max(500, score),
+      colorMode: 'color',
+    });
+
+    expect(soundsFor(withRecord(490), withRecord(510))).toEqual(['newRecord']);
+    expect(soundsFor(withRecord(500), withRecord(510))).toEqual(['newRecord']);
+    expect(soundsFor(withRecord(510), withRecord(530))).toEqual([]);
+  });
+
+  it('does not celebrate when there was no record to beat', () => {
+    expect(soundsFor(playing({ score: 0 }), playing({ score: 10 }))).toEqual([]);
   });
 
   it('is silent when nothing happens', () => {

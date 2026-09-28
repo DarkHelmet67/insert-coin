@@ -201,3 +201,28 @@ Documento: [prompt unico](prompt-unico.md).
 **Un dettaglio trovato dall'AI:** sui telefoni l'audio si sblocca quando il dito si _stacca_ (`pointerup`, `touchend`), non quando tocca. Con il solo `pointerdown` il gioco sarebbe rimasto muto; ora `createAudio` ascolta anche quei due eventi.
 
 **Verifica:** test delle funzioni pure e dell'adattatore con eventi finti; in Chromium con l'emulazione di un telefono (390×844 e 360×740, verticale e orizzontale) tocchi veri via DevTools: moneta, sinistra tenuta con un dito e fuoco con l'altro, pollice fatto scivolare su destra. Screenshot controllati; su desktop il pannello non compare. Non provato su un telefono fisico: lo fa l'autore.
+
+## 2026-09-28 · Correzione: gioco non centrato su desktop
+
+**Segnalazione dell'autore:** dopo il pannello touch, su desktop il gioco è spostato a destra; nel CSS non trovava la causa.
+
+**Causa, trovata dall'AI misurando la pagina in Chromium** (440 pixel di margine a sinistra, 147 a destra): la regola `grid-area: screen` del canvas era fuori dalla media query `pointer: coarse`. Su desktop la griglia non ha un'area chiamata `screen`, e per un nome sconosciuto il browser crea righe e colonne implicite: il canvas finisce in una colonna in più. La media query nascondeva il problema proprio sui dispositivi usati per provare il pannello.
+
+**Correzione:** `grid-area` spostata dentro la media query, con un commento che spiega il perché; margini ora uguali (294 e 294 pixel). Il test in Chromium controlla anche questo.
+
+**Lezione:** una modifica "solo per mobile" va verificata anche sul desktop. Lo screenshot del pannello era perfetto; mancava quello della vecchia pagina.
+
+## 2026-09-28 · Record salvato e versione 1.0.0
+
+**Richiesta dell'autore:** ultima funzionalità prima della v1.0.0: salvare il punteggio più alto nel `localStorage`, con un suono celebrativo quando lo si supera, simile a quello della vita extra.
+
+**Decisioni dell'AI:**
+
+- nuovo pacchetto `@arcade/storage`, perché il record serve a ogni gioco. Ogni accesso a `localStorage` è protetto: in navigazione privata o con l'archiviazione disattivata il browser lancia errori, e un record non salvato non deve fermare il gioco;
+- il record si salva appena cambia, non a fine partita, così sopravvive anche se si chiude la pagina a metà;
+- la fanfara usa la stessa onda quadra della vita extra, in arpeggio 480, 600, 720, 960 Hz. Suona una sola volta per partita, e non alla prima partita in assoluto (record 0). Per saperlo lo stato della partita ricorda `recordToBeat`, il record all'inizio;
+- come sul cabinato, `SCORE<1> HI-SCORE` compare anche nella schermata di attesa: senza, dopo aver ricaricato la pagina il record salvato non si vedeva.
+
+**Verifica:** 182 test; in Chromium: record di partenza 20 scritto nel `localStorage`, partita, record aggiornato, fanfara suonata una volta (rilevata intercettando le frequenze dell'`AudioContext`), pagina ricaricata con il nuovo record in alto.
+
+**Versione:** `1.0.0` nel `package.json` della root e del gioco, con il tag git `v1.0.0`.

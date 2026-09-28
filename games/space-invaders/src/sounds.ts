@@ -41,6 +41,16 @@ const PLAYING_SOUNDS: readonly (readonly [
   ],
 ];
 
+/**
+ * Whether this step beat the record held when the game started. Only once per game, and only
+ * if there was a record: the first alien of the first game ever is not a celebration.
+ */
+const beatRecord = (previous: GameState, next: PlayingState): boolean =>
+  previous.screen === 'playing' &&
+  previous.recordToBeat > 0 &&
+  previous.playing.score <= previous.recordToBeat &&
+  next.score > previous.recordToBeat;
+
 /** The march note to play when the formation starts a new pass, if any. */
 const marchSound = (prev: PlayingState, next: PlayingState): readonly SoundName[] => {
   const note = MARCH_NOTES[next.fleet.beat % MARCH_NOTES.length];
@@ -59,5 +69,6 @@ export const soundsFor = (previous: GameState, next: GameState): readonly SoundN
   return [
     ...marchSound(prev, current),
     ...PLAYING_SOUNDS.filter(([, happened]) => happened(prev, current)).map(([name]) => name),
+    ...(beatRecord(previous, current) ? (['newRecord'] as const) : []),
   ];
 };

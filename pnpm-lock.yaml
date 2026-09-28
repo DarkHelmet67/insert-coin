@@ -56,6 +56,9 @@ importers:
       '@arcade/render':
         specifier: workspace:*
         version: link:../../packages/render
+      '@arcade/storage':
+        specifier: workspace:*
+        version: link:../../packages/storage
 
   packages/audio: {}
 
@@ -68,6 +71,8 @@ importers:
   packages/math: {}
 
   packages/render: {}
+
+  packages/storage: {}
 
 packages:
 

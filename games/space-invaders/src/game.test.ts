@@ -12,6 +12,7 @@ const startGame = (): GameState => updateGame(initialGameState, coin, 1 / 60);
 /** A game about to end: no cannons left and the last one done exploding. */
 const lastFrame: GameState = {
   screen: 'playing',
+  recordToBeat: 0,
   playing: { ...initialPlayingState(), lives: 0, cannonExplosion: 1, score: 420 },
   hiScore: 100,
   colorMode: 'color',
@@ -20,6 +21,13 @@ const lastFrame: GameState = {
 describe('updateGame', () => {
   it('waits on the attract screen until a coin is inserted', () => {
     expect(updateGame(initialGameState, noControls, 1 / 60).screen).toBe('attract');
+  });
+
+  it('remembers the record to beat for the whole game', () => {
+    const withRecord: GameState = { ...initialGameState, hiScore: 1200 };
+    const started = updateGame(withRecord, coin, 1 / 60);
+    const later = updateGame(started, noControls, 1 / 60);
+    expect(later).toMatchObject({ screen: 'playing', recordToBeat: 1200 });
   });
 
   it('starts a new game when a coin is inserted', () => {

@@ -1,0 +1,10 @@
+{
+  "name": "@arcade/storage",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Hi-scores saved in the browser (localStorage), safe when storage is unavailable.",
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

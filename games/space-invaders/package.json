@@ -1,6 +1,6 @@
 {
   "name": "@arcade/space-invaders",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "description": "Space Invaders (Taito, 1978) rebuilt on HTML5 Canvas.",
@@ -15,6 +15,7 @@
     "@arcade/engine-core": "workspace:*",
     "@arcade/input": "workspace:*",
     "@arcade/math": "workspace:*",
-    "@arcade/render": "workspace:*"
+    "@arcade/render": "workspace:*",
+    "@arcade/storage": "workspace:*"
   }
 }
