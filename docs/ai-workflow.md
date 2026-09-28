@@ -59,3 +59,5 @@ Registro delle decisioni prese insieme a Claude, dei prompt significativi e dell
 **Correzione:** `engines.node` allineato ai requisiti reali, `engine-strict=true` in `.npmrc` (verificato: con un Node non supportato `pnpm install` si ferma con `ERR_PNPM_UNSUPPORTED_ENGINE`), `.nvmrc` con Node 24 LTS, e documentazione aggiornata.
 
 **Lezione:** quando l'AI lavora in un ambiente diverso da quello dell'utente, i requisiti di runtime vanno dichiarati e verificati esplicitamente fin dal primo commit.
+
+**Seguito:** con Node 24 è comparso un secondo errore, `Cannot find native binding` di Rolldown. L'AI ha letto il log sul computer dell'autore tramite Remote Control, in sola lettura. Il file di installazione di pnpm mostrava `@rolldown/binding-darwin-arm64` fra i pacchetti _saltati_. Causa: la prima installazione era avvenuta con il Node vecchio, e pnpm aveva escluso quel pacchetto opzionale perché il suo `engines` richiede Node 20.19+ o 22.12+. Cambiare Node non lo reinstalla: serve cancellare `node_modules` e ripetere `pnpm install`. Aggiunto alla guida 01.

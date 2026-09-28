@@ -23,6 +23,15 @@ Per trasformarlo in un messaggio esplicito già durante `pnpm install`:
 - `.npmrc` contiene `engine-strict=true`;
 - `.nvmrc` indica la versione consigliata, così con nvm basta `nvm use`.
 
+Se hai già eseguito `pnpm install` con un Node troppo vecchio, aggiornare Node non basta. pnpm aveva saltato in silenzio i pacchetti opzionali incompatibili, tra cui il motore nativo di Rolldown (`@rolldown/binding-darwin-arm64` su Mac Apple Silicon), che richiede Node 20.19+ o 22.12+. Il sintomo è `Error: Cannot find native binding` all'avvio di `pnpm dev`. La soluzione è reinstallare da zero:
+
+```bash
+rm -rf node_modules games/*/node_modules packages/*/node_modules
+pnpm install
+```
+
+> Consiglio: non tenere il progetto in una cartella sincronizzata (OneDrive, iCloud, Dropbox). `node_modules` contiene migliaia di file e link simbolici che la sincronizzazione rallenta o può danneggiare.
+
 ## 2. Il workspace pnpm
 
 `package.json` alla radice è privato (non si pubblica) e contiene solo gli script globali e gli strumenti di sviluppo. `pnpm-workspace.yaml` dice a pnpm dove cercare i pacchetti:
