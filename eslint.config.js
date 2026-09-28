@@ -62,6 +62,12 @@ export default tseslint.config(
     },
   },
 
+  // Web Audio nodes are configured by assignment (`oscillator.type = ...`), like the canvas context.
+  {
+    files: ['packages/audio/src/synth.ts'],
+    rules: { 'functional/immutable-data': 'off' },
+  },
+
   // Tests may use mocks and mutable fixtures.
   {
     files: TESTS,

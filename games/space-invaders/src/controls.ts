@@ -1,14 +1,15 @@
 import { isActionDown, wasActionPressed, type KeyBindings, type KeyState } from '@arcade/input';
 
 /** The buttons of the original cabinet. */
-export type Action = 'left' | 'right' | 'fire' | 'coin';
+export type Action = 'left' | 'right' | 'fire' | 'coin' | 'mute';
 
-/** Keyboard layout: arrows or A/D to move, space to fire, C (or 5, as in MAME) to insert a coin. */
+/** Keyboard layout: arrows or A/D to move, space to fire, C (or 5, as in MAME) to insert a coin, M to mute. */
 export const bindings: KeyBindings<Action> = {
   left: ['ArrowLeft', 'KeyA'],
   right: ['ArrowRight', 'KeyD'],
   fire: ['Space'],
   coin: ['KeyC', 'Digit5'],
+  mute: ['KeyM'],
 };
 
 /** What the player is doing during one simulation step, independent of the keys used. */
@@ -17,10 +18,12 @@ export interface Controls {
   readonly direction: -1 | 0 | 1;
   readonly fire: boolean;
   readonly coin: boolean;
+  /** Switch the sound off or on: handled by the audio output, not by the game logic. */
+  readonly mute: boolean;
 }
 
 /** No input: useful as a default and in tests. */
-export const noControls: Controls = { direction: 0, fire: false, coin: false };
+export const noControls: Controls = { direction: 0, fire: false, coin: false, mute: false };
 
 /** Translates the keyboard state into cabinet controls. */
 export const readControls = (keys: KeyState): Controls => {
@@ -30,5 +33,6 @@ export const readControls = (keys: KeyState): Controls => {
     direction: left === right ? 0 : left ? -1 : 1,
     fire: wasActionPressed(keys, bindings, 'fire'),
     coin: wasActionPressed(keys, bindings, 'coin'),
+    mute: wasActionPressed(keys, bindings, 'mute'),
   };
 };

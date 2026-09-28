@@ -91,3 +91,15 @@ Registro delle decisioni prese insieme a Claude, dei prompt significativi e dell
 **Errore dell'AI corretto dai test:** il primo test del "colpo che passa fra le gambe dell'octopus" usava una colonna dello sprite che in realtà conteneva un pixel acceso, e il test falliva. L'AI ha ricontrollato lo sprite riga per riga e ha scelto una colonna davvero vuota. È un buon esempio del perché i test vanno eseguiti, non solo scritti.
 
 **Verifica:** 28 nuovi test; partita di prova in Chromium: moneta, movimento, due colpi, un octopus distrutto, punteggio a 20.
+
+## 2026-09-28 · Audio
+
+**Reazione dell'autore al passo precedente:** giocato sul suo Mac, il risultato gli è sembrato "pressoché indistinguibile dall'originale giocato con il MAME".
+
+**Proposta dell'AI:** effetti sonori descritti come dati (un tono che scivola in frequenza o un'esplosione di rumore filtrato) e sintetizzati con la Web Audio API, senza file audio. Il contesto audio nasce al primo tasto premuto, per rispettare la politica di autoplay dei browser. I suoni non vengono chiamati dalla logica di gioco: una funzione pura, `soundsFor`, li deduce confrontando lo stato prima e dopo ogni passo.
+
+**Eccezione alle regole:** i nodi Web Audio si configurano per assegnamento, quindi la regola sull'immutabilità è disattivata solo per `synth.ts`, come già per il canvas. Documentata in `CLAUDE.md`.
+
+**Non ancora fatto:** la marcia a quattro note degli alieni è legata al loro movimento, che non esiste ancora; arriverà insieme alla marcia della formazione.
+
+**Verifica:** 13 nuovi test; in Chromium, con la politica di autoplay attiva, la moneta e lo sparo generano i nodi audio attesi, e dopo **M** non ne viene creato nessun altro.
