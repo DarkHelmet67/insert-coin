@@ -225,4 +225,4 @@ Documento: [prompt unico](prompt-unico.md).
 
 **Verifica:** 182 test; in Chromium: record di partenza 20 scritto nel `localStorage`, partita, record aggiornato, fanfara suonata una volta (rilevata intercettando le frequenze dell'`AudioContext`), pagina ricaricata con il nuovo record in alto.
 
-**Versione:** `1.0.0` nel `package.json` della root e del gioco, con il tag git `v1.0.0`.
+**Versione:** `1.0.0` nel `package.json` della root e del gioco. Il tag `v1.0.0` e la release si creano da GitHub (Releases → Draft a new release), perché l'ambiente dell'AI può spingere solo sul ramo main.
