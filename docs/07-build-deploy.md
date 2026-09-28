@@ -125,7 +125,8 @@ Il workflow non può attivare Pages da solo. Serve un passaggio manuale sul repo
 
 1. **Settings → Pages**.
 2. In **Build and deployment → Source** scegliere **GitHub Actions**.
-3. Da **Actions → Deploy to GitHub Pages** avviare il workflow con **Run workflow**, oppure fare un nuovo push su `main`.
+   Nient'altro: le proposte che compaiono sotto (come _Create your own_) servono a creare un nuovo workflow, ma il nostro è già nel repository.
+3. Rilanciare il deploy. Se il primo run è fallito (succede quando il workflow arriva prima dell'attivazione di Pages), basta aprirlo in **Actions** e premere **Re-run failed jobs**. In alternativa: nella colonna di sinistra di **Actions** scegliere **Deploy to GitHub Pages** e premere **Run workflow**, oppure fare un nuovo push su `main`. Da smartphone la colonna di sinistra è nascosta: meglio usare il computer.
 
 Dopo un minuto circa il sito è online. L'indirizzo compare nel riepilogo del job `deploy` e sotto **Settings → Pages**.
 
