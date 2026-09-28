@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { endTime, whiteNoise, type Sound } from './sound';
+import { endTime, fadeStart, layersOf, whiteNoise, type Sound } from './sound';
 
 const beep: Sound = {
   kind: 'tone',
@@ -13,6 +13,21 @@ const beep: Sound = {
 describe('endTime', () => {
   it('adds the duration to the start time', () => {
     expect(endTime(beep, 1)).toBeCloseTo(1.2);
+  });
+});
+
+describe('fadeStart', () => {
+  it('starts the fade after the hold, never after the end', () => {
+    expect(fadeStart(beep, 1)).toBe(1);
+    expect(fadeStart({ ...beep, hold: 0.1 }, 1)).toBeCloseTo(1.1);
+    expect(fadeStart({ ...beep, hold: 5 }, 1)).toBeCloseTo(1.2);
+  });
+});
+
+describe('layersOf', () => {
+  it('turns a single sound into a one-layer list', () => {
+    expect(layersOf(beep)).toEqual([beep]);
+    expect(layersOf([beep, beep])).toHaveLength(2);
   });
 });
 

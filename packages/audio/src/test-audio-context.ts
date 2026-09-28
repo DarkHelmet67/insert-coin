@@ -8,6 +8,8 @@ const fakeParam = (name: string, calls: AudioCall[]) => ({
   setValueAtTime: (value: number, time: number) => calls.push([`${name}.set`, value, time]),
   exponentialRampToValueAtTime: (value: number, time: number) =>
     calls.push([`${name}.ramp`, value, time]),
+  linearRampToValueAtTime: (value: number, time: number) =>
+    calls.push([`${name}.linear`, value, time]),
 });
 
 /**

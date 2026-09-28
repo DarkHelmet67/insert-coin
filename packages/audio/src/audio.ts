@@ -1,5 +1,5 @@
-import type { Sound } from './sound';
-import { playSound, type SynthContext } from './synth';
+import type { SoundEffect } from './sound';
+import { playEffect, type SynthContext } from './synth';
 
 /** An audio context that may start suspended, as browsers do until the user interacts with the page. */
 export type UnlockableContext = SynthContext & Pick<AudioContext, 'state' | 'resume'>;
@@ -17,7 +17,7 @@ export interface AudioOptions {
 /** Sound output of a game. */
 export interface AudioPlayer {
   /** Plays a sound effect; does nothing while muted or before the first user gesture. */
-  readonly play: (sound: Sound) => void;
+  readonly play: (effect: SoundEffect) => void;
   /** Switches the sound off or back on. */
   readonly toggleMute: () => void;
   readonly isMuted: () => boolean;
@@ -51,8 +51,8 @@ export const createAudio = ({
   });
 
   return {
-    play: (sound) => {
-      if (ctx && !muted) playSound(ctx, sound);
+    play: (effect) => {
+      if (ctx && !muted) playEffect(ctx, effect);
     },
     toggleMute: () => {
       muted = !muted;

@@ -5,5 +5,15 @@ export {
   type GestureTarget,
   type UnlockableContext,
 } from './audio';
-export { endTime, SILENCE, whiteNoise, type NoiseSound, type Sound, type ToneSound } from './sound';
-export { playSound, type SynthContext } from './synth';
+export {
+  endTime,
+  fadeStart,
+  layersOf,
+  SILENCE,
+  whiteNoise,
+  type NoiseSound,
+  type Sound,
+  type SoundEffect,
+  type ToneSound,
+} from './sound';
+export { playEffect, playSound, type SynthContext } from './synth';

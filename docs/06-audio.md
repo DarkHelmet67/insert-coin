@@ -105,7 +105,32 @@ const step = (state: GameState, dt: number): GameState => {
 
 Questo approccio scala bene: la marcia degli alieni, l'UFO o la morte del cannone saranno nuove righe in `soundsFor`, senza toccare la logica di gioco.
 
-## 6. Un'eccezione alle regole
+## 6. Suoni più ricchi: strati, pause e rampe lineari
+
+Un solo tono o un solo rumore bastano per una bozza, ma per avvicinarsi ai suoni del cabinato servono alcuni campi opzionali in più, tutti ancora semplici dati:
+
+| Campo    | Per cosa                                                                                                |
+| -------- | ------------------------------------------------------------------------------------------------------- |
+| `hold`   | Secondi a volume pieno prima della dissolvenza (la marcia e le esplosioni restano costanti, poi calano) |
+| `fade`   | `'linear'` fa calare il volume in modo costante, come un condensatore che si scarica                    |
+| `sweep`  | `'linear'` fa scendere la frequenza degli stessi hertz ogni secondo, come i circuiti analogici          |
+| `cutoff` | Un filtro passa-basso anche sui toni, per ammorbidire onde brillanti come la dente di sega              |
+| `delay`  | Secondi di attesa prima di partire                                                                      |
+
+Con `delay` un effetto può essere fatto di **più strati**: il tipo `SoundEffect` è un suono o una lista di suoni suonati insieme, ognuno dopo il proprio ritardo. È così che è fatto lo sparo del cannone, tre discese di frequenza in fila più un soffio di rumore:
+
+```ts
+shot: [
+  { kind: 'noise', cutoff: 4000, duration: 0.05, volume: 0.06 },
+  { kind: 'tone', wave: 'triangle', sweep: 'linear', from: 800, to: 375, duration: 0.058, /* ... */ },
+  { kind: 'tone', wave: 'triangle', sweep: 'linear', from: 1800, to: 450, delay: 0.058, /* ... */ },
+  // ...
+],
+```
+
+I tempi restano precisi perché ogni strato viene programmato sull'orologio dell'`AudioContext`, non con `setTimeout`. Come sono stati ricavati questi numeri dalle registrazioni originali è spiegato nella [guida delle meccaniche di Space Invaders](../games/space-invaders/docs/meccaniche-originali.md#8-i-suoni-misurati-sugli-originali).
+
+## 7. Un'eccezione alle regole
 
 I nodi Web Audio si configurano per assegnamento (`oscillator.type = 'square'`, `source.buffer = buffer`), proprio come il contesto del canvas. La regola ESLint sull'immutabilità è quindi disattivata **solo** per `synth.ts`, e l'eccezione è documentata in [CLAUDE.md](../CLAUDE.md).
 

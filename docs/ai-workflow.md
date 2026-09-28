@@ -161,3 +161,19 @@ Documento: [prompt unico](prompt-unico.md).
 **Un dettaglio trovato con lo screenshot:** la scritta `<V> MONO/COLOR` usciva senza barra, perché il font 5×7 non ha il carattere `/`; ora è `<V> MONO-COLOR`.
 
 **Verifica:** 153 test; screenshot in Chromium della schermata di attesa e della stessa partita in COLORE e, dopo V, in MONO.
+
+## 2026-09-28 · Suoni misurati sugli originali
+
+**Richiesta dell'autore:** rendere i suoni più simili all'originale, a partire dallo sparo del cannone, usando le registrazioni originali o fonti più rapide.
+
+**Ostacolo:** il sito con le registrazioni non era raggiungibile dall'ambiente dell'AI. L'AI ha trovato l'analisi dei circuiti audio del cabinato su walkofmind.com (utile per la forma d'onda e per la vita extra a 480 Hz, ma senza i valori della maggior parte dei suoni); l'autore ha poi caricato direttamente i file WAV.
+
+**Metodo dell'AI:** misura di ogni registrazione con FFT a finestre, autocorrelazione e inviluppo del volume. Scoperte principali: lo sparo non è un rumore ma una frequenza che scende in linea retta e riparte; l'alieno colpito è un tono acuto a 2,6 kHz, non una discesa; la marcia è a 60, 56, 52 e 69 Hz, più grave di quanto scelto a orecchio.
+
+**Modifiche al pacchetto `@arcade/audio`:** per descrivere questi suoni sono serviti alcuni campi opzionali (`hold`, `fade`, `sweep`, `cutoff`, `delay`) e gli effetti a più strati (`SoundEffect`). Tutti opzionali: i suoni esistenti non cambiano significato.
+
+**Verifica con il sintetizzatore vero:** i suoni del gioco sono stati resi in Chromium con un `OfflineAudioContext` e confrontati con le registrazioni usando le stesse misure. Il primo confronto ha mostrato che la dissolvenza esponenziale spegneva i suoni troppo presto rispetto agli originali, che calano in modo lineare: da qui il campo `fade: 'linear'`. Anche il picco dell'UFO è stato corretto dopo il confronto.
+
+**Divisione del file:** con i nuovi valori `sounds.ts` superava le 190 righe; i dati sono passati in `sound-bank.ts`, la logica `soundsFor` è rimasta in `sounds.ts`.
+
+**Non misurati:** UFO colpito e vita extra (registrazioni non disponibili); la moneta non esiste nell'originale.

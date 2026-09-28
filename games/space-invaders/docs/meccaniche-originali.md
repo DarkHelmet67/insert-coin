@@ -9,6 +9,8 @@ Il codice del gioco originale è stato disassemblato e commentato riga per riga 
 - [Computer Archeology · Space Invaders](https://www.computerarcheology.com/Arcade/SpaceInvaders/): il codice originale per CPU 8080, disassemblato e commentato ([codice](https://computerarcheology.com/Arcade/SpaceInvaders/Code.html), [uso della RAM](https://www.computerarcheology.com/Arcade/SpaceInvaders/RAMUse.html)).
 - [Shmups Wiki · Space Invaders](https://www.shmups.wiki/library/Space_Invaders): le regole viste dal giocatore, con i trucchi noti.
 - [Space Invaders Wiki · UFO](https://spaceinvaders.fandom.com/wiki/UFO): punteggi e comparsa dell'astronave.
+- [Walk Of Mind · Space Invaders sound emulation](https://www.walkofmind.com/programming/side/soundboard.htm): l'analisi dei circuiti audio del cabinato, di Alessandro Scotti.
+- [Classic Gaming · Space Invaders sounds](https://classicgaming.cc/classics/space-invaders/sounds): le registrazioni dei suoni originali, usate solo per misurarli (non sono incluse nel repository).
 
 ## 1. Un alieno per frame: da dove viene l'accelerazione
 
@@ -44,7 +46,7 @@ Quando un alieno viene colpito, `removeAlien` corregge il cursore: l'alieno che 
 
 ### La marcia a quattro note
 
-Il suono di sottofondo è una sequenza di quattro note basse, una per ogni passo completo della formazione: accelera insieme agli alieni. Le frequenze delle note sono scelte a orecchio (le fonti descrivono il circuito analogico, non le note). Per non trasformare la marcia in un ronzio quando resta un solo alieno, fra due note passano almeno 5 frame (`MIN_BEAT_FRAMES`, scelta nostra).
+Il suono di sottofondo è una sequenza di quattro note basse, una per ogni passo completo della formazione: accelera insieme agli alieni. Le note sono misurate sulle registrazioni originali: 60, 56, 52 e 69 Hz (vedi la sezione 8). Per non trasformare la marcia in un ronzio quando resta un solo alieno, fra due note passano almeno 5 frame (`MIN_BEAT_FRAMES`, scelta nostra).
 
 ## 2. Le bombe degli alieni
 
@@ -173,3 +175,35 @@ Il monitor originale era in bianco e nero: i colori venivano da pellicole colora
 I colori stanno tutti in un file di configurazione, [`colors.config.ts`](../src/colors.config.ts): per cambiarli basta modificare un valore, per esempio `alienRows: ['#40c8ff', '#30ff30', '#30ff30', '#c050ff', '#c050ff']`, una voce per riga dall'alto. Qualsiasi colore CSS va bene.
 
 Il resto del codice non conosce i colori: [`palette.ts`](../src/palette.ts) trasforma la modalità scelta (`'mono'` o `'color'`) in una _palette_, e le funzioni di disegno la ricevono come parametro. Per questo ogni alieno ricorda la propria riga (`row`, da 1 a 5): il colore segue l'alieno anche quando la formazione scende. La modalità fa parte dello stato del gioco ma non della partita: resta la stessa quando se ne inizia una nuova.
+
+## 8. I suoni, misurati sugli originali
+
+Il gioco non contiene file audio: ogni suono è descritto da pochi numeri e sintetizzato con la Web Audio API ([guida 06](../../../docs/06-audio.md)). Per rendere quei numeri fedeli, i suoni sono stati **misurati** sulle registrazioni del cabinato originale. Le registrazioni non sono nel repository: servono solo come riferimento.
+
+### Come si misura un suono
+
+Tre strumenti di analisi, tutti con poche righe di Python e NumPy:
+
+- **Spettro nel tempo** (FFT su finestre di 23 ms): dice quale frequenza domina istante per istante, e quindi come si muove il tono.
+- **Autocorrelazione**: trova il periodo di un'onda ripetitiva anche quando le armoniche ingannano la FFT. È quella che ha dato le note della marcia.
+- **Inviluppo** (volume medio ogni 10 ms): dice quanto dura il suono, quanto resta costante e come si spegne.
+
+L'ampiezza relativa delle armoniche dice anche la **forma d'onda**: la dente di sega ha tutte le armoniche, il triangolo solo quelle dispari e molto più deboli.
+
+### Cosa hanno detto le misure
+
+| Suono           | Originale misurato                                                                             | Nel remake                                                     |
+| --------------- | ---------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| Sparo           | Frequenza che scende in linea retta da ~1800 a ~400 Hz in 0,19 s e riparte; 0,37 s in tutto    | Tre discese lineari in fila (triangolo) più un soffio iniziale |
+| Alieno colpito  | Tono quasi puro a ~2,6 kHz che cala appena fino a ~2,4 kHz; costante per 0,16 s, poi si spegne | Triangolo 2660 → 2420 Hz, 0,33 s                               |
+| UFO             | Sale da ~780 a oltre 2500 Hz e ridiscende, ciclo di 0,163 s (circa 10 frame)                   | Due rampe (su e giù) ripetute ogni 10 frame                    |
+| Cannone colpito | Rumore sotto 1 kHz, costante per ~0,55 s, poi si spegne entro 0,8 s                            | Rumore filtrato a 700 Hz, stesso inviluppo                     |
+| Marcia          | Quattro note gravi da ~0,1 s: 60, 56, 52 e 69 Hz, ricche di armoniche                          | Dente di sega filtrata a 500 Hz, volume costante poi taglio    |
+
+Le quattro note della marcia girano in ciclo, quindi l'ordine 60-56-52-69 equivale a 69-60-56-52: una discesa che riparte dall'alto.
+
+### Come si verifica
+
+Il confronto finale usa il **sintetizzatore vero**, non una copia: in Chromium, un `OfflineAudioContext` a 11025 Hz (la frequenza delle registrazioni) esegue `playEffect` con i suoni del gioco e restituisce i campioni. Le stesse analisi applicate ai due segnali danno per esempio, per l'esplosione del cannone, la stessa distribuzione di energia per banda di frequenza (entro 2 dB fino a 4 kHz) e lo stesso andamento del volume.
+
+**Non misurati:** il suono dell'UFO colpito e quello della vita extra non erano fra le registrazioni. Per la vita extra l'analisi dei circuiti indica un tono a 480 Hz (modulato a 60 Hz, modulazione non ancora riprodotta); la durata è una scelta nostra. L'UFO colpito resta com'era, scelto a orecchio. Anche la moneta è nostra: l'originale non ha un suono per la moneta.
