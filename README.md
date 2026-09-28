@@ -62,7 +62,7 @@ Il codice è scritto per essere letto da persone (_code for humans, not for AI_)
 | [00 · Introduzione](docs/00-introduzione.md)         | Obiettivi e metodo di lavoro con l'AI              |
 | [01 · Setup del monorepo](docs/01-setup-monorepo.md) | Creare il monorepo da zero, passo per passo        |
 | [02 · Game loop](docs/02-game-loop.md)               | Loop a timestep fisso, testabile senza timer reali |
-| 03 · Input da tastiera                               | _in arrivo_                                        |
+| [03 · Input da tastiera](docs/03-input-tastiera.md)  | Stato della tastiera, azioni, un poll per passo    |
 | 04 · Rendering e sprite                              | _in arrivo_                                        |
 | 05 · Collisioni                                      | _in arrivo_                                        |
 | 06 · Audio                                           | _in arrivo_                                        |

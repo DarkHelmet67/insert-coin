@@ -1,7 +1,9 @@
 import './style.css';
 import { createGameLoop } from '@arcade/engine-core';
-import { initialAttractState, updateAttract } from './attract';
-import { renderAttract } from './render';
+import { boundKeys, createKeyboard } from '@arcade/input';
+import { bindings, readControls } from './controls';
+import { initialGameState, updateGame } from './game';
+import { renderGame } from './render';
 
 /** Finds the game canvas and its 2D context, failing loudly if the page is broken. */
 const getScreen = (): CanvasRenderingContext2D => {
@@ -11,9 +13,11 @@ const getScreen = (): CanvasRenderingContext2D => {
 };
 
 const ctx = getScreen();
+const keyboard = createKeyboard(window, { captureKeys: boundKeys(bindings) });
 
+// The keyboard is polled once per simulation step, so every key press reaches exactly one update.
 createGameLoop({
-  initialState: initialAttractState,
-  update: updateAttract,
-  render: (state) => renderAttract(ctx, state),
+  initialState: initialGameState,
+  update: (state, dt) => updateGame(state, readControls(keyboard.poll()), dt),
+  render: (state) => renderGame(ctx, state),
 }).start();

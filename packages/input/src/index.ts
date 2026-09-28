@@ -1,2 +1,19 @@
-// Placeholder: the public API of this package is built step by step in the how-to guides.
-export {};
+export {
+  applyKeyEvent,
+  clearEdges,
+  emptyKeyState,
+  isDown,
+  releaseAll,
+  wasPressed,
+  wasReleased,
+  type KeyCode,
+  type KeyEvent,
+  type KeyState,
+} from './key-state';
+export { boundKeys, isActionDown, wasActionPressed, type KeyBindings } from './bindings';
+export {
+  createKeyboard,
+  type Keyboard,
+  type KeyboardOptions,
+  type KeyboardTarget,
+} from './keyboard';

@@ -41,6 +41,12 @@ importers:
       '@arcade/engine-core':
         specifier: workspace:*
         version: link:../../packages/engine-core
+      '@arcade/input':
+        specifier: workspace:*
+        version: link:../../packages/input
+      '@arcade/math':
+        specifier: workspace:*
+        version: link:../../packages/math
 
   packages/audio: {}
 
