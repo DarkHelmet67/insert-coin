@@ -22,7 +22,8 @@ packages:
 Gli strumenti si installano una volta sola alla radice:
 
 ```bash
-pnpm add -Dw typescript vite vitest eslint @eslint/js typescript-eslint prettier
+pnpm add -Dw typescript vite vitest eslint @eslint/js typescript-eslint prettier \
+  eslint-plugin-functional eslint-plugin-jsdoc
 ```
 
 > Nota: `typescript-eslint` supporta TypeScript fino alla 6.0, quindi la versione è fissata a `~6.0`.
@@ -56,13 +57,13 @@ packages/math/
 Un gioco dichiara i pacchetti che usa come dipendenze del workspace:
 
 ```json
-"dependencies": { "@arcade/math": "workspace:*" }
+"dependencies": { "@arcade/engine-core": "workspace:*" }
 ```
 
 e li importa come qualsiasi libreria:
 
 ```ts
-import { clamp } from '@arcade/math';
+import { createGameLoop } from '@arcade/engine-core';
 ```
 
 Il canvas ha la risoluzione originale del cabinato (224×256). Il CSS lo ingrandisce con `image-rendering: pixelated`, così i pixel restano quadrati e nitidi.
@@ -93,7 +94,7 @@ dist/game.js
 
 - `pnpm test` esegue Vitest su tutti i file `*.test.ts` dei pacchetti.
 - `pnpm typecheck` esegue `tsc` in ogni pacchetto.
-- `pnpm lint` usa ESLint con le regole `strict` di typescript-eslint.
+- `pnpm lint` usa ESLint con le regole `strict` di typescript-eslint, più `eslint-plugin-functional` (stile funzionale e immutabile) ed `eslint-plugin-jsdoc` (commento obbligatorio su ogni funzione). Le regole sono spiegate in [CLAUDE.md](../CLAUDE.md).
 
 ## Verifica
 

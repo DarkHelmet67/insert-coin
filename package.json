@@ -18,6 +18,8 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "eslint": "^10.11.0",
+    "eslint-plugin-functional": "^10.0.1",
+    "eslint-plugin-jsdoc": "^64.5.4",
     "prettier": "^3.9.9",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.70.1",

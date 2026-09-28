@@ -51,6 +51,10 @@ Ogni pacchetto ha una sola responsabilità e non conosce i giochi: i giochi dipe
 - **Vite** per sviluppo e build; **Vitest** per i test.
 - Codice e commenti in inglese, documentazione in italiano.
 
+## Regole di sviluppo
+
+Il codice è scritto per essere letto da persone (_code for humans, not for AI_): stile funzionale senza classi, dati immutabili, arrow function, funzioni piccole e testabili, un commento TSDoc per ogni funzione. Le regole complete, e come ESLint le verifica, sono in [CLAUDE.md](CLAUDE.md), che è anche il file di istruzioni letto da Claude.
+
 ## Documentazione
 
 | Guida                                                | Argomento                                          |
