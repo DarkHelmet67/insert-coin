@@ -2,11 +2,24 @@
 
 Remake di _Space Invaders_ (Taito, 1978) su HTML5 Canvas, costruito sui pacchetti condivisi `@arcade/*`.
 
-Stato: schermata d'attesa con la tabella dei punteggi; con **C** (o **5**) si inserisce una moneta. In gioco il cannone si muove con le frecce o **A**/**D** e spara con lo **spazio**; i colpi distruggono gli alieni (per ora fermi) e fanno salire il punteggio. Moneta, sparo e alieno colpito hanno i loro effetti sonori; **M** toglie e rimette l'audio.
+![Space Invaders in gioco](../../docs/images/space-invaders-gameplay.png)
+
+## Come si gioca
+
+| Tasto                | Azione                        |
+| -------------------- | ----------------------------- |
+| **C** o **5**        | Inserisce una moneta e inizia |
+| Frecce o **A**/**D** | Muove il cannone              |
+| **Spazio**           | Spara                         |
+| **M**                | Toglie e rimette l'audio      |
+
+Il gioco è completo: la formazione di 55 alieni marcia e accelera come nell'originale, lancia tre tipi di bombe, i quattro bunker si sgretolano colpo dopo colpo, l'UFO passa ogni 25 secondi con il suo punteggio "misterioso". Tre vite, una vita extra a 1500 punti, record della sessione e ondate che partono sempre più in basso.
 
 ```bash
 pnpm dev     # dalla root del monorepo
 pnpm build   # output in games/space-invaders/dist: index.html + game.css + game.js
 ```
 
-Le guide specifiche del gioco (formazione degli alieni, bunker, UFO, punteggi) andranno in [docs/](docs/).
+## Guide del gioco
+
+- [Le meccaniche dell'originale](docs/meccaniche-originali.md): marcia degli alieni, bombe, bunker, UFO e il trucco del 23° colpo, con le fonti.

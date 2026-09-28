@@ -103,3 +103,19 @@ Registro delle decisioni prese insieme a Claude, dei prompt significativi e dell
 **Non ancora fatto:** la marcia a quattro note degli alieni è legata al loro movimento, che non esiste ancora; arriverà insieme alla marcia della formazione.
 
 **Verifica:** 13 nuovi test; in Chromium, con la politica di autoplay attiva, la moneta e lo sparo generano i nodi audio attesi, e dopo **M** non ne viene creato nessun altro.
+
+## 2026-09-28 · Il gioco completo
+
+**Richiesta dell'autore:** prima di pubblicare mancavano la marcia degli alieni con l'accelerazione originale, i quattro bunker distruttibili sia dai colpi del giocatore sia da quelli degli alieni, e l'UFO con i suoi punteggi. Gli algoritmi andavano verificati online.
+
+**Ricerca dell'AI:** le regole vengono dal codice originale disassemblato e commentato su [Computer Archeology](https://www.computerarcheology.com/Arcade/SpaceInvaders/) e dalla [Shmups Wiki](https://www.shmups.wiki/library/Space_Invaders). La scoperta più interessante: l'accelerazione degli alieni non è programmata, nasce dal fatto che l'originale muoveva un solo alieno per frame. Il nostro codice fa lo stesso, e l'accelerazione arriva gratis.
+
+**Onestà sulle fonti:** l'accesso diretto a una delle fonti era limitato dal proxy dell'ambiente, e alcune pagine sono arrivate troncate. Per questo la guida [meccaniche originali](../games/space-invaders/docs/meccaniche-originali.md) separa i valori confermati dalle scelte nostre (velocità dell'UFO, note della marcia, durata delle esplosioni) e dichiara che la tabella delle colonne da cui partono le bombe è ricostruita a memoria, salvo i primi valori confermati.
+
+**Un dettaglio corretto durante la scrittura:** la tabella dei punteggi dell'UFO dà 300 punti anche all'8° colpo, non solo al 23°. L'AI se n'è accorta scrivendo il test e ha verificato il motivo: la prima UFO arriva dopo 25 secondi, quando l'8° colpo è già stato sparato. Il commento nel codice ora lo spiega.
+
+**Un bug trovato dai test:** nel test "colpisci l'ultimo alieno", la bomba _rolling_ (che mira al cannone) partiva proprio dall'alieno bersaglio e fermava il colpo prima che arrivasse. Non era un bug del gioco, era il gioco che funzionava come l'originale. Il test ora parte con una bomba già in volo lontano, così gli alieni non possono sparare.
+
+**Architettura:** un modulo puro per ogni meccanica (`fleet`, `bombs`, `shields`, `ufo`, `effects`) e le collisioni come lista di regole `(stato) => nuovoStato` applicate in ordine. Nel pacchetto `@arcade/collision` è arrivata `eraseBitmap`, riusabile per ogni terreno distruttibile; scrivendola l'AI ha trovato e corretto un difetto di `isSolidAt`, che per coordinate fuori dal bordo destro leggeva i pixel della riga successiva.
+
+**Verifica:** 149 test in totale; partita di prova di 30 secondi in Chromium: marcia, bombe, bunker sgretolati, UFO in arrivo, nessun errore.

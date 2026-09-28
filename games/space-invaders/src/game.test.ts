@@ -1,11 +1,20 @@
 import { describe, expect, it } from 'vitest';
 import { initialCannonState } from './cannon';
 import { noControls } from './controls';
-import { initialGameState, updateGame, type GameState } from './game';
+import { GAME_OVER_FRAMES, initialGameState, updateGame, type GameState } from './game';
+import { initialPlayingState } from './playing';
+
+const coin = { ...noControls, coin: true };
 
 /** The game right after a coin is inserted. */
-const startGame = (): GameState =>
-  updateGame(initialGameState, { ...noControls, coin: true }, 1 / 60);
+const startGame = (): GameState => updateGame(initialGameState, coin, 1 / 60);
+
+/** A game about to end: no cannons left and the last one done exploding. */
+const lastFrame: GameState = {
+  screen: 'playing',
+  playing: { ...initialPlayingState(), lives: 0, cannonExplosion: 1, score: 420 },
+  hiScore: 100,
+};
 
 describe('updateGame', () => {
   it('waits on the attract screen until a coin is inserted', () => {
@@ -18,9 +27,30 @@ describe('updateGame', () => {
   });
 
   it('moves the cannon while playing', () => {
-    const moved = updateGame(startGame(), { ...noControls, direction: 1 }, 1);
+    const moved = updateGame(startGame(), { ...noControls, direction: 1 }, 1 / 60);
     expect(moved.screen === 'playing' && moved.playing.cannon.x).toBeGreaterThan(
       initialCannonState.x,
     );
+  });
+
+  it('shows "game over" and keeps the best score when the game ends', () => {
+    expect(updateGame(lastFrame, noControls, 1 / 60)).toMatchObject({
+      screen: 'gameOver',
+      hiScore: 420,
+    });
+  });
+
+  it('goes back to the attract screen after the game over message', () => {
+    const over = updateGame(lastFrame, noControls, 1 / 60);
+    const later = Array.from({ length: GAME_OVER_FRAMES }).reduce<GameState>(
+      (state) => updateGame(state, noControls, 1 / 60),
+      over,
+    );
+    expect(later).toMatchObject({ screen: 'attract', hiScore: 420 });
+  });
+
+  it('accepts a coin during the game over message', () => {
+    const over = updateGame(lastFrame, noControls, 1 / 60);
+    expect(updateGame(over, coin, 1 / 60)).toMatchObject({ screen: 'playing', hiScore: 420 });
   });
 });

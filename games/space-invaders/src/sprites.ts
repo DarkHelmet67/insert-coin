@@ -115,3 +115,96 @@ export const explosionSprite = parseSprite([
   '..X..X.X..X..',
   '.X..X...X..X.',
 ]);
+
+/** The three kinds of invader bombs, each with its own look and firing rule. */
+export type BombKind = 'rolling' | 'plunger' | 'squiggly';
+
+/** Four animation frames per bomb, cycled as the bomb falls. */
+export const bombSprites: Readonly<Record<BombKind, readonly [Sprite, Sprite, Sprite, Sprite]>> = {
+  rolling: [
+    parseSprite(['.X.', '.X.', 'XX.', '.X.', '.X.', '.XX', '.X.', '.X.']),
+    parseSprite(['.X.', '.X.', '.X.', '.X.', '.X.', '.X.', '.X.', '.X.']),
+    parseSprite(['.X.', '.X.', '.XX', '.X.', '.X.', 'XX.', '.X.', '.X.']),
+    parseSprite(['.X.', '.X.', '.X.', '.X.', '.X.', '.X.', '.X.', '.X.']),
+  ],
+  plunger: [
+    parseSprite(['XXX', '.X.', '.X.', '.X.', '.X.', '.X.', '.X.', '.X.']),
+    parseSprite(['.X.', '.X.', 'XXX', '.X.', '.X.', '.X.', '.X.', '.X.']),
+    parseSprite(['.X.', '.X.', '.X.', '.X.', 'XXX', '.X.', '.X.', '.X.']),
+    parseSprite(['.X.', '.X.', '.X.', '.X.', '.X.', '.X.', 'XXX', '.X.']),
+  ],
+  squiggly: [
+    parseSprite(['X..', '.X.', '..X', '.X.', 'X..', '.X.', '..X', '.X.']),
+    parseSprite(['.X.', '..X', '.X.', 'X..', '.X.', '..X', '.X.', 'X..']),
+    parseSprite(['..X', '.X.', 'X..', '.X.', '..X', '.X.', 'X..', '.X.']),
+    parseSprite(['.X.', 'X..', '.X.', '..X', '.X.', 'X..', '.X.', '..X']),
+  ],
+};
+
+/** The splash left where the cannon's shot hits a shield or the top of the screen. */
+export const shotExplosionSprite = parseSprite([
+  'X...X..X',
+  '..X...X.',
+  '.XXXXXX.',
+  'XXXXXXXX',
+  'XXXXXXXX',
+  '.XXXXXX.',
+  '..X..X..',
+  'X..X...X',
+]);
+
+/** The splash left where an invader bomb hits a shield or the ground. */
+export const bombExplosionSprite = parseSprite([
+  '.X..X.',
+  'X.XX..',
+  '.XXXX.',
+  'XXXXXX',
+  '.XXXX.',
+  'X.XX.X',
+  '..X..X',
+  'X...X.',
+]);
+
+/** The cannon blowing up: two frames that alternate. */
+export const cannonExplosionSprites: readonly [Sprite, Sprite] = [
+  parseSprite([
+    '......X.......',
+    '..........X...',
+    '...X..X..X....',
+    '.....XX.......',
+    '..X.XXXX...X..',
+    'X..XXXXXX.....',
+    '.XXXXXXXXX..X.',
+    'XXXXXXXXXXX.XX',
+  ]),
+  parseSprite([
+    '....X....X....',
+    'X......X....X.',
+    '..X..XX...X...',
+    '.X..XXXX......',
+    '...XXXXX.X..X.',
+    'X.XXXXXXX..X..',
+    '..XXXXXXXXX..X',
+    '.XXXXXXXXXXXX.',
+  ]),
+];
+
+/** One of the four green shields, before any damage. */
+export const shieldSprite = parseSprite([
+  '....XXXXXXXXXXXXXX....',
+  '...XXXXXXXXXXXXXXXX...',
+  '..XXXXXXXXXXXXXXXXXX..',
+  '.XXXXXXXXXXXXXXXXXXXX.',
+  'XXXXXXXXXXXXXXXXXXXXXX',
+  'XXXXXXXXXXXXXXXXXXXXXX',
+  'XXXXXXXXXXXXXXXXXXXXXX',
+  'XXXXXXXXXXXXXXXXXXXXXX',
+  'XXXXXXXXXXXXXXXXXXXXXX',
+  'XXXXXXXXXXXXXXXXXXXXXX',
+  'XXXXXXXXXXXXXXXXXXXXXX',
+  'XXXXXXXXXXXXXXXXXXXXXX',
+  'XXXXXXX........XXXXXXX',
+  'XXXXXX..........XXXXXX',
+  'XXXXX............XXXXX',
+  'XXXXX............XXXXX',
+]);

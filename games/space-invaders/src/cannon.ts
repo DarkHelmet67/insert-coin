@@ -19,6 +19,9 @@ export const CANNON_MAX_X = 224 - 16 - CANNON_WIDTH;
 /** Vertical position of the cannon's top edge, in screen pixels. */
 export const CANNON_Y = 216;
 
+/** Frames the game pauses while the cannon explodes (not documented in the sources: chosen by eye). */
+export const CANNON_EXPLOSION_FRAMES = 90;
+
 /** The cannon at the start of a game: left side of the screen, like the original. */
 export const initialCannonState: CannonState = { x: CANNON_MIN_X };
 

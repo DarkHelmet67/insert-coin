@@ -27,10 +27,22 @@ export const boundsOf = ({ bitmap, x, y }: PlacedBitmap): Rect => ({
   height: bitmap.height,
 });
 
-/** Whether the placed bitmap has a solid pixel at the screen position (`screenX`, `screenY`). */
+/**
+ * Whether the placed bitmap has a solid pixel at the screen position (`screenX`, `screenY`).
+ * Positions outside the bitmap are empty: without this check a position past the right edge
+ * would wrap around to the start of the next row.
+ */
 export const isSolidAt = (placed: PlacedBitmap, screenX: number, screenY: number): boolean => {
-  const { x, y, width } = boundsOf(placed);
-  return placed.bitmap.pixels[(screenY - y) * width + (screenX - x)] === true;
+  const { x, y, width, height } = boundsOf(placed);
+  const column = screenX - x;
+  const row = screenY - y;
+  return (
+    column >= 0 &&
+    column < width &&
+    row >= 0 &&
+    row < height &&
+    placed.bitmap.pixels[row * width + column] === true
+  );
 };
 
 /** Lists every screen pixel inside `rect`. */
@@ -51,4 +63,18 @@ export const bitmapsOverlap = (a: PlacedBitmap, b: PlacedBitmap): boolean => {
     shared !== undefined &&
     pixelsIn(shared).some(([x, y]) => isSolidAt(a, x, y) && isSolidAt(b, x, y))
   );
+};
+
+/**
+ * Destructible terrain: returns a copy of the target bitmap with every pixel covered by a
+ * solid pixel of `brush` switched off. Used, for example, to carve holes in shields.
+ */
+export const eraseBitmap = (target: PlacedBitmap, brush: PlacedBitmap): Bitmap => {
+  const { x, y, width } = boundsOf(target);
+  return {
+    ...target.bitmap,
+    pixels: target.bitmap.pixels.map(
+      (solid, i) => solid && !isSolidAt(brush, x + (i % width), y + Math.floor(i / width)),
+    ),
+  };
 };
