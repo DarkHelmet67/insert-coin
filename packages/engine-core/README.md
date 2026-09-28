@@ -2,4 +2,4 @@
 
 Fixed-timestep game loop and scene/state management.
 
-Stato: segnaposto. Il codice arriva nei prossimi passi (vedi [docs/](../../docs/)).
+Stato: game loop a timestep fisso disponibile. Guida: [02 · Game loop](../../docs/02-game-loop.md).

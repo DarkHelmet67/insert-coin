@@ -7,9 +7,9 @@ export default defineConfig({
     target: 'es2022',
     cssCodeSplit: false,
     assetsInlineLimit: 0,
-    rollupOptions: {
+    rolldownOptions: {
       output: {
-        inlineDynamicImports: true,
+        codeSplitting: false,
         entryFileNames: 'game.js',
         assetFileNames: 'game.[ext]',
       },

@@ -2,7 +2,7 @@
 
 Remake di _Space Invaders_ (Taito, 1978) su HTML5 Canvas, costruito sui pacchetti condivisi `@arcade/*`.
 
-Stato: pagina "hello canvas" che verifica la toolchain. Il gioco viene costruito nei prossimi passi.
+Stato: schermata d'attesa con "INSERT COIN" lampeggiante, animata dal game loop di `@arcade/engine-core`. Il gioco viene costruito nei prossimi passi.
 
 ```bash
 pnpm dev     # dalla root del monorepo

@@ -57,7 +57,7 @@ Ogni pacchetto ha una sola responsabilità e non conosce i giochi: i giochi dipe
 | ---------------------------------------------------- | -------------------------------------------------- |
 | [00 · Introduzione](docs/00-introduzione.md)         | Obiettivi e metodo di lavoro con l'AI              |
 | [01 · Setup del monorepo](docs/01-setup-monorepo.md) | Creare il monorepo da zero, passo per passo        |
-| 02 · Game loop                                       | _in arrivo_                                        |
+| [02 · Game loop](docs/02-game-loop.md)               | Loop a timestep fisso, testabile senza timer reali |
 | 03 · Input da tastiera                               | _in arrivo_                                        |
 | 04 · Rendering e sprite                              | _in arrivo_                                        |
 | 05 · Collisioni                                      | _in arrivo_                                        |

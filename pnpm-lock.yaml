@@ -32,6 +32,9 @@ importers:
 
   games/space-invaders:
     dependencies:
+      '@arcade/engine-core':
+        specifier: workspace:*
+        version: link:../../packages/engine-core
       '@arcade/math':
         specifier: workspace:*
         version: link:../../packages/math

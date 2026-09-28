@@ -69,14 +69,14 @@ Il canvas ha la risoluzione originale del cabinato (224×256). Il CSS lo ingrand
 
 ## 6. Un solo HTML, un solo CSS, un solo JS
 
-`vite.config.ts` del gioco disattiva lo split del codice e fissa i nomi dei file:
+`vite.config.ts` del gioco disattiva lo split del codice e fissa i nomi dei file (Vite 8 usa Rolldown come bundler, da cui `rolldownOptions`):
 
 ```ts
 build: {
   target: 'es2022',
   cssCodeSplit: false,
-  rollupOptions: {
-    output: { inlineDynamicImports: true, entryFileNames: 'game.js', assetFileNames: 'game.[ext]' },
+  rolldownOptions: {
+    output: { codeSplitting: false, entryFileNames: 'game.js', assetFileNames: 'game.[ext]' },
   },
 },
 ```
@@ -102,4 +102,4 @@ pnpm install && pnpm typecheck && pnpm lint && pnpm test && pnpm build
 pnpm dev   # apri http://localhost:5173: deve comparire "INSERT COIN"
 ```
 
-Prossima guida: **02 · Game loop**.
+Prossima guida: [02 · Game loop](02-game-loop.md).

@@ -1,2 +1,8 @@
-// Placeholder: the public API of this package is built step by step in the how-to guides.
-export {};
+export { FixedStepClock, type FixedStepClockOptions } from './clock';
+export {
+  animationFrameScheduler,
+  createGameLoop,
+  type FrameScheduler,
+  type GameLoop,
+  type GameLoopOptions,
+} from './loop';

@@ -16,3 +16,13 @@ Registro delle decisioni prese insieme a Claude, dei prompt significativi e dell
 **Nome del repository:** scartato `ai-videogames` perché generico e troppo centrato sull'AI. Fra le proposte (`arcade-from-scratch`, `coin-op-remakes-ts`, `insert-coin`, `retro-arcade-ts`) è stato scelto **`insert-coin`**.
 
 **Correzione durante lo scaffold:** l'ultima TypeScript (7.0) non è ancora supportata da `typescript-eslint`; la versione è stata fissata a 6.0.
+
+## 2026-09-28 · Game loop
+
+**Richiesta:** secondo passo del piano, il pacchetto `engine-core` con il game loop.
+
+**Proposta dell'AI:** timestep fisso con accumulatore, separando la logica pura (`FixedStepClock`) dal collegamento a `requestAnimationFrame` (`createGameLoop`) per poter testare il tempo senza timer reali.
+
+**Verifica:** 9 test unitari, fra cui uno che simula 6000 frame a 60 Hz per escludere errori di arrotondamento; controllo visivo della pagina in Chromium.
+
+**Lavoro:** su richiesta dell'autore, durante la prima bozza i commit vanno direttamente su `main`, senza pull request.
