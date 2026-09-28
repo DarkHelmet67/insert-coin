@@ -100,3 +100,18 @@ export const ufoSprite = parseSprite([
   '..XXX..XX..XXX..',
   '...X........X...',
 ]);
+
+/** The cannon's laser shot: a thin vertical line. */
+export const shotSprite = parseSprite(['X', 'X', 'X', 'X']);
+
+/** The burst shown for a moment where an invader was hit. */
+export const explosionSprite = parseSprite([
+  '....X...X....',
+  '.X...X.X...X.',
+  '..X.......X..',
+  '...X.....X...',
+  'XX.........XX',
+  '...X.....X...',
+  '..X..X.X..X..',
+  '.X..X...X..X.',
+]);

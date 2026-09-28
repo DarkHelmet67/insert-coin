@@ -2,4 +2,4 @@
 
 AABB and pixel-perfect collision helpers.
 
-Stato: segnaposto. Il codice arriva nei prossimi passi (vedi [docs/](../../docs/)).
+Stato: disponibile. Guida: [05 · Collisioni](../../docs/05-collisioni.md).

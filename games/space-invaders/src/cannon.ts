@@ -16,6 +16,9 @@ export const CANNON_SPEED = 60;
 export const CANNON_MIN_X = 16;
 export const CANNON_MAX_X = 224 - 16 - CANNON_WIDTH;
 
+/** Vertical position of the cannon's top edge, in screen pixels. */
+export const CANNON_Y = 216;
+
 /** The cannon at the start of a game: left side of the screen, like the original. */
 export const initialCannonState: CannonState = { x: CANNON_MIN_X };
 

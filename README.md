@@ -68,7 +68,7 @@ Il codice è scritto per essere letto da persone (_code for humans, not for AI_)
 | [02 · Game loop](docs/02-game-loop.md)                 | Loop a timestep fisso, testabile senza timer reali |
 | [03 · Input da tastiera](docs/03-input-tastiera.md)    | Stato della tastiera, azioni, un poll per passo    |
 | [04 · Rendering e sprite](docs/04-rendering-sprite.md) | Sprite come testo, font bitmap, test senza browser |
-| 05 · Collisioni                                        | _in arrivo_                                        |
+| [05 · Collisioni](docs/05-collisioni.md)               | Rettangoli, pixel per pixel, tunneling             |
 | 06 · Audio                                             | _in arrivo_                                        |
 | 07 · Build e deploy                                    | _in arrivo_                                        |
 | [Diario AI](docs/ai-workflow.md)                       | Prompt, decisioni e correzioni durante lo sviluppo |

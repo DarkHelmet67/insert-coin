@@ -81,3 +81,13 @@ Registro delle decisioni prese insieme a Claude, dei prompt significativi e dell
 **Correzione:** su richiesta dell'autore, nuovo script `pnpm clean` che cancella tutti i `node_modules` e `pnpm-lock.yaml`; `pnpm clean && pnpm install` ha risolto. La guida 01 usa lo script al posto del `rm -rf` scritto a mano.
 
 **Revisione:** l'AI ha fatto notare che cancellare `pnpm-lock.yaml` a ogni pulizia rende le installazioni non riproducibili: le versioni delle dipendenze vengono ricalcolate e possono cambiare senza che nessuno se ne accorga. Su decisione dell'autore gli script sono diventati due: `pnpm clean` cancella solo i `node_modules`, mentre `pnpm clean:all` cancella anche il lockfile, da usare solo quando si vogliono aggiornare le dipendenze di proposito. Il README ricorda di eseguire `pnpm install` dopo ogni `git pull`.
+
+## 2026-09-28 · Collisioni
+
+**Proposta dell'AI:** un pacchetto `@arcade/collision` con due livelli, il test dei rettangoli (AABB) e la collisione pixel per pixel limitata all'area condivisa. Il pacchetto dichiara una propria interfaccia `Bitmap` invece di importare `Sprite`: grazie alla tipizzazione strutturale di TypeScript gli sprite funzionano lo stesso, e i pacchetti restano indipendenti.
+
+**Gioco:** formazione di 55 alieni (per ora ferma), colpo singolo, esplosioni, punteggio. Il passo di gioco è diviso in piccole funzioni pure, ognuna testata.
+
+**Errore dell'AI corretto dai test:** il primo test del "colpo che passa fra le gambe dell'octopus" usava una colonna dello sprite che in realtà conteneva un pixel acceso, e il test falliva. L'AI ha ricontrollato lo sprite riga per riga e ha scelto una colonna davvero vuota. È un buon esempio del perché i test vanno eseguiti, non solo scritti.
+
+**Verifica:** 28 nuovi test; partita di prova in Chromium: moneta, movimento, due colpi, un octopus distrutto, punteggio a 20.

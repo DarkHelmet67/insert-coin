@@ -12,7 +12,7 @@ export const renderGame = (ctx: DrawingContext, state: GameState): void => {
       renderAttract(ctx, state.attract);
       break;
     case 'playing':
-      renderPlaying(ctx, state.cannon);
+      renderPlaying(ctx, state.playing);
       break;
   }
 };

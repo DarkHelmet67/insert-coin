@@ -1,2 +1,2 @@
-// Placeholder: the public API of this package is built step by step in the how-to guides.
-export {};
+export { bitmapsOverlap, boundsOf, isSolidAt, type Bitmap, type PlacedBitmap } from './bitmap';
+export { intersection, rectsOverlap, type Rect } from './rect';

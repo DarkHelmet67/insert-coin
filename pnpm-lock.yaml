@@ -38,6 +38,9 @@ importers:
 
   games/space-invaders:
     dependencies:
+      '@arcade/collision':
+        specifier: workspace:*
+        version: link:../../packages/collision
       '@arcade/engine-core':
         specifier: workspace:*
         version: link:../../packages/engine-core
