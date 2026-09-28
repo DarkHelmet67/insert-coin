@@ -15,7 +15,7 @@ Il progetto ha due obiettivi:
 
 ## Avvio rapido
 
-Servono Node.js 22+ e pnpm 10+ (`corepack enable` lo attiva).
+Servono **Node.js 22.13+ o 24 LTS** (consigliato; con nvm basta `nvm use`, la versione è in `.nvmrc`) e pnpm 10+ (`corepack enable` lo attiva). Con una versione di Node più vecchia `pnpm install` si ferma con un errore esplicito.
 
 ```bash
 pnpm install

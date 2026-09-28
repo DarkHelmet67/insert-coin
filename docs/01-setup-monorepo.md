@@ -5,9 +5,23 @@ Obiettivo: un monorepo con pacchetti condivisi e un primo gioco che mostra "INSE
 ## 1. Prerequisiti
 
 ```bash
-node --version      # 22 o superiore
+node --version      # 22.13+ o 24 LTS (consigliata, vedi .nvmrc)
 corepack enable     # attiva pnpm alla versione dichiarata in package.json
 ```
+
+### Perché una versione minima di Node
+
+Vite 8, Vitest e ESLint usano API recenti di Node, per esempio `styleText` di `node:util`. Con Node 18 o con un Node 20/22 non aggiornato, `pnpm dev` fallisce con un errore poco chiaro:
+
+```
+SyntaxError: The requested module 'node:util' does not provide an export named 'styleText'
+```
+
+Per trasformarlo in un messaggio esplicito già durante `pnpm install`:
+
+- `package.json` dichiara le versioni supportate in `engines.node` (`^22.13.0 || ^24.0.0 || >=26.0.0`, l'intersezione dei requisiti di Vite, Vitest ed ESLint);
+- `.npmrc` contiene `engine-strict=true`;
+- `.nvmrc` indica la versione consigliata, così con nvm basta `nvm use`.
 
 ## 2. Il workspace pnpm
 

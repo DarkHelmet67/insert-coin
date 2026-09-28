@@ -49,3 +49,13 @@ Registro delle decisioni prese insieme a Claude, dei prompt significativi e dell
 **Decisione chiave:** la tastiera si legge una volta per passo di simulazione, non per frame, così ogni pressione arriva a un solo `update`.
 
 **Verifica:** 24 nuovi test, fra pacchetto e gioco; in Chromium, dopo la moneta, tenendo premuta la freccia destra per un secondo il cannone si sposta di 60 pixel, come previsto.
+
+## 2026-09-28 · Errore `styleText` con `pnpm dev`
+
+**Problema segnalato dall'autore:** sul suo computer `pnpm dev` falliva con `SyntaxError: ... does not provide an export named 'styleText'`.
+
+**Diagnosi:** non era codice mancante ma un requisito non dichiarato. L'ambiente dell'AI usava Node 22.22, mentre Vite 8 richiede almeno Node 20.19 o 22.12, e Vitest ed ESLint ancora un po' di più. Il `package.json` dichiarava solo `node >= 22`, troppo permissivo, e nessuno lo verificava.
+
+**Correzione:** `engines.node` allineato ai requisiti reali, `engine-strict=true` in `.npmrc` (verificato: con un Node non supportato `pnpm install` si ferma con `ERR_PNPM_UNSUPPORTED_ENGINE`), `.nvmrc` con Node 24 LTS, e documentazione aggiornata.
+
+**Lezione:** quando l'AI lavora in un ambiente diverso da quello dell'utente, i requisiti di runtime vanno dichiarati e verificati esplicitamente fin dal primo commit.
