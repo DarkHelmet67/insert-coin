@@ -100,6 +100,7 @@ Il codice è scritto per essere letto da persone (_code for humans, not for AI_)
 | [05 · Collisioni](docs/05-collisioni.md)                                         | Rettangoli, pixel per pixel, tunneling                                |
 | [06 · Audio](docs/06-audio.md)                                                   | Suoni sintetizzati con Web Audio, autoplay, suoni dedotti dallo stato |
 | [07 · Build e deploy](docs/07-build-deploy.md)                                   | Build di produzione, sito multi-gioco, GitHub Actions e Pages         |
+| [08 · Comandi touch](docs/08-comandi-touch.md)                                   | Pannello di comandi per smartphone, tasti virtuali, multitouch        |
 | [Space Invaders · meccaniche](games/space-invaders/docs/meccaniche-originali.md) | Marcia, bombe, bunker, UFO: come funzionava l'originale               |
 | [Prompt unico](docs/prompt-unico.md)                                             | Un solo prompt per ricreare l'intero progetto con un assistente AI    |
 | [Diario AI](docs/ai-workflow.md)                                                 | Prompt, decisioni e correzioni durante lo sviluppo                    |

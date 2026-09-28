@@ -138,3 +138,5 @@ Dopo un minuto circa il sito è online. L'indirizzo compare nel riepilogo del jo
 - Nel pannello Network del browser la pagina scarica tre file: HTML, CSS e JavaScript.
 
 Da qui in poi pubblicare è solo `git push`.
+
+Prossima guida: [08 · Comandi touch](08-comandi-touch.md).

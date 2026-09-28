@@ -25,13 +25,17 @@ export interface AudioPlayer {
   readonly dispose: () => void;
 }
 
-/** User gestures that browsers accept as permission to start audio. */
-const UNLOCK_EVENTS = ['keydown', 'pointerdown'] as const;
+/**
+ * User gestures that browsers accept as permission to start audio.
+ * A finger counts only when it is lifted (`pointerup`, `touchend`), not when it touches the
+ * screen: that is why the touch events are listed too, otherwise phones would stay silent.
+ */
+const UNLOCK_EVENTS = ['keydown', 'pointerdown', 'pointerup', 'touchend'] as const;
 
 /**
  * Creates the game's audio output.
  * Browsers block sound until the user interacts with the page (autoplay policy), so the
- * audio context is created, or resumed, on the first key press or click.
+ * audio context is created, or resumed, on the first key press, click or tap.
  */
 export const createAudio = ({
   target = window,

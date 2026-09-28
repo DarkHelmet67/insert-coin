@@ -187,3 +187,17 @@ Documento: [prompt unico](prompt-unico.md).
 **Correzione:** tabella completa, verificata sull'analisi del codice originale di Ron Jeffries; nuovi test che controllano le prime tre altezze, il limite di 184 pixel e il ciclo dalla decima ondata.
 
 **Lezione:** i valori trascritti da una fonte vanno confrontati uno a uno con la fonte, non solo con il ricordo di averla letta. Un test che fissa i valori attesi ("128, 152, 168") rende l'errore visibile a chiunque legga il codice.
+
+## 2026-09-28 · Giocare da smartphone
+
+**Richiesta dell'autore:** far giocare anche da smartphone, visto che la maggior parte del traffico arriva da lì. La sua prima idea: toccare a sinistra o a destra dello schermo per muovere, al centro per sparare; ma lui stesso la trovava scomoda e ha chiesto alternative.
+
+**Proposte dell'AI:** tre opzioni su una scheda di scelta: pannello come il cabinato sotto lo schermo (consigliata), trascina e spara, zone sullo schermo. Le zone hanno il difetto che le dita coprono l'area di gioco e non c'è un confine che si sente sotto il dito. L'autore ha scelto il pannello.
+
+**Domanda dell'autore:** mostrare il pannello solo sui browser mobili? Sì, ma senza leggere lo _user-agent_ (un iPad si presenta come un Mac): la media query CSS `pointer: coarse` chiede se il puntatore principale è un dito.
+
+**Decisione tecnica:** i pulsanti sono "tasti virtuali" del pacchetto `@arcade/input`, con un attributo `data-key` che produce lo stesso `KeyState` del tasto fisico. La logica di gioco non è cambiata di una riga. Il tracciamento è per dito, non per pulsante, così funzionano il multitouch e il pollice che scivola da ◀ a ▶.
+
+**Un dettaglio trovato dall'AI:** sui telefoni l'audio si sblocca quando il dito si _stacca_ (`pointerup`, `touchend`), non quando tocca. Con il solo `pointerdown` il gioco sarebbe rimasto muto; ora `createAudio` ascolta anche quei due eventi.
+
+**Verifica:** test delle funzioni pure e dell'adattatore con eventi finti; in Chromium con l'emulazione di un telefono (390×844 e 360×740, verticale e orizzontale) tocchi veri via DevTools: moneta, sinistra tenuta con un dito e fuoco con l'altro, pollice fatto scivolare su destra. Screenshot controllati; su desktop il pannello non compare. Non provato su un telefono fisico: lo fa l'autore.

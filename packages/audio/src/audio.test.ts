@@ -40,6 +40,15 @@ describe('createAudio', () => {
     expect(ctx.calls).toContainEqual(['resume']);
   });
 
+  it('unlocks on the end of a tap, the gesture phones accept', () => {
+    const target = new EventTarget();
+    const ctx = createRecordingAudioContext('suspended');
+    createAudio({ target, createContext: () => ctx });
+
+    target.dispatchEvent(new Event('touchend'));
+    expect(ctx.calls).toContainEqual(['resume']);
+  });
+
   it('plays nothing while muted', () => {
     const target = new EventTarget();
     const ctx = createRecordingAudioContext();

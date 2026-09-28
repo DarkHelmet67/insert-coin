@@ -12,6 +12,139 @@ body {
 
 /* The original screen is 224x256: scale it up without blurring the pixels. */
 #screen {
+  grid-area: screen;
   height: min(100vh, calc(100vw * 256 / 224));
   image-rendering: pixelated;
+}
+
+/* With mouse and keyboard the panel is not needed. */
+.panel {
+  display: none;
+}
+
+/*
+ * Touch screens (phones, tablets): the primary pointer is a finger, so show the control panel.
+ * The media query asks how the page is used, not which browser it is: no user-agent sniffing.
+ */
+@media (pointer: coarse) {
+  :root {
+    --panel-height: 11rem;
+    --side-width: 9rem;
+  }
+
+  html,
+  body {
+    height: 100dvh;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
+  body {
+    box-sizing: border-box;
+    /* Keep the buttons clear of the notch, the rounded corners and the home bar. */
+    padding: env(safe-area-inset-top) max(env(safe-area-inset-right), 0.5rem)
+      max(env(safe-area-inset-bottom), 0.5rem) max(env(safe-area-inset-left), 0.5rem);
+    /* Screen at the top, panel in the space left below it, within reach of the thumbs. */
+    grid-template:
+      'screen screen screen' auto
+      'move system fire' minmax(var(--panel-height), 1fr)
+      / 1fr auto 1fr;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+
+  #screen {
+    height: min(100dvh - var(--panel-height), 100vw * 256 / 224);
+  }
+
+  /* The pads sit directly in the page grid, so they can move to the sides in landscape. */
+  .panel {
+    display: contents;
+  }
+
+  .pad {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .pad-move {
+    grid-area: move;
+  }
+
+  .pad-system {
+    grid-area: system;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .pad-fire {
+    grid-area: fire;
+  }
+
+  /* Styled after arcade buttons: round, chunky, with a pressed state. */
+  .key {
+    border: 3px solid #fff;
+    border-radius: 50%;
+    background: #222;
+    color: #fff;
+    font: bold 1rem/1 monospace;
+    touch-action: none;
+  }
+
+  .key:active {
+    background: #555;
+    transform: scale(0.95);
+  }
+
+  .key-arrow {
+    width: 4rem;
+    height: 4rem;
+    font-size: 1.5rem;
+  }
+
+  .key-fire {
+    width: 6rem;
+    height: 6rem;
+    border-color: #ff3030;
+    background: #601010;
+  }
+
+  .key-fire:active {
+    background: #ff3030;
+  }
+
+  .key-small {
+    border-width: 2px;
+    border-radius: 1rem;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.75rem;
+  }
+}
+
+/* Phone held sideways: screen in the middle, movement on the left, fire on the right. */
+@media (pointer: coarse) and (orientation: landscape) {
+  body {
+    grid-template:
+      'system screen fire' auto
+      'move screen fire' 1fr
+      / var(--side-width) 1fr var(--side-width);
+  }
+
+  #screen {
+    height: min(100dvh, (100vw - 2 * var(--side-width)) * 256 / 224);
+  }
+
+  .pad-system {
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding-top: 0.5rem;
+  }
+
+  .pad-move {
+    flex-direction: column;
+  }
 }

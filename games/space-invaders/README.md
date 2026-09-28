@@ -14,6 +14,8 @@ Remake di _Space Invaders_ (Taito, 1978) su HTML5 Canvas, costruito sui pacchett
 | **M**                | Toglie e rimette l'audio         |
 | **V**                | Schermo monocromatico o a colori |
 
+Su smartphone e tablet sotto lo schermo compare un pannello come quello del cabinato: ◀ ▶ per muovere, FUOCO per sparare, più MONETA, COLORE e AUDIO. Si può tenere premuta una direzione e sparare insieme; col telefono in orizzontale i comandi vanno ai lati dello schermo ([guida 08](../../docs/08-comandi-touch.md)).
+
 Il gioco è completo: la formazione di 55 alieni marcia e accelera come nell'originale, lancia tre tipi di bombe, i quattro bunker si sgretolano colpo dopo colpo, l'UFO passa ogni 25 secondi con il suo punteggio "misterioso". Tre vite, una vita extra a 1500 punti, record della sessione e ondate che partono sempre più in basso.
 
 ```bash
