@@ -14,6 +14,7 @@ const lastFrame: GameState = {
   screen: 'playing',
   playing: { ...initialPlayingState(), lives: 0, cannonExplosion: 1, score: 420 },
   hiScore: 100,
+  colorMode: 'color',
 };
 
 describe('updateGame', () => {
@@ -52,5 +53,11 @@ describe('updateGame', () => {
   it('accepts a coin during the game over message', () => {
     const over = updateGame(lastFrame, noControls, 1 / 60);
     expect(updateGame(over, coin, 1 / 60)).toMatchObject({ screen: 'playing', hiScore: 420 });
+  });
+
+  it('switches between mono and color on any screen, keeping the choice for the next game', () => {
+    const mono = updateGame(initialGameState, { ...noControls, colorMode: true }, 1 / 60);
+    expect(mono.colorMode).toBe('mono');
+    expect(updateGame(mono, coin, 1 / 60)).toMatchObject({ screen: 'playing', colorMode: 'mono' });
   });
 });

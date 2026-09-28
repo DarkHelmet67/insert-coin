@@ -4,6 +4,7 @@ import type { AlienKind } from './sprites';
 /** An invader for tests, with sensible defaults for the fields a test does not care about. */
 export const alienAt = (x: number, y: number, kind: AlienKind = 'octopus', column = 1): Alien => ({
   kind,
+  row: 1,
   column,
   x,
   y,

@@ -3,6 +3,8 @@ import { alienSprites, type AlienKind } from './sprites';
 /** One invader of the formation. */
 export interface Alien {
   readonly kind: AlienKind;
+  /** Row in the formation, 1 (top) to 5 (bottom): decides the invader's color. */
+  readonly row: number;
   /** Column in the formation, 1 (left) to 11 (right): used by the bomb firing tables. */
   readonly column: number;
   /** Top-left corner of the sprite, in screen pixels. */
@@ -58,6 +60,7 @@ export const createFormation = (round = 1): readonly Alien[] =>
   [...FORMATION_ROWS].reverse().flatMap((kind, rowFromBottom) =>
     Array.from({ length: FORMATION_COLUMNS }, (_, index) => ({
       kind,
+      row: FORMATION_ROWS.length - rowFromBottom,
       column: index + 1,
       x: FORMATION_LEFT + index * CELL_SIZE + centerOffset(kind),
       y: startBottomY(round) - rowFromBottom * CELL_SIZE,

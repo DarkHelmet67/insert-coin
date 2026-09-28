@@ -149,3 +149,15 @@ Documento: [prompt unico](prompt-unico.md).
 **Proposta dell'AI:** invece di scaricare il PNG, un'icona SVG generata dallo stesso sprite ASCII del crab usato nel gioco. Il README dichiara che nessun asset originale o di terzi è incluso, e l'immagine proposta non aveva una licenza chiara; lo sprite nostro è identico nella forma, pesa meno di 1 KB e resta nitido a ogni dimensione. Sfondo nero con bordi arrotondati, così si legge sia nel tema chiaro sia in quello scuro di GitHub.
 
 **Badge:** stato reale del workflow di deploy (si aggiorna da solo), licenza, e badge statici shields.io per TypeScript, HTML5 Canvas, Node, pnpm, Vite, Vitest, ESLint, Prettier e Claude. Le versioni nei badge statici vanno aggiornate a mano quando cambiano gli strumenti.
+
+## 2026-09-28 · Monocromatico o a colori
+
+**Richiesta dell'autore:** l'originale è monocromatico e i colori venivano dalle pellicole sul cabinato; serve un tasto per passare da MONO a COLORE, con basi e cannone verdi, UFO rosso, alieni azzurri nella prima riga, verdi nella seconda e terza, viola nella quarta e quinta. I colori vanno in un file di configurazione facile da modificare.
+
+**Proposta dell'AI:** tasto **V** (C è già la moneta, M l'audio). Un file `colors.config.ts` con soli dati commentati; `palette.ts` lo trasforma nella palette della modalità scelta e il disegno la riceve come parametro, così nessuna funzione di disegno sceglie colori da sola. La modalità sta nello stato del gioco (quindi è testabile come il resto) ma sopravvive fra una partita e l'altra, come il record. Ogni alieno ora ricorda la propria riga, perché due righe con lo stesso tipo di alieno potrebbero avere colori diversi nella configurazione.
+
+**Cosa cambia:** le "strisce" per altezza introdotte con il gioco completo (bombe che diventano verdi vicino alle basi) sono state sostituite dai colori per oggetto chiesti dall'autore.
+
+**Un dettaglio trovato con lo screenshot:** la scritta `<V> MONO/COLOR` usciva senza barra, perché il font 5×7 non ha il carattere `/`; ora è `<V> MONO-COLOR`.
+
+**Verifica:** 153 test; screenshot in Chromium della schermata di attesa e della stessa partita in COLORE e, dopo V, in MONO.

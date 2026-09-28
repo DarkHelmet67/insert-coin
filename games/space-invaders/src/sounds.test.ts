@@ -4,13 +4,19 @@ import type { GameState } from './game';
 import { initialPlayingState, type PlayingState } from './playing';
 import { soundsFor } from './sounds';
 
-const attract: GameState = { screen: 'attract', attract: { time: 0 }, hiScore: 0 };
+const attract: GameState = {
+  screen: 'attract',
+  attract: { time: 0 },
+  hiScore: 0,
+  colorMode: 'color',
+};
 
 /** A playing state with some fields replaced. */
 const playing = (changes: Partial<PlayingState> = {}): GameState => ({
   screen: 'playing',
   playing: { ...initialPlayingState(), ...changes },
   hiScore: 0,
+  colorMode: 'color',
 });
 
 describe('soundsFor', () => {

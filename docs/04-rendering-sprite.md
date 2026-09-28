@@ -99,7 +99,7 @@ expect(ctx.rects).toEqual([
 | File                                                                 | Contenuto                                                          |
 | -------------------------------------------------------------------- | ------------------------------------------------------------------ |
 | [`sprites.ts`](../games/space-invaders/src/sprites.ts)               | I tre alieni (due fotogrammi ciascuno), il cannone e l'UFO         |
-| [`palette.ts`](../games/space-invaders/src/palette.ts)               | I colori, che imitano le strisce di plastica del cabinato          |
+| [`palette.ts`](../games/space-invaders/src/palette.ts)               | Le palette monocromatica e a colori, lette da `colors.config.ts`   |
 | [`render-attract.ts`](../games/space-invaders/src/render-attract.ts) | Titolo e tabella dei punteggi con gli alieni animati               |
 | [`render-playing.ts`](../games/space-invaders/src/render-playing.ts) | Linea del terreno e cannone                                        |
 | [`render.ts`](../games/space-invaders/src/render.ts)                 | Pulisce lo schermo e sceglie cosa disegnare in base alla schermata |

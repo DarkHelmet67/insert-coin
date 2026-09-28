@@ -157,6 +157,19 @@ Ogni regola si testa da sola: si costruisce uno stato con un colpo e un alieno n
 
 Anche i suoni seguono lo stesso principio della [guida 06](../../../docs/06-audio.md): `soundsFor` confronta lo stato prima e dopo il frame. Un'esplosione appena nata fa partire il suono del colpo, un nuovo passo della formazione fa partire la nota successiva della marcia.
 
-## 7. I colori delle strisce di cellophane
+## 7. Monocromatico o a colori
 
-Il monitor originale era in bianco e nero; i colori venivano da strisce di cellophane incollate sul vetro: rossa in alto, sulla corsia dell'UFO, verde in basso, su bunker e cannone. Un oggetto che passa sotto una striscia ne prende il colore: le bombe diventano verdi vicino ai bunker, e gli alieni che scendono troppo in basso anche. La funzione `colorAt(y)` in [`palette.ts`](../src/palette.ts) riproduce l'effetto scegliendo il colore in base all'altezza.
+Il monitor originale era in bianco e nero: i colori venivano da pellicole colorate incollate sul vetro del cabinato. Il remake offre entrambi gli aspetti, e il tasto **V** passa dall'uno all'altro in qualsiasi momento, anche durante la partita:
+
+| Oggetto                                 | MONO   | COLORE  |
+| --------------------------------------- | ------ | ------- |
+| Cannone, basi, terreno, vite di riserva | bianco | verde   |
+| UFO, i suoi punti, "GAME OVER"          | bianco | rosso   |
+| Alieni, riga 1 (squid)                  | bianco | azzurro |
+| Alieni, righe 2 e 3 (crab)              | bianco | verde   |
+| Alieni, righe 4 e 5 (octopus)           | bianco | viola   |
+| Testo, colpi, bombe, esplosioni         | bianco | bianco  |
+
+I colori stanno tutti in un file di configurazione, [`colors.config.ts`](../src/colors.config.ts): per cambiarli basta modificare un valore, per esempio `alienRows: ['#40c8ff', '#30ff30', '#30ff30', '#c050ff', '#c050ff']`, una voce per riga dall'alto. Qualsiasi colore CSS va bene.
+
+Il resto del codice non conosce i colori: [`palette.ts`](../src/palette.ts) trasforma la modalità scelta (`'mono'` o `'color'`) in una _palette_, e le funzioni di disegno la ricevono come parametro. Per questo ogni alieno ricorda la propria riga (`row`, da 1 a 5): il colore segue l'alieno anche quando la formazione scende. La modalità fa parte dello stato del gioco ma non della partita: resta la stessa quando se ne inizia una nuova.

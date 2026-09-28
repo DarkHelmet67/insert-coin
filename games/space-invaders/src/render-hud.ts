@@ -1,5 +1,5 @@
 import { arcadeFont, drawSprite, drawText, type DrawingContext } from '@arcade/render';
-import { colors } from './palette';
+import type { Palette } from './palette';
 import { GROUND_Y } from './playfield';
 import { formatScore } from './score';
 import { cannonSprite } from './sprites';
@@ -11,22 +11,31 @@ const HI_SCORE_X = 88;
 const RESERVE_Y = GROUND_Y + 4;
 
 /** Draws the header: the player's score and the best score. */
-export const renderHeader = (ctx: DrawingContext, score: number, hiScore: number): void => {
-  drawText(ctx, arcadeFont, 'SCORE<1>', 8, 8, colors.text);
-  drawText(ctx, arcadeFont, formatScore(score), 24, 20, colors.text);
-  drawText(ctx, arcadeFont, 'HI-SCORE', HI_SCORE_X, 8, colors.text);
-  drawText(ctx, arcadeFont, formatScore(hiScore), HI_SCORE_X + 16, 20, colors.text);
+export const renderHeader = (
+  ctx: DrawingContext,
+  score: number,
+  hiScore: number,
+  palette: Palette,
+): void => {
+  drawText(ctx, arcadeFont, 'SCORE<1>', 8, 8, palette.text);
+  drawText(ctx, arcadeFont, formatScore(score), 24, 20, palette.text);
+  drawText(ctx, arcadeFont, 'HI-SCORE', HI_SCORE_X, 8, palette.text);
+  drawText(ctx, arcadeFont, formatScore(hiScore), HI_SCORE_X + 16, 20, palette.text);
 };
 
 /**
  * Draws the green ground line and, under it, the cannons left: a number plus one icon for
  * every cannon waiting after the one in play, as on the original.
  */
-export const renderGroundAndLives = (ctx: DrawingContext, lives: number): void => {
-  ctx.fillStyle = colors.cannon;
+export const renderGroundAndLives = (
+  ctx: DrawingContext,
+  lives: number,
+  palette: Palette,
+): void => {
+  ctx.fillStyle = palette.cannon;
   ctx.fillRect(0, GROUND_Y, ctx.canvas.width, 1);
-  drawText(ctx, arcadeFont, String(lives), 8, RESERVE_Y, colors.cannon);
+  drawText(ctx, arcadeFont, String(lives), 8, RESERVE_Y, palette.cannon);
   Array.from({ length: Math.max(0, lives - 1) }, (_, index) => {
-    drawSprite(ctx, cannonSprite, 24 + index * 16, RESERVE_Y, colors.cannon);
+    drawSprite(ctx, cannonSprite, 24 + index * 16, RESERVE_Y, palette.cannon);
   });
 };

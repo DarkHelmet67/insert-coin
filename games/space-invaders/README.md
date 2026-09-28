@@ -6,12 +6,13 @@ Remake di _Space Invaders_ (Taito, 1978) su HTML5 Canvas, costruito sui pacchett
 
 ## Come si gioca
 
-| Tasto                | Azione                        |
-| -------------------- | ----------------------------- |
-| **C** o **5**        | Inserisce una moneta e inizia |
-| Frecce o **A**/**D** | Muove il cannone              |
-| **Spazio**           | Spara                         |
-| **M**                | Toglie e rimette l'audio      |
+| Tasto                | Azione                           |
+| -------------------- | -------------------------------- |
+| **C** o **5**        | Inserisce una moneta e inizia    |
+| Frecce o **A**/**D** | Muove il cannone                 |
+| **Spazio**           | Spara                            |
+| **M**                | Toglie e rimette l'audio         |
+| **V**                | Schermo monocromatico o a colori |
 
 Il gioco è completo: la formazione di 55 alieni marcia e accelera come nell'originale, lancia tre tipi di bombe, i quattro bunker si sgretolano colpo dopo colpo, l'UFO passa ogni 25 secondi con il suo punteggio "misterioso". Tre vite, una vita extra a 1500 punti, record della sessione e ondate che partono sempre più in basso.
 

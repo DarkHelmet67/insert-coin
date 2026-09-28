@@ -21,4 +21,8 @@ describe('readControls', () => {
     expect(readControls(pressing('Space')).fire).toBe(true);
     expect(readControls(pressing('Digit5')).coin).toBe(true);
   });
+
+  it('reads the color mode switch from V', () => {
+    expect(readControls(pressing('KeyV')).colorMode).toBe(true);
+  });
 });

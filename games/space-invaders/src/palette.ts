@@ -1,28 +1,39 @@
-/**
- * Screen colors. The original monitor was black and white: color came from strips of
- * cellophane glued on the screen, red at the top (UFO) and green at the bottom (cannon).
- */
-export const colors = {
-  background: '#000',
-  text: '#fff',
-  aliens: '#fff',
-  ufo: '#ff3030',
-  cannon: '#30ff30',
-} as const;
+import { colorConfig } from './colors.config';
 
-/** Vertical extent of the red strip, around the mystery ship's lane. */
-export const RED_STRIP_TOP = 32;
-export const RED_STRIP_BOTTOM = 56;
+/** How the screen is colored: like the black and white monitor, or with the colored film. */
+export type ColorMode = 'mono' | 'color';
 
-/** Top of the green strip, covering shields, cannon and reserve cannons. */
-export const GREEN_STRIP_TOP = 184;
+/** The colors used to draw one frame, already resolved for the current color mode. */
+export interface Palette {
+  readonly background: string;
+  readonly text: string;
+  readonly cannon: string;
+  readonly ufo: string;
+  readonly shots: string;
+  /** Invader colors, one per formation row from top to bottom. */
+  readonly alienRows: readonly string[];
+}
 
-/**
- * The color an object gets when its top edge is at `y`: like on the cabinet, anything passing
- * behind a strip takes its color, so invaders that come down low turn green.
- */
-export const colorAt = (y: number): string => {
-  if (y >= GREEN_STRIP_TOP) return colors.cannon;
-  if (y >= RED_STRIP_TOP && y < RED_STRIP_BOTTOM) return colors.ufo;
-  return colors.aliens;
+/** The colors from the configuration file. */
+const colorPalette: Palette = colorConfig;
+
+/** Every object in the monitor's single color. */
+const monoPalette: Palette = {
+  background: colorConfig.background,
+  text: colorConfig.mono,
+  cannon: colorConfig.mono,
+  ufo: colorConfig.mono,
+  shots: colorConfig.mono,
+  alienRows: colorConfig.alienRows.map(() => colorConfig.mono),
 };
+
+/** The palette for `mode`. */
+export const paletteFor = (mode: ColorMode): Palette =>
+  mode === 'mono' ? monoPalette : colorPalette;
+
+/** The other color mode: what the V key switches to. */
+export const toggleColorMode = (mode: ColorMode): ColorMode => (mode === 'mono' ? 'color' : 'mono');
+
+/** The color of an invader in formation row `row` (1 = top); the last color covers extra rows. */
+export const alienColor = (palette: Palette, row: number): string =>
+  palette.alienRows[Math.min(row, palette.alienRows.length) - 1] ?? palette.text;
