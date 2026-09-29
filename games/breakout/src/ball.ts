@@ -55,7 +55,7 @@ export const bounceOffWalls = (ball: Ball): Ball => {
   return ball;
 };
 
-/** Whether the ball touches the top wall in this frame: the paddle will shrink (next step). */
+/** Whether the ball touches the top wall in this frame: the paddle shrinks to half. */
 export const touchesTopWall = (ball: Ball): boolean => ball.y <= TOP_WALL_HEIGHT;
 
 /**

@@ -281,3 +281,16 @@ Documento: [prompt unico](prompt-unico.md).
 **Adattatore del puntatore:** ora riporta anche i clic e i tocchi (`pressed`), usati come pulsante SERVE.
 
 **Verifica:** test di velocità, rimbalzi, segmenti, mattoni, battuta e fine partita. In Chromium un piccolo "robot" legge i pixel del canvas per trovare la pallina e ci porta sotto il mouse: in 25 secondi la pallina è stata servita, ha rimbalzato su muri e racchetta e ha rotto mattoni (7 punti), senza errori in console.
+
+## 2026-09-29 · Breakout, step 5: le regole del muro
+
+**Richiesta:** accelerazione sui mattoni alti, racchetta dimezzata, secondo muro.
+
+**Implementato, seguendo il circuito:**
+
+- **Mattoni arancioni e rossi:** portano la pallina alla velocità massima fino alla battuta successiva. Non serve una regola a parte: il colpo accende l'indicatore `fast` e `speedFor` fa il resto.
+- **Racchetta dimezzata:** al primo tocco del muro in alto la larghezza passa da 16 a 8 righe; torna intera alla palla successiva. I 4 segmenti si dimezzano da soli.
+- **Secondo muro:** compare al primo colpo di racchetta dopo 448 punti, una volta sola, come nel circuito, che non contava i mattoni rimasti ma guardava il punteggio.
+- **Punteggio lampeggiante:** circa 4 volte al secondo durante la partita, fermo a partita finita; frequenza nel file di configurazione.
+
+**Verifica:** test per ogni regola (colori veloci, larghezza, 448 punti ma non 447, nessun terzo muro, lampeggio di circa 4 Hz). In Chromium il robot che insegue la pallina ha giocato 60 secondi senza errori; in quel tempo non ha raggiunto il muro in alto, quindi racchetta dimezzata e secondo muro sono verificati solo dai test. La prova vera la fa l'autore giocando.

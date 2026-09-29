@@ -1,6 +1,13 @@
-import { bounceOffPaddle, bounceOffWalls, isLost, moveBall, type Ball } from './ball';
+import {
+  bounceOffPaddle,
+  bounceOffWalls,
+  isLost,
+  moveBall,
+  touchesTopWall,
+  type Ball,
+} from './ball';
 import { hitBrick } from './brick-hit';
-import { fullWall, type Wall } from './bricks';
+import { fullWall, WALL_POINTS, type Wall } from './bricks';
 import type { Paddle } from './paddle';
 import { serveDelay, servedBall } from './serve';
 import { tuning } from './tuning.config';
@@ -19,6 +26,10 @@ export interface Round {
   readonly score: number;
   /** Number of the ball in play: 1 to `ballsPerGame`. */
   readonly ball: number;
+  /** The paddle is half as wide: the ball touched the top wall since the serve. */
+  readonly shrunk: boolean;
+  /** The second wall has been given: there is no third. */
+  readonly refilled: boolean;
 }
 
 /** A new game: full wall, no points, first ball waiting for SERVE. */
@@ -27,19 +38,41 @@ export const newRound = (): Round => ({
   wall: fullWall(),
   score: 0,
   ball: 1,
+  shrunk: false,
+  refilled: false,
 });
 
 /** After a lost ball: the next one, or the end of the game after the last. */
 const loseBall = (round: Round): Round =>
   round.ball < tuning.ballsPerGame
-    ? { ...round, play: { phase: 'ready' }, ball: round.ball + 1 }
-    : { ...round, play: { phase: 'gameOver' } };
+    ? { ...round, play: { phase: 'ready' }, ball: round.ball + 1, shrunk: false }
+    : { ...round, play: { phase: 'gameOver' }, shrunk: false };
 
-/** One frame of the ball in play: move, bounce, break a brick, or get lost. */
+/**
+ * Whether the second wall appears now. The circuit does not count the bricks left: it waits
+ * for the first paddle hit once the score reaches the value of a whole wall, and only once.
+ */
+export const secondWallDue = (round: Round, hitPaddle: boolean): boolean =>
+  hitPaddle && !round.refilled && round.score >= WALL_POINTS;
+
+/**
+ * One frame of the ball in play: move, bounce, break a brick, or get lost. Touching the top
+ * wall halves the paddle; hitting the paddle with a full wall's worth of points brings back
+ * the bricks.
+ */
 const updateBall = (round: Round, ball: Ball, paddle: Paddle): Round => {
-  const bounced = bounceOffPaddle(bounceOffWalls(moveBall(ball)), paddle);
-  const hit = hitBrick(bounced, round.wall);
-  const next = { ...round, wall: hit.wall, score: round.score + hit.points };
+  const moved = moveBall(ball);
+  const walled = bounceOffWalls(moved);
+  const bounced = bounceOffPaddle(walled, paddle);
+  const refill = secondWallDue(round, bounced !== walled);
+  const hit = hitBrick(bounced, refill ? fullWall() : round.wall);
+  const next: Round = {
+    ...round,
+    wall: hit.wall,
+    score: round.score + hit.points,
+    shrunk: round.shrunk || touchesTopWall(moved),
+    refilled: round.refilled || refill,
+  };
   return isLost(hit.ball) ? loseBall(next) : { ...next, play: { phase: 'inPlay', ball: hit.ball } };
 };
 

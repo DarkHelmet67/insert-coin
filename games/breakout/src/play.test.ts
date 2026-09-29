@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import type { Ball } from './ball';
 import { initialPaddle } from './paddle';
-import { newRound, updateRound, type Round } from './play';
+import { fullWall } from './bricks';
+import { newRound, secondWallDue, updateRound, type Round } from './play';
 
 /** A round with the ball in play at `changes`. */
 const inPlay = (changes: Partial<Ball>, round: Partial<Round> = {}): Round => ({
@@ -44,6 +45,30 @@ describe('updateRound', () => {
   it('moves on to the next ball when one is lost', () => {
     const next = updateRound(inPlay({ y: 207 }), initialPaddle, false, 0);
     expect(next).toMatchObject({ ball: 2, play: { phase: 'ready' } });
+  });
+
+  it('halves the paddle when the ball touches the top wall, until the next ball', () => {
+    const shrunk = updateRound(inPlay({ y: 9, dirY: -1 }), initialPaddle, false, 0);
+    expect(shrunk.shrunk).toBe(true);
+    const next = updateRound(inPlay({ y: 207 }, { shrunk: true }), initialPaddle, false, 0);
+    expect(next.shrunk).toBe(false);
+  });
+
+  it('brings the second wall at the first paddle hit after 448 points, only once', () => {
+    const cleared = { ...newRound(), wall: fullWall().map(() => false), score: 448 };
+    expect(secondWallDue(cleared, true)).toBe(true);
+    expect(secondWallDue(cleared, false)).toBe(false);
+    expect(secondWallDue({ ...cleared, refilled: true }, true)).toBe(false);
+    expect(secondWallDue({ ...cleared, score: 447 }, true)).toBe(false);
+
+    const paddleHit = updateRound(
+      inPlay({ x: initialPaddle.x + 6, y: 187 }, { wall: cleared.wall, score: 448 }),
+      initialPaddle,
+      false,
+      0,
+    );
+    expect(paddleHit.refilled).toBe(true);
+    expect(paddleHit.wall.filter(Boolean)).toHaveLength(112);
   });
 
   it('ends the game after the last ball, and SERVE starts a new one', () => {

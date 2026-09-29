@@ -2,7 +2,7 @@
 
 Remake di _Breakout_ (Atari, 1976) su HTML5 Canvas, costruito sui pacchetti condivisi `@arcade/*`.
 
-Stato: **in costruzione**. Per ora si gioca: battuta, rimbalzi, mattoni che si rompono, tre palle; il gioco arriva un passo alla volta, e ogni passo è pubblicato online.
+Stato: **in costruzione**. Per ora si gioca: battuta, rimbalzi, accelerazioni, racchetta dimezzata, secondo muro, tre palle; mancano suoni, record e schermata di attesa; il gioco arriva un passo alla volta, e ogni passo è pubblicato online.
 
 | Comando                     | Azione                           |
 | --------------------------- | -------------------------------- |

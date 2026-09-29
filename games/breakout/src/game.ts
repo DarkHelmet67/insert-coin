@@ -1,5 +1,5 @@
 import type { Controls } from './controls';
-import { initialPaddle, movePaddle, type Paddle } from './paddle';
+import { initialPaddle, movePaddle, paddleWidth, type Paddle } from './paddle';
 import { toggleColorMode, type ColorMode } from './palette';
 import { newRound, updateRound, type Round } from './play';
 
@@ -21,7 +21,8 @@ export const initialGameState: GameState = {
 
 /** Returns the game state one frame later, given the player's controls. */
 export const updateGame = (state: GameState, controls: Controls): GameState => {
-  const paddle = movePaddle(state.paddle, controls);
+  const sized = { ...state.paddle, width: paddleWidth(state.shrunk) };
+  const paddle = movePaddle(sized, controls);
   return {
     ...state,
     ...updateRound(state, paddle, controls.serve, state.clock),

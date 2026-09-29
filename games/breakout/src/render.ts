@@ -14,7 +14,7 @@ import {
   TOP_WALL_HEIGHT,
 } from './playfield';
 import { renderFilm, type FilmContext } from './render-film';
-import { renderHud } from './render-hud';
+import { isBlinkOn, renderHud } from './render-hud';
 
 /** Draws the three walls that enclose the playfield. */
 export const renderWalls = (ctx: DrawingContext, color: string): void => {
@@ -56,7 +56,13 @@ const renderBall = (ctx: DrawingContext, state: GameState, color: string): void 
 export const renderGame = (ctx: FilmContext, state: GameState): void => {
   const palette = paletteFor(state.colorMode);
   clearScreen(ctx, palette.background);
-  renderHud(ctx, { player: 1, score: state.score, ball: state.ball, otherScore: 0 }, palette.ink);
+  // As on the cabinet, the score of the player up blinks while the game is on.
+  const scoreVisible = state.play.phase === 'gameOver' || isBlinkOn(state.clock);
+  renderHud(
+    ctx,
+    { player: 1, score: state.score, ball: state.ball, otherScore: 0, scoreVisible },
+    palette.ink,
+  );
   renderBricks(ctx, state.wall, palette.ink);
   renderWalls(ctx, palette.ink);
   renderPaddle(ctx, state.paddle, palette.ink);

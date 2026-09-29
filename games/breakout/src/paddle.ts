@@ -3,8 +3,14 @@ import type { Controls } from './controls';
 import { RIGHT_WALL_X, SIDE_WALL_WIDTH } from './playfield';
 import { tuning } from './tuning.config';
 
-/** Width of the full paddle, in scan lines [C]; it halves after a breakout (later step). */
+/** Width of the full paddle, in scan lines [C]. */
 export const PADDLE_WIDTH = 16;
+
+/** Width of the paddle after the ball touched the top wall: exactly half [C]. */
+export const HALF_PADDLE_WIDTH = PADDLE_WIDTH / 2;
+
+/** The paddle's width: full, or half after a breakout until the next serve. */
+export const paddleWidth = (shrunk: boolean): number => (shrunk ? HALF_PADDLE_WIDTH : PADDLE_WIDTH);
 
 /** The paddle: its left edge and its width. It always sits on the paddle row (`PADDLE_Y`). */
 export interface Paddle {

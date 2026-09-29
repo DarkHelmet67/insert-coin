@@ -66,9 +66,10 @@ Fra una fila di mattoni e l'altra il circuito lascia una sottile riga scura, pi�
 
 - **Punti per mattone** [M]: gialli 1, verdi 3, arancioni 5, rossi 7. Un muro vale 448 punti.
 - **Secondo muro** [M]: finiti i mattoni, ne compare un secondo set completo, **una sola volta**: il massimo è 896. Nel circuito il nuovo muro non si attiva contando i mattoni, ma **con il punteggio**: al primo colpo di racchetta dopo 448 punti [C].
+- Nel remake: `secondWallDue` in [`play.ts`](../src/play.ts) applica la stessa regola del circuito (colpo di racchetta, punteggio almeno 448, una volta sola). Il caso dei due giocatori non si pone, perché il remake ha un solo giocatore.
 - **Ticchettio** [C]: il punteggio sale subito, ma i "tic" sonori sono messi in coda e suonano uno per punto: un mattone rosso fa 7 tic in circa mezzo secondo.
 - **Cifre a sette segmenti** [C]: tre cifre per giocatore, disegnate da decoder 7448 come quelle di un orologio digitale. In alto a sinistra il giocatore di turno e sotto il suo punteggio, in alto a destra il numero della palla e sotto il punteggio dell'altro giocatore. Posizione esatta e spessore dei segmenti sono nostri [N]. Codice: `drawSegmentDigit` in [`@arcade/render`](../../../packages/render/src/seven-segment.ts).
-- **Punteggio lampeggiante** [M]: durante il gioco il punteggio del giocatore di turno lampeggia, circa 4 volte al secondo [C].
+- **Punteggio lampeggiante** [M]: durante il gioco il punteggio del giocatore di turno lampeggia, circa 4 volte al secondo [C]. Nel remake: `isBlinkOn` in [`render-hud.ts`](../src/render-hud.ts), frequenza in `tuning.config.ts`.
 - **Record**: l'originale non ha un record; il remake lo aggiunge come Space Invaders [N].
 
 ## 4. Palle, battuta, giocatori
@@ -82,7 +83,7 @@ Fra una fila di mattoni e l'altra il circuito lascia una sottile riga scura, pi�
 
 - **Manopola a potenziometro** [M]: la posizione della manopola è la posizione della racchetta. È il motivo per cui nel remake la racchetta **segue il mouse o il dito**: è lo stesso tipo di controllo.
 - Nel remake, la racchetta si centra sulla posizione del mouse o del dito, letta in unità dello schermo di gioco con il nuovo `createPointerPosition` di `@arcade/input`. Con le frecce si sposta di 3 righe per immagine [N]. Si ferma ai muri laterali: la corsa esatta della manopola non è nota [N]. Codice: [`paddle.ts`](../src/paddle.ts).
-- **Racchetta dimezzata** [M]: quando la pallina tocca il muro in alto, la racchetta si riduce a metà (16 → 8 righe) [C]. Torna intera alla battuta successiva [C].
+- **Racchetta dimezzata** [M]: quando la pallina tocca il muro in alto, la racchetta si riduce a metà (16 → 8 righe) [C]. Torna intera alla battuta successiva [C]. Nel remake i 4 segmenti si dimezzano con lei, perché sono quarti della larghezza. Codice: `paddleWidth` in [`paddle.ts`](../src/paddle.ts).
 
 ## 6. La pallina
 

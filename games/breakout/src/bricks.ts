@@ -61,3 +61,9 @@ const ROW_PAIR_POINTS: readonly number[] = [7, 5, 3, 1];
 
 /** Points scored by breaking a brick in `row`. */
 export const brickPoints = (row: number): number => ROW_PAIR_POINTS[Math.floor(row / 2)] ?? 0;
+
+/** Points of a whole wall: 14 bricks x 2 rows x (7 + 5 + 3 + 1) = 448. */
+export const WALL_POINTS = brickPositions().reduce((sum, { row }) => sum + brickPoints(row), 0);
+
+/** Whether a brick in `row` is orange or red: hitting one sends the ball to its top speed. */
+export const isHighRow = (row: number): boolean => brickPoints(row) >= 5;

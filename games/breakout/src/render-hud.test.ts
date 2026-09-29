@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { formatScore } from './render-hud';
+import { formatScore, isBlinkOn } from './render-hud';
 
 describe('formatScore', () => {
   it('shows three digits, like the original counters', () => {
@@ -9,5 +9,14 @@ describe('formatScore', () => {
 
   it('rolls over after 999, as a three-digit counter does', () => {
     expect(formatScore(1004)).toBe('004');
+  });
+});
+
+describe('isBlinkOn', () => {
+  it('blinks about 4 times a second at the frame rate of the circuit, on and off in halves', () => {
+    const second = Array.from({ length: 63 }, (_, clock) => isBlinkOn(clock));
+    const changes = second.filter((on, index) => index > 0 && on !== second[index - 1]).length;
+    expect(changes).toBe(7);
+    expect(second.filter(Boolean).length).toBeGreaterThanOrEqual(30);
   });
 });

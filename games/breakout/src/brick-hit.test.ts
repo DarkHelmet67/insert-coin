@@ -36,6 +36,11 @@ describe('hitBrick', () => {
     expect(fromAbove.ball).toMatchObject({ dirY: -1, hits: 3 });
   });
 
+  it('goes to top speed after an orange or red brick, not after a yellow one', () => {
+    expect(hitBrick(ball(), fullWall()).ball.fast).toBe(false);
+    expect(hitBrick(ball({ y: 39, dirY: 1 }), fullWall()).ball.fast).toBe(true);
+  });
+
   it('does nothing away from the bricks', () => {
     expect(hitBrick(ball({ y: 120 }), fullWall()).points).toBe(0);
   });

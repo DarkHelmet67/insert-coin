@@ -6,7 +6,9 @@ import {
   brickShape,
   fullWall,
   hasBrick,
+  isHighRow,
   removeBrick,
+  WALL_POINTS,
 } from './bricks';
 
 describe('bricks', () => {
@@ -36,7 +38,19 @@ describe('bricks', () => {
 
   it('scores 7, 5, 3 and 1 point from the top pair of rows down: 448 for a wall', () => {
     expect([0, 1, 2, 3, 4, 5, 6, 7].map(brickPoints)).toEqual([7, 7, 5, 5, 3, 3, 1, 1]);
-    const total = brickPositions().reduce((sum, { row }) => sum + brickPoints(row), 0);
-    expect(total).toBe(448);
+    expect(WALL_POINTS).toBe(448);
+  });
+
+  it('marks the orange and red rows as the fast ones', () => {
+    expect([0, 1, 2, 3, 4, 5, 6, 7].map(isHighRow)).toEqual([
+      true,
+      true,
+      true,
+      true,
+      false,
+      false,
+      false,
+      false,
+    ]);
   });
 });

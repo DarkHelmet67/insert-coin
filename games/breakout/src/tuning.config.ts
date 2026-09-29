@@ -55,6 +55,9 @@ export const tuning = {
    */
   brickRowGap: 1,
 
+  /** The player's score blinks during play [M], about 4 times a second [C]. */
+  scoreBlinkHz: 4,
+
   /**
    * The seven-segment score digits. Cell of 16 lines by 16 steps [C]; size of the lit segments
    * and positions on the screen [N].

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { noControls } from './controls';
-import { initialPaddle, movePaddle } from './paddle';
+import { initialPaddle, movePaddle, paddleWidth } from './paddle';
 import { RIGHT_WALL_X, SIDE_WALL_WIDTH } from './playfield';
 import { tuning } from './tuning.config';
 
@@ -22,6 +22,11 @@ describe('movePaddle', () => {
   it('stops at the side walls', () => {
     expect(movePaddle(initialPaddle, { ...noControls, pointerX: -40 }).x).toBe(SIDE_WALL_WIDTH);
     expect(movePaddle(initialPaddle, { ...noControls, pointerX: 400 }).x).toBe(RIGHT_WALL_X - 16);
+  });
+
+  it('is 16 lines wide, 8 after a breakout', () => {
+    expect(paddleWidth(false)).toBe(16);
+    expect(paddleWidth(true)).toBe(8);
   });
 
   it('snaps to whole scan lines', () => {
