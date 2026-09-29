@@ -94,6 +94,7 @@ export const updateRound = (round: Round, paddle: Paddle, serve: boolean, clock:
     case 'inPlay':
       return updateBall(round, play.ball, paddle);
     case 'gameOver':
-      return serve ? newRound() : round;
+      // The game decides what comes next: the attract mode (see game.ts).
+      return round;
   }
 };

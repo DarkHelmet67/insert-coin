@@ -30,6 +30,10 @@ describe('readControls', () => {
     expect(readControls(emptyKeyState, { x: 50, pressed: true }).serve).toBe(true);
   });
 
+  it('mutes with M', () => {
+    expect(readControls(pressedKeys('KeyM'), still).mute).toBe(true);
+  });
+
   it('switches the colors with V', () => {
     expect(readControls(pressedKeys('KeyV'), still).colorMode).toBe(true);
   });

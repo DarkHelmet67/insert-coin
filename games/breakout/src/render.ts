@@ -57,11 +57,12 @@ const renderBall = (ctx: DrawingContext, state: GameState, color: string): void 
 export const renderGame = (ctx: FilmContext, state: GameState): void => {
   const palette = paletteFor(state.colorMode);
   clearScreen(ctx, palette.background);
-  // As on the cabinet, the score of the player up blinks while the game is on.
-  const scoreVisible = state.play.phase === 'gameOver' || isBlinkOn(state.clock);
+  // As on the cabinet, the score of the player up blinks while the game is on. The second
+  // player's score shows the record instead: the remake has one player and keeps a record.
+  const scoreVisible = state.attract || isBlinkOn(state.clock);
   renderHud(
     ctx,
-    { player: 1, score: state.score, ball: state.ball, otherScore: 0, scoreVisible },
+    { player: 1, score: state.score, ball: state.ball, otherScore: state.hiScore, scoreVisible },
     palette.ink,
   );
   renderBricks(ctx, state.wall, palette.ink);

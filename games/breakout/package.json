@@ -10,10 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@arcade/audio": "workspace:*",
     "@arcade/collision": "workspace:*",
     "@arcade/engine-core": "workspace:*",
     "@arcade/input": "workspace:*",
     "@arcade/math": "workspace:*",
-    "@arcade/render": "workspace:*"
+    "@arcade/render": "workspace:*",
+    "@arcade/storage": "workspace:*"
   }
 }

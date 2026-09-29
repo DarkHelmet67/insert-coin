@@ -70,7 +70,7 @@ Fra una fila di mattoni e l'altra il circuito lascia una sottile riga scura, pi�
 - **Ticchettio** [C]: il punteggio sale subito, ma i "tic" sonori sono messi in coda e suonano uno per punto: un mattone rosso fa 7 tic in circa mezzo secondo.
 - **Cifre a sette segmenti** [C]: tre cifre per giocatore, disegnate da decoder 7448 come quelle di un orologio digitale. In alto a sinistra il giocatore di turno e sotto il suo punteggio, in alto a destra il numero della palla e sotto il punteggio dell'altro giocatore. Posizione esatta e spessore dei segmenti sono nostri [N]. Codice: `drawSegmentDigit` in [`@arcade/render`](../../../packages/render/src/seven-segment.ts).
 - **Punteggio lampeggiante** [M]: durante il gioco il punteggio del giocatore di turno lampeggia, circa 4 volte al secondo [C]. Nel remake: `isBlinkOn` in [`render-hud.ts`](../src/render-hud.ts), frequenza in `tuning.config.ts`.
-- **Record**: l'originale non ha un record; il remake lo aggiunge come Space Invaders [N].
+- **Record**: l'originale non ha un record; il remake lo aggiunge come Space Invaders [N] (vedi la sezione 8).
 
 ## 4. Palle, battuta, giocatori
 
@@ -125,15 +125,19 @@ Tre suoni durante il gioco, nessuno in attesa [M], tutti onde quadre ricavate da
 
 Nessun suono per la palla persa [C].
 
+Nel remake i tre suoni sono onde quadre sintetizzate con `@arcade/audio`, con i toni e le durate della tabella; volume nostro [N]. Il muro in alto suona, come dice il manuale [N: il circuito sembra non farlo]; si spegne con `sounds.topWall` in `tuning.config.ts`. I tic seguono il circuito: i punti di un mattone si pagano uno alla volta, un tic ogni 5 immagini (circa 83 ms), quindi un mattone rosso suona 7 tic mentre la pallina è già ripartita. Il tasto **M** toglie e rimette l'audio. Codice: [`ticks.ts`](../src/ticks.ts), [`sounds.ts`](../src/sounds.ts), [`sound-bank.ts`](../src/sound-bank.ts).
+
 ## 8. Attesa e fine partita
 
 - **Schermata di attesa** [M]: la pallina viene servita da sola e la racchetta è una riga intera, così la pallina rimbalza sempre; i mattoni non spariscono, niente suoni.
 - **Fine partita** [M]: persa l'ultima palla, si torna all'attesa.
+- Nel remake l'attesa parte all'apertura della pagina e dopo ogni partita, e mostra i mattoni e il punteggio dell'ultima partita. SERVE (clic, tocco, spazio o Invio) fa le veci di moneta e START: il primo avvia la partita, il secondo serve la pallina. Codice: [`attract.ts`](../src/attract.ts), [`game.ts`](../src/game.ts).
+- **Record** [N]: l'originale non ne ha. Il remake lo salva nel browser con `@arcade/storage` e lo mostra al posto del punteggio del secondo giocatore, che nella partita a un giocatore restava a 000. Battere il record fa suonare una breve fanfara, una volta per partita, come in Space Invaders.
 
 ## Valori incerti
 
 - La tabella delle velocità, soprattutto la riga "colpi 8–11", e se contano come "colpi" solo quelli della racchetta.
-- Il suono sul muro in alto: il manuale lo cita, il circuito sembra suonare solo sui muri laterali.
+- Il suono sul muro in alto: il manuale lo cita, il circuito sembra suonare solo sui muri laterali. Il remake segue il manuale.
 - La corsa esatta della racchetta (arriva fino ai muri?) e lo spazio fra le file di mattoni.
 - Il colore della striscia della racchetta (blu solo secondo MAME).
 

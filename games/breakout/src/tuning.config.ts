@@ -71,6 +71,30 @@ export const tuning = {
   scoreBlinkHz: 4,
 
   /**
+   * The sounds [C]: short square-wave beeps from the counters of the circuit. Frequencies and
+   * lengths come from the netlist; the volume is ours [N].
+   */
+  sounds: {
+    /** The paddle hit: about 2 kHz for 9 ms. */
+    paddle: { frequency: 2000, duration: 0.009 },
+    /** A wall bounce: about 1 kHz for 21 ms. */
+    wall: { frequency: 1000, duration: 0.021 },
+    /** One point of a broken brick: about 500 Hz for 9 ms. */
+    brick: { frequency: 500, duration: 0.009 },
+    /**
+     * Frames between two brick ticks: the circuit counts the points one at a time, about every
+     * 75 ms, and ticks at each one, so a red brick sounds 7 ticks.
+     */
+    tickFrames: 5,
+    /**
+     * Whether the top wall sounds too. The manual [M] says every wall does; the netlist [C]
+     * wires the sound to the side walls only. We follow the manual.
+     */
+    topWall: true,
+    volume: 0.15,
+  },
+
+  /**
    * The seven-segment score digits. Cell of 16 lines by 16 steps [C]; size of the lit segments
    * and positions on the screen [N].
    */

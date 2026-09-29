@@ -38,6 +38,9 @@ importers:
 
   games/breakout:
     dependencies:
+      '@arcade/audio':
+        specifier: workspace:*
+        version: link:../../packages/audio
       '@arcade/collision':
         specifier: workspace:*
         version: link:../../packages/collision
@@ -53,6 +56,9 @@ importers:
       '@arcade/render':
         specifier: workspace:*
         version: link:../../packages/render
+      '@arcade/storage':
+        specifier: workspace:*
+        version: link:../../packages/storage
 
   games/space-invaders:
     dependencies:

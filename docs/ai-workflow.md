@@ -313,3 +313,16 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 **Punto 2:** la tabella delle velocità mantiene lo schema del circuito ma con valori più bassi e scatti più dolci, marcati [N]; i valori del circuito restano documentati nella guida delle meccaniche. La pallina ora si muove di frazioni di pixel e viene disegnata sul pixel più vicino.
 
 **Punto 3:** `debug` in `tuning.config.ts`. Con `true` la racchetta è larga quanto lo spazio fra i muri: è lo stesso trucco della schermata di attesa del cabinato, dove la racchetta era una riga intera. Provato in Chromium: 90 secondi senza toccare nulla, la pallina è ancora la prima.
+
+## 2026-09-29 · Breakout, step 6: suoni, record e schermata di attesa
+
+**Richiesta:** suoni e record, dopo la conferma che velocità e modalità debug vanno bene.
+
+**Implementato:**
+
+- **Suoni del circuito:** tre onde quadre, "blip" sulla racchetta (circa 2 kHz), "bounce" sui muri (circa 1 kHz), un "tic" (circa 500 Hz) per ogni punto. Come in Space Invaders i suoni si ricavano confrontando due stati consecutivi, quindi la logica di gioco resta pura. I tic hanno bisogno di un piccolo stato in più, `ticks.ts`: il circuito paga i punti uno alla volta, e un mattone rosso suona 7 tic distanziati.
+- **Muro in alto:** manuale e circuito non concordano; l'AI ha scelto il manuale e ha messo l'interruttore `sounds.topWall` nel file di configurazione, insieme a toni, durate e volume.
+- **Record:** salvato con `@arcade/storage`, mostrato al posto del punteggio del secondo giocatore, con una fanfara quando lo si batte, come in Space Invaders.
+- **Schermata di attesa:** l'originale non si ferma mai; aspetta un giocatore con la pallina che rimbalza da sola su una racchetta larga quanto lo schermo, senza rompere mattoni e senza suoni. Il remake fa lo stesso, riusando la larghezza della modalità debug. SERVE fa le veci di moneta e START.
+
+**Verifica:** test per i tic, i suoni (racchetta, muri, silenzio in attesa, fanfara una volta sola), l'attesa (non rompe mattoni e non perde la palla in 5000 immagini) e il passaggio attesa → partita → attesa. In Chromium un robot ha contato gli oscillatori creati: 0 suoni in attesa, poi 2000, 1000 e 500 Hz durante la partita; il record è sopravvissuto al ricaricamento della pagina. Space Invaders si apre senza errori.

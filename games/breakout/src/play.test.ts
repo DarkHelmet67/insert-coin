@@ -71,9 +71,9 @@ describe('updateRound', () => {
     expect(paddleHit.wall.filter(Boolean)).toHaveLength(112);
   });
 
-  it('ends the game after the last ball, and SERVE starts a new one', () => {
+  it('ends the game after the last ball, keeping the score', () => {
     const over = updateRound(inPlay({ y: 207.5 }, { ball: 3, score: 40 }), initialPaddle, false, 0);
     expect(over.play.phase).toBe('gameOver');
-    expect(updateRound(over, initialPaddle, true, 0)).toMatchObject({ score: 0, ball: 1 });
+    expect(updateRound(over, initialPaddle, true, 0)).toMatchObject({ score: 40, ball: 3 });
   });
 });
