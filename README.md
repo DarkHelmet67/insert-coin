@@ -2,6 +2,7 @@
 
 <p align="center">
   <a href="https://darkhelmet67.github.io/insert-coin/space-invaders/"><img src="docs/images/games/space-invaders.svg" alt="Space Invaders" title="Space Invaders (Taito, 1978): gioca online" width="120"></a>
+  <a href="https://darkhelmet67.github.io/insert-coin/breakout/"><img src="docs/images/games/breakout.svg" alt="Breakout" title="Breakout (Atari, 1976): gioca online" width="120"></a>
 </p>
 
 <p align="center">
@@ -31,11 +32,12 @@ Il progetto ha due obiettivi:
 **▶ [Gioca online](https://darkhelmet67.github.io/insert-coin/)**: i giochi sono pubblicati su GitHub Pages a ogni push su `main`.
 
 ![Space Invaders in gioco](docs/images/space-invaders-gameplay.png)
+![Breakout in gioco](docs/images/breakout-gameplay.png)
 
-| Gioco                                   | Anno originale | Stato          |
-| --------------------------------------- | -------------- | -------------- |
-| [Space Invaders](games/space-invaders/) | 1978, Taito    | Completo       |
-| [Breakout](games/breakout/)             | 1976, Atari    | In costruzione |
+| Gioco                                   | Anno originale | Stato    |
+| --------------------------------------- | -------------- | -------- |
+| [Space Invaders](games/space-invaders/) | 1978, Taito    | Completo |
+| [Breakout](games/breakout/)             | 1976, Atari    | Completo |
 
 ## Avvio rapido
 
@@ -64,15 +66,15 @@ insert-coin/
 ├── docs/                 guide passo-passo trasversali
 ├── packages/             codice condiviso fra i giochi (@arcade/*)
 │   ├── engine-core/      game loop a timestep fisso, scene/stati
-│   ├── input/            tastiera e pulsanti touch
-│   ├── render/           canvas, scaling nitido, sprite bitmap, font pixel
+│   ├── input/            tastiera, pulsanti touch, posizione di mouse e dito
+│   ├── render/           canvas, scaling nitido, sprite bitmap, font pixel, cifre a 7 segmenti
 │   ├── audio/            effetti sonori con Web Audio API
 │   ├── collision/        AABB e collisione pixel-perfect
 │   ├── storage/          record salvato nel browser
 │   └── math/             vettori, clamp, random con seed
 ├── games/
 │   ├── space-invaders/   un gioco = un'app Vite che usa i pacchetti @arcade/*
-│   └── breakout/         il secondo gioco, in costruzione
+│   └── breakout/         il secondo gioco, costruito sugli stessi pacchetti
 ├── site/                 pagina iniziale del sito pubblicato
 ├── scripts/              script di build del sito
 └── .github/workflows/    controlli e deploy su GitHub Pages
@@ -106,7 +108,9 @@ Il codice è scritto per essere letto da persone (_code for humans, not for AI_)
 | [07 · Build e deploy](docs/07-build-deploy.md)                                   | Build di produzione, sito multi-gioco, GitHub Actions e Pages         |
 | [08 · Comandi touch](docs/08-comandi-touch.md)                                   | Pannello di comandi per smartphone, tasti virtuali, multitouch        |
 | [09 · Record salvato](docs/09-record-salvato.md)                                 | Record in localStorage senza errori, fanfara del nuovo record         |
+| [10 · Un secondo gioco: Breakout](docs/10-secondo-gioco.md)                      | Cosa si riusa, cosa si aggiunge, pixel non quadrati, valori incerti   |
 | [Space Invaders · meccaniche](games/space-invaders/docs/meccaniche-originali.md) | Marcia, bombe, bunker, UFO: come funzionava l'originale               |
+| [Breakout · meccaniche](games/breakout/docs/meccaniche-originali.md)             | Mattoni, pallina, suoni: il circuito senza processore                 |
 | [Prompt unico](docs/prompt-unico.md)                                             | Un solo prompt per ricreare l'intero progetto con un assistente AI    |
 | [Diario AI](docs/ai-workflow.md)                                                 | Prompt, decisioni e correzioni durante lo sviluppo                    |
 

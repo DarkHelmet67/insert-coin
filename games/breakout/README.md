@@ -2,7 +2,7 @@
 
 Remake di _Breakout_ (Atari, 1976) su HTML5 Canvas, costruito sui pacchetti condivisi `@arcade/*`.
 
-Stato: **in costruzione**. Il gioco è completo: schermata di attesa, battuta, rimbalzi, accelerazioni, racchetta dimezzata, secondo muro, tre palle, suoni del circuito e record salvato nel browser. Manca la documentazione finale.
+Stato: **completo**. Schermata di attesa, battuta, rimbalzi, accelerazioni, racchetta dimezzata, secondo muro, tre palle, suoni del circuito e record salvato nel browser.
 
 | Comando                     | Azione                           |
 | --------------------------- | -------------------------------- |
@@ -26,6 +26,7 @@ pnpm build          # output in games/breakout/dist: index.html + game.css + gam
 ## Guide del gioco
 
 - [Le meccaniche dell'originale](docs/meccaniche-originali.md): schermo, mattoni, racchetta, pallina e suoni, ricavati dal manuale e dallo schema elettrico.
+- [10 · Un secondo gioco: Breakout](../../docs/10-secondo-gioco.md): come il gioco riusa i pacchetti di Space Invaders e che cosa aggiunge.
 
 ## Modalità debug
 

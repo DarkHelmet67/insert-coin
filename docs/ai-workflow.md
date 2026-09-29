@@ -326,3 +326,17 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 - **Schermata di attesa:** l'originale non si ferma mai; aspetta un giocatore con la pallina che rimbalza da sola su una racchetta larga quanto lo schermo, senza rompere mattoni e senza suoni. Il remake fa lo stesso, riusando la larghezza della modalità debug. SERVE fa le veci di moneta e START.
 
 **Verifica:** test per i tic, i suoni (racchetta, muri, silenzio in attesa, fanfara una volta sola), l'attesa (non rompe mattoni e non perde la palla in 5000 immagini) e il passaggio attesa → partita → attesa. In Chromium un robot ha contato gli oscillatori creati: 0 suoni in attesa, poi 2000, 1000 e 500 Hz durante la partita; il record è sopravvissuto al ricaricamento della pagina. Space Invaders si apre senza errori.
+
+## 2026-09-29 · Breakout, step 7: documentazione finale
+
+**Prova dell'autore dello step 6:** tutto a posto, "identico all'originale, anche nei suoni".
+
+**Aggiornato, come previsto dal metodo a gioco finito:**
+
+- **Guida 10, "Un secondo gioco":** cosa Breakout riusa dai pacchetti (tutto, senza modificarli), cosa aggiunge (posizione del puntatore in `@arcade/input`, cifre a sette segmenti in `@arcade/render`), pixel non quadrati, pellicole, il file unico dei valori incerti, la pallina come nel circuito, l'attesa.
+- **README:** icona SVG di Breakout accanto a quella di Space Invaders, screenshot di gioco, stato "Completo", guide 10 e meccaniche di Breakout nella tabella.
+- **Sito:** tolta la scritta "in costruzione", nuova anteprima presa da una partita vera, i tasti di Breakout sotto quelli di Space Invaders.
+- **Prompt unico:** nuova sezione Breakout con tutti i valori di `tuning.config.ts`, le regole del circuito e i sette passi come fase 10; aggiunte le due funzioni nuove dei pacchetti.
+- **Versioni:** Breakout 1.0.0; la root passa a 1.1.0, perché il progetto ha un gioco in più.
+
+**Verifica:** screenshot presi in Chromium da un robot che insegue la pallina con il mouse, con un record finto di 214 per mostrarlo in alto a destra.

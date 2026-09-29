@@ -95,3 +95,5 @@ pnpm dev
 ```
 
 Fai qualche punto, ricarica la pagina: il record è ancora lì, in alto. Nella partita successiva, quando lo superi, senti la fanfara. Negli strumenti per sviluppatori (Application → Local Storage) si vede la chiave `insert-coin/space-invaders/hi-score`; cancellandola il record torna a 0.
+
+Prossima guida: [10 · Un secondo gioco: Breakout](10-secondo-gioco.md).
