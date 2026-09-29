@@ -1,0 +1,22 @@
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: #000;
+}
+
+body {
+  display: grid;
+  place-items: center;
+}
+
+/*
+ * The original pixels are not square: one step along the long side of the monitor is about
+ * 1.48 times longer than one scan line. The canvas keeps the original 228x208 grid and CSS
+ * stretches it to the shape of the real picture, 228:308, without blurring.
+ */
+#screen {
+  height: min(100vh, calc(100vw * 308 / 228));
+  aspect-ratio: 228 / 308;
+  image-rendering: pixelated;
+}

@@ -32,9 +32,10 @@ Il progetto ha due obiettivi:
 
 ![Space Invaders in gioco](docs/images/space-invaders-gameplay.png)
 
-| Gioco                                   | Anno originale | Stato    |
-| --------------------------------------- | -------------- | -------- |
-| [Space Invaders](games/space-invaders/) | 1978, Taito    | Completo |
+| Gioco                                   | Anno originale | Stato          |
+| --------------------------------------- | -------------- | -------------- |
+| [Space Invaders](games/space-invaders/) | 1978, Taito    | Completo       |
+| [Breakout](games/breakout/)             | 1976, Atari    | In costruzione |
 
 ## Avvio rapido
 
@@ -43,6 +44,7 @@ Servono **Node.js 22.13+ o 24 LTS** (consigliato; con nvm basta `nvm use`, la ve
 ```bash
 pnpm install
 pnpm dev      # avvia Space Invaders con hot reload su http://localhost:5173
+pnpm dev:breakout  # avvia Breakout
 pnpm build    # build di produzione di tutti i giochi (games/*/dist)
 pnpm build:site  # build + sito completo in _site/, come su GitHub Pages
 ```
@@ -69,7 +71,8 @@ insert-coin/
 │   ├── storage/          record salvato nel browser
 │   └── math/             vettori, clamp, random con seed
 ├── games/
-│   └── space-invaders/   un gioco = un'app Vite che usa i pacchetti @arcade/*
+│   ├── space-invaders/   un gioco = un'app Vite che usa i pacchetti @arcade/*
+│   └── breakout/         il secondo gioco, in costruzione
 ├── site/                 pagina iniziale del sito pubblicato
 ├── scripts/              script di build del sito
 └── .github/workflows/    controlli e deploy su GitHub Pages

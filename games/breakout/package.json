@@ -1,0 +1,15 @@
+{
+  "name": "@arcade/breakout",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Breakout (Atari, 1976) rebuilt on HTML5 Canvas.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@arcade/render": "workspace:*"
+  }
+}

@@ -226,3 +226,15 @@ Documento: [prompt unico](prompt-unico.md).
 **Verifica:** 182 test; in Chromium: record di partenza 20 scritto nel `localStorage`, partita, record aggiornato, fanfara suonata una volta (rilevata intercettando le frequenze dell'`AudioContext`), pagina ricaricata con il nuovo record in alto.
 
 **Versione:** `1.0.0` nel `package.json` della root e del gioco. Il tag `v1.0.0` e la release si creano da GitHub (Releases → Draft a new release), perché l'ambiente dell'AI può spingere solo sul ramo main.
+
+## 2026-09-29 · Breakout, step 1: meccaniche originali e pagina vuota
+
+**Scelta del secondo gioco.** L'autore proponeva Breakout (o T.T. Block di Taito) e Asteroids, con due dubbi: per Breakout la tastiera al posto della manopola, per Asteroids la grafica vettoriale e i molti tasti. L'AI ha consigliato Breakout: la manopola dell'originale è un **potenziometro**, cioè una posizione assoluta, esattamente come la posizione del mouse o del dito. Riusa quasi tutto (loop, sprite, font, collisioni, audio, record, modalità mono/colori, perché anche Breakout era in bianco e nero con pellicole colorate). Asteroids richiederebbe un renderer nuovo; Galaxian riuserebbe i comandi ma con molto codice nuovo per le traiettorie in picchiata.
+
+**Metodo concordato:** una checklist di sette step; dopo ogni step l'autore prova nel browser, anche Space Invaders per le regressioni; diario aggiornato a ogni step; documentazione e prompt unico a gioco finito.
+
+**Ricerca.** Breakout non ha un processore: niente codice da disassemblare. Un sotto-agente AI ha letto il manuale Atari (su archive.org) e soprattutto la netlist del circuito trascritta da MAME, ricavando porta per porta le misure dello schermo, la tabella delle velocità, i 4 segmenti della racchetta e i toni dei suoni. Scoperte non ovvie: il secondo muro si attiva con il punteggio, non contando i mattoni; dopo un mattone la pallina attraversa gli altri finché non tocca racchetta o muro; i pixel dell'originale non sono quadrati. Ogni valore nella guida delle meccaniche è marcato come "dal manuale", "dal circuito" o "scelta nostra".
+
+**Decisione tecnica:** il gioco lavora nelle unità del circuito (228 righe × 208 passi) e il CSS allunga l'immagine alla forma vera, 228:308, con `aspect-ratio`. Nessun calcolo di conversione nel codice.
+
+**Step 1:** pagina `games/breakout` con i muri e la scritta "COMING SOON", seconda scheda nel sito, comando `pnpm dev:breakout`. Verifica: build del sito con due giochi; in Chromium Breakout e Space Invaders centrati su desktop, Breakout su telefono, pagina iniziale con le due schede.
