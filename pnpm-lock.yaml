@@ -38,6 +38,12 @@ importers:
 
   games/breakout:
     dependencies:
+      '@arcade/engine-core':
+        specifier: workspace:*
+        version: link:../../packages/engine-core
+      '@arcade/input':
+        specifier: workspace:*
+        version: link:../../packages/input
       '@arcade/render':
         specifier: workspace:*
         version: link:../../packages/render

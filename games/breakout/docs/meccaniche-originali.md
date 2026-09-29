@@ -4,6 +4,8 @@ Questa guida spiega come funziona _Breakout_ (Atari, 1976) "dentro": lo schermo,
 
 A differenza di Space Invaders, **Breakout non ha un processore né un programma**: è fatto di circa cento chip di logica TTL collegati fra loro (il progetto è attribuito a Steve Wozniak e Steve Jobs, poi rifatto da Atari). Non c'è un codice da disassemblare: le regole si ricavano dal manuale e dallo schema elettrico, che il progetto MAME ha trascritto in una _netlist_ simulabile.
 
+Tutti i valori incerti stanno in un solo file, [`tuning.config.ts`](../src/tuning.config.ts), ognuno con la sua marcatura: per provare un'altra velocità o un'altra posizione basta cambiare un numero lì. I colori stanno in [`colors.config.ts`](../src/colors.config.ts).
+
 Ogni valore è marcato così:
 
 - **[M]** detto dal manuale o da un'altra fonte scritta;
@@ -54,13 +56,18 @@ Oggetti: pallina 4 righe × 2 passi, racchetta 16 righe × 4 passi [C].
 
 Come in Space Invaders, il colore non viene dal monitor: **quattro strisce di pellicola trasparente**, ognuna sopra due file di mattoni, dall'alto **rossa, arancione, verde, gialla**, più una quinta striscia sopra la zona della racchetta [M]. Tutto il resto è bianco, e la pallina prende il colore della striscia che attraversa.
 
-Colori della striscia della racchetta e valori RGB: dal layout di MAME (rosso, arancione, verde, giallo, **blu** per la racchetta) [M: MAME].
+Colori della striscia della racchetta e valori RGB: dal layout di MAME (rosso, arancione, verde, giallo, **blu** per la racchetta) [M: MAME]. Altezza della striscia della racchetta: dalla riga 180 alla 199 [N].
+
+Il remake riproduce la pellicola alla lettera: disegna tutto in bianco, poi stende sopra ogni striscia con un rettangolo in modalità `multiply`. Il bianco sotto la striscia prende il suo colore, il nero resta nero, e anche i muri laterali si colorano dove la striscia li attraversa, come sul cabinato. Codice: [`render-film.ts`](../src/render-film.ts).
+
+Fra una fila di mattoni e l'altra il circuito lascia una sottile riga scura, più sottile di un passo: il remake usa un passo intero [N].
 
 ## 3. Punteggio e secondo muro
 
 - **Punti per mattone** [M]: gialli 1, verdi 3, arancioni 5, rossi 7. Un muro vale 448 punti.
 - **Secondo muro** [M]: finiti i mattoni, ne compare un secondo set completo, **una sola volta**: il massimo è 896. Nel circuito il nuovo muro non si attiva contando i mattoni, ma **con il punteggio**: al primo colpo di racchetta dopo 448 punti [C].
 - **Ticchettio** [C]: il punteggio sale subito, ma i "tic" sonori sono messi in coda e suonano uno per punto: un mattone rosso fa 7 tic in circa mezzo secondo.
+- **Cifre a sette segmenti** [C]: tre cifre per giocatore, disegnate da decoder 7448 come quelle di un orologio digitale. In alto a sinistra il giocatore di turno e sotto il suo punteggio, in alto a destra il numero della palla e sotto il punteggio dell'altro giocatore. Posizione esatta e spessore dei segmenti sono nostri [N]. Codice: `drawSegmentDigit` in [`@arcade/render`](../../../packages/render/src/seven-segment.ts).
 - **Punteggio lampeggiante** [M]: durante il gioco il punteggio del giocatore di turno lampeggia, circa 4 volte al secondo [C].
 - **Record**: l'originale non ha un record; il remake lo aggiunge come Space Invaders [N].
 

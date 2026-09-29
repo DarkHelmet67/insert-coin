@@ -238,3 +238,17 @@ Documento: [prompt unico](prompt-unico.md).
 **Decisione tecnica:** il gioco lavora nelle unità del circuito (228 righe × 208 passi) e il CSS allunga l'immagine alla forma vera, 228:308, con `aspect-ratio`. Nessun calcolo di conversione nel codice.
 
 **Step 1:** pagina `games/breakout` con i muri e la scritta "COMING SOON", seconda scheda nel sito, comando `pnpm dev:breakout`. Verifica: build del sito con due giochi; in Chromium Breakout e Space Invaders centrati su desktop, Breakout su telefono, pagina iniziale con le due schede.
+
+## 2026-09-29 · Breakout, step 2: campo di gioco
+
+**Richiesta dell'autore, durante lo step:** tutti i valori incerti (per esempio la velocità della pallina) in un unico file di costanti, per cambiarli e provarli facilmente. Nasce `tuning.config.ts`: ogni valore ha un commento con la fonte, marcata [M] manuale, [C] circuito o [N] scelta nostra. I valori certi (misure dei mattoni, punti per fila) restano nel codice che li usa; i colori in `colors.config.ts`, come in Space Invaders.
+
+**Decisioni dell'AI:**
+
+- **La pellicola come nel cabinato:** invece di dare un colore a ogni oggetto, il gioco disegna tutto in bianco e poi stende le cinque strisce colorate con la modalità `multiply` del canvas. Il risultato è quello dell'originale anche nei dettagli: i muri laterali si colorano dove passano sotto una striscia, e la pallina cambierà colore attraversandole. In modalità MONO le strisce semplicemente non ci sono.
+- **Cifre a sette segmenti** nel pacchetto `@arcade/render` (`drawSegmentDigit`), perché l'originale usava decoder per display, non un font. Serviranno anche ad altri giochi degli anni '70.
+- **Riga scura fra le file di mattoni:** nel circuito è più sottile di un passo; il remake usa un passo intero, valore nel file di configurazione.
+
+**Un aggiustamento dopo lo screenshot:** le cifre in alto toccavano il muro e sembravano attaccate; abbassate di due passi e rimpicciolite (valori [N] nel file di configurazione).
+
+**Verifica:** test di mattoni, punti (448 per muro), segmenti, pellicola e cambio di modalità; screenshot in Chromium a colori e in MONO, Space Invaders ancora giocabile.
