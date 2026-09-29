@@ -2,13 +2,14 @@
 
 Remake di _Breakout_ (Atari, 1976) su HTML5 Canvas, costruito sui pacchetti condivisi `@arcade/*`.
 
-Stato: **in costruzione**. Per ora ci sono il campo con il muro di mattoni, i punteggi e la racchetta; il gioco arriva un passo alla volta, e ogni passo è pubblicato online.
+Stato: **in costruzione**. Per ora si gioca: battuta, rimbalzi, mattoni che si rompono, tre palle; il gioco arriva un passo alla volta, e ogni passo è pubblicato online.
 
-| Comando              | Azione                           |
-| -------------------- | -------------------------------- |
-| Mouse o dito         | Muove la racchetta               |
-| Frecce o **A**/**D** | Muove la racchetta               |
-| **V**                | Schermo monocromatico o a colori |
+| Comando                     | Azione                           |
+| --------------------------- | -------------------------------- |
+| Mouse o dito                | Muove la racchetta               |
+| Frecce o **A**/**D**        | Muove la racchetta               |
+| Clic, tocco, spazio o Invio | Serve la pallina (SERVE)         |
+| **V**                       | Schermo monocromatico o a colori |
 
 La racchetta sta dove sta il puntatore, come sul cabinato stava dove girava la manopola. Sul telefono il dito può scorrere ovunque, anche sotto lo schermo di gioco, così non copre la pallina.
 
