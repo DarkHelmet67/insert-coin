@@ -29,6 +29,10 @@ describe('movePaddle', () => {
     expect(paddleWidth(true)).toBe(8);
   });
 
+  it('spans the whole screen in debug mode, even after a breakout', () => {
+    expect(paddleWidth(true, true)).toBe(220);
+  });
+
   it('snaps to whole scan lines', () => {
     expect(Number.isInteger(movePaddle(initialPaddle, { ...noControls, pointerX: 50.7 }).x)).toBe(
       true,

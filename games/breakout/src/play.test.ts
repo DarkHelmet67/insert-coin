@@ -43,14 +43,14 @@ describe('updateRound', () => {
   });
 
   it('moves on to the next ball when one is lost', () => {
-    const next = updateRound(inPlay({ y: 207 }), initialPaddle, false, 0);
+    const next = updateRound(inPlay({ y: 207.5 }), initialPaddle, false, 0);
     expect(next).toMatchObject({ ball: 2, play: { phase: 'ready' } });
   });
 
   it('halves the paddle when the ball touches the top wall, until the next ball', () => {
-    const shrunk = updateRound(inPlay({ y: 9, dirY: -1 }), initialPaddle, false, 0);
+    const shrunk = updateRound(inPlay({ y: 8.5, dirY: -1 }), initialPaddle, false, 0);
     expect(shrunk.shrunk).toBe(true);
-    const next = updateRound(inPlay({ y: 207 }, { shrunk: true }), initialPaddle, false, 0);
+    const next = updateRound(inPlay({ y: 207.5 }, { shrunk: true }), initialPaddle, false, 0);
     expect(next.shrunk).toBe(false);
   });
 
@@ -72,7 +72,7 @@ describe('updateRound', () => {
   });
 
   it('ends the game after the last ball, and SERVE starts a new one', () => {
-    const over = updateRound(inPlay({ y: 207 }, { ball: 3, score: 40 }), initialPaddle, false, 0);
+    const over = updateRound(inPlay({ y: 207.5 }, { ball: 3, score: 40 }), initialPaddle, false, 0);
     expect(over.play.phase).toBe('gameOver');
     expect(updateRound(over, initialPaddle, true, 0)).toMatchObject({ score: 0, ball: 1 });
   });

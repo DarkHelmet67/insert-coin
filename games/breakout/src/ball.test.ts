@@ -9,6 +9,7 @@ import {
 } from './ball';
 import { initialPaddle } from './paddle';
 import { PADDLE_Y, RIGHT_WALL_X } from './playfield';
+import { speedFor } from './speed';
 
 /** A ball in the middle of the screen, going down and right at the serve speed. */
 const ball = (changes: Partial<Ball> = {}): Ball => ({
@@ -28,8 +29,13 @@ const paddle = { ...initialPaddle, x: 100 };
 
 describe('ball', () => {
   it('moves by its speed in its direction', () => {
-    expect(moveBall(ball())).toMatchObject({ x: 101, y: 121 });
-    expect(moveBall(ball({ dirX: -1, dirY: -1, outer: true }))).toMatchObject({ x: 98, y: 119 });
+    const slow = speedFor(ball());
+    expect(moveBall(ball())).toMatchObject({ x: 100 + slow.sideways, y: 120 + slow.vertical });
+    const flat = speedFor(ball({ outer: true }));
+    expect(moveBall(ball({ dirX: -1, dirY: -1, outer: true }))).toMatchObject({
+      x: 100 - flat.sideways,
+      y: 120 - flat.vertical,
+    });
   });
 
   it('bounces off the side walls and the top wall', () => {

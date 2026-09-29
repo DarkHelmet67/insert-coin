@@ -34,7 +34,7 @@ Un passo di H è circa **1,48 volte più lungo** dello spessore di una riga [C].
 
 Il canvas non si deforma nel codice: ogni misura del gioco resta quella del circuito. Codice: [`playfield.ts`](../src/playfield.ts), [`style.css`](../src/style.css).
 
-Il circuito disegna un'immagine completa circa **63,4 volte al secondo** (252 righe da 62,6 µs), non 60 [C].
+Il circuito disegna un'immagine completa circa **63,4 volte al secondo** (252 righe da 62,6 µs), non 60 [C]. Il remake avanza invece a 60 passi al secondo [N]: sugli schermi a 60 Hz, i più comuni, ogni immagine mostra esattamente un passo, mentre con 63,4 ogni tanto la pallina avrebbe fatto un piccolo salto.
 
 ## 2. Il campo di gioco
 
@@ -98,6 +98,8 @@ La racchetta è divisa in **4 segmenti** [M: "4 directions"; C]: la metà colpit
 | Colpi 8–11                        | 1            | 3                 | 3                  |
 | Colpi 12+ (seconda accelerazione) | 2            | 3                 | 3                  |
 | Dopo un mattone arancione o rosso | 3            | 3                 | 3                  |
+
+**Nel remake le velocità sono più basse** [N]: con i valori del circuito la pallina era troppo veloce da giocare nel browser, già dalla battuta e ancora di più dopo le accelerazioni (prova dell'autore). La tabella in `tuning.config.ts` mantiene lo schema del circuito (accelerazioni al 4° e al 12° colpo, angolo più piatto dall'8°, massimo dopo i mattoni alti) con valori più bassi e scatti più dolci: in verticale 0,6 → 0,8 passi per immagine, 1 dopo un mattone alto.
 
 Nel remake la pallina non memorizza una velocità: come il circuito, tiene solo la direzione, il contatore dei colpi e due indicatori (mattone veloce, segmento esterno), e la velocità si ricava a ogni immagine con `speedFor`. La tabella sta in `tuning.config.ts`. Codice: [`speed.ts`](../src/speed.ts), [`ball.ts`](../src/ball.ts).
 

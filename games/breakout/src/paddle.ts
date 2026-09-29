@@ -9,8 +9,15 @@ export const PADDLE_WIDTH = 16;
 /** Width of the paddle after the ball touched the top wall: exactly half [C]. */
 export const HALF_PADDLE_WIDTH = PADDLE_WIDTH / 2;
 
-/** The paddle's width: full, or half after a breakout until the next serve. */
-export const paddleWidth = (shrunk: boolean): number => (shrunk ? HALF_PADDLE_WIDTH : PADDLE_WIDTH);
+/** The paddle in debug mode: the whole space between the walls, so no ball is ever lost. */
+export const DEBUG_PADDLE_WIDTH = RIGHT_WALL_X - SIDE_WALL_WIDTH;
+
+/**
+ * The paddle's width: full, or half after a breakout until the next serve; the whole screen
+ * in debug mode (see `tuning.debug`).
+ */
+export const paddleWidth = (shrunk: boolean, debug: boolean = tuning.debug): number =>
+  debug ? DEBUG_PADDLE_WIDTH : shrunk ? HALF_PADDLE_WIDTH : PADDLE_WIDTH;
 
 /** The paddle: its left edge and its width. It always sits on the paddle row (`PADDLE_Y`). */
 export interface Paddle {

@@ -46,7 +46,8 @@ const renderBall = (ctx: DrawingContext, state: GameState, color: string): void 
   if (state.play.phase !== 'inPlay') return;
   const { x, y, width, height } = ballRect(state.play.ball);
   ctx.fillStyle = color;
-  ctx.fillRect(x, y, width, height);
+  // The ball moves in fractions of a pixel; it is drawn on the nearest whole one, like a sprite.
+  ctx.fillRect(Math.round(x), Math.round(y), width, height);
 };
 
 /**

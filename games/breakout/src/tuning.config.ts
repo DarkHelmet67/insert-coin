@@ -9,30 +9,42 @@
  */
 export const tuning = {
   /**
-   * Frames per second of the original circuit [C]: 252 lines of 62.6 µs. The game advances in
-   * whole frames at this rate, so every speed below is "per frame" as in the circuit.
+   * Debug mode [N]: the paddle spans the whole screen, so the ball can never be lost. Useful
+   * to watch the speed-ups and the second wall without playing well. The original cabinet did
+   * the same in its attract mode. Keep it `false` in the published game.
    */
-  framesPerSecond: 63.4,
+  debug: false,
+
+  /**
+   * Frames per second of the game loop, and so the unit of every speed below ("per frame").
+   * The circuit ran at 63.4 [C]; the remake uses 60 [N] so that on the common 60 Hz screens
+   * every displayed image shows exactly one step, without the small jumps of 63.4 steps a
+   * second on 60 images.
+   */
+  framesPerSecond: 60,
 
   /** Balls per game [M]: 3, or 5 with a switch inside the cabinet. */
   ballsPerGame: 3,
 
   /**
    * Ball speed in each state, per frame: `vertical` in steps, sideways in scan lines, depending
-   * on whether the ball last touched an outer or a middle segment of the paddle [C]. The row
-   * that applies is the last one whose `fromHits` the hit counter has reached. The manual
-   * confirms speed-ups at the 4th and the 12th hit [M]; the row from hit 8 comes only from
-   * the circuit [C, uncertain]: slower vertically but flatter, so about as fast overall.
+   * on whether the ball last touched an outer or a middle segment of the paddle. The row that
+   * applies is the last one whose `fromHits` the hit counter has reached.
+   *
+   * The pattern follows the circuit [C]: speed-ups at the 4th and 12th hit (confirmed by the
+   * manual [M]), a flatter angle from the 8th. The values are ours [N], slower and with gentler
+   * steps: the circuit's (1, 2, 1, 2 steps down per frame, 3 when fast) proved too fast to
+   * play in the browser. The circuit table is in docs/meccaniche-originali.md.
    */
   ballSpeeds: [
-    { fromHits: 0, vertical: 1, outer: 2, middle: 1 },
-    { fromHits: 4, vertical: 2, outer: 2, middle: 1 },
-    { fromHits: 8, vertical: 1, outer: 3, middle: 3 },
-    { fromHits: 12, vertical: 2, outer: 3, middle: 3 },
+    { fromHits: 0, vertical: 0.6, outer: 1.2, middle: 0.6 },
+    { fromHits: 4, vertical: 0.8, outer: 1.2, middle: 0.6 },
+    { fromHits: 8, vertical: 0.6, outer: 1.6, middle: 1.6 },
+    { fromHits: 12, vertical: 0.8, outer: 1.6, middle: 1.6 },
   ],
 
-  /** The fastest speed, after an orange or red brick [M, values C]. */
-  fastSpeed: { vertical: 3, sideways: 3 },
+  /** The fastest speed, after an orange or red brick [M; values N, circuit: 3 and 3]. */
+  fastSpeed: { vertical: 1, sideways: 1.6 },
 
   /**
    * The serve [C]: the ball circles invisibly and shows up when it crosses the middle of the

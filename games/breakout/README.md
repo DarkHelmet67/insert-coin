@@ -23,3 +23,7 @@ pnpm build          # output in games/breakout/dist: index.html + game.css + gam
 ## Guide del gioco
 
 - [Le meccaniche dell'originale](docs/meccaniche-originali.md): schermo, mattoni, racchetta, pallina e suoni, ricavati dal manuale e dallo schema elettrico.
+
+## Modalità debug
+
+In [`src/tuning.config.ts`](src/tuning.config.ts) c'è `debug: false`. Con `true` la racchetta occupa tutto lo spazio fra i muri e la pallina non si perde mai: si possono osservare le accelerazioni e il secondo muro senza dover giocare bene. È lo stesso trucco della schermata di attesa del cabinato originale. Da rimettere a `false` prima di pubblicare.

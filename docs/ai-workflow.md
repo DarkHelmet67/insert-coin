@@ -294,3 +294,22 @@ Documento: [prompt unico](prompt-unico.md).
 - **Punteggio lampeggiante:** circa 4 volte al secondo durante la partita, fermo a partita finita; frequenza nel file di configurazione.
 
 **Verifica:** test per ogni regola (colori veloci, larghezza, 448 punti ma non 447, nessun terzo muro, lampeggio di circa 4 Hz). In Chromium il robot che insegue la pallina ha giocato 60 secondi senza errori; in quel tempo non ha raggiunto il muro in alto, quindi racchetta dimezzata e secondo muro sono verificati solo dai test. La prova vera la fa l'autore giocando.
+
+## 2026-09-29 · Breakout, step 5 bis: velocità e modalità debug
+
+**Prova dell'autore su più dispositivi:**
+
+1. la pallina sembra un po' più veloce su Mac che su smartphone;
+2. velocità iniziale e accelerazioni troppo alte: dopo 30 secondi è difficile respingere la pallina;
+3. serve una modalità debug: un booleano nel file di configurazione e una pallina che non si perde mai, per esempio con una racchetta larga quanto lo schermo.
+
+**Analisi dell'AI sul punto 1:** il loop a passo fisso rende la velocità indipendente dalla potenza di calcolo. Per verificarlo, in Chromium la velocità della pallina è stata misurata leggendo i pixel del canvas, con il processore normale e rallentato 6 volte in emulazione telefono: 35,9 e 36,4 unità al secondo, cioè la stessa (atteso: 0,6 × 60 = 36). Due cause possibili della differenza percepita:
+
+- lo schermo del Mac è più grande, quindi la pallina percorre più centimetri al secondo;
+- il gioco avanzava a 63,4 passi al secondo come il circuito, e su uno schermo a 60 Hz ogni tanto un'immagine mostrava due passi, con un piccolo scatto.
+
+Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
+
+**Punto 2:** la tabella delle velocità mantiene lo schema del circuito ma con valori più bassi e scatti più dolci, marcati [N]; i valori del circuito restano documentati nella guida delle meccaniche. La pallina ora si muove di frazioni di pixel e viene disegnata sul pixel più vicino.
+
+**Punto 3:** `debug` in `tuning.config.ts`. Con `true` la racchetta è larga quanto lo spazio fra i muri: è lo stesso trucco della schermata di attesa del cabinato, dove la racchetta era una riga intera. Provato in Chromium: 90 secondi senza toccare nulla, la pallina è ancora la prima.
