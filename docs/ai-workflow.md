@@ -340,3 +340,11 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 - **Versioni:** Breakout 1.0.0; la root passa a 1.1.0, perché il progetto ha un gioco in più.
 
 **Verifica:** screenshot presi in Chromium da un robot che insegue la pallina con il mouse, con un record finto di 214 per mostrarlo in alto a destra.
+
+## 2026-09-29 · Pagina iniziale: i comandi dentro le schede
+
+**Richiesta:** con più giochi, i paragrafi dei comandi sotto la griglia diventano difficili da seguire. Due proposte dell'autore: griglia con miniatura e comandi nella stessa scheda, oppure tabella verticale con le colonne MINIATURA e COMANDI.
+
+**Scelta dell'AI:** la griglia, perché si adatta da sola alla larghezza dello schermo: più colonne su desktop, una sola colonna sul telefono, dove diventa di fatto la tabella verticale. Ogni scheda ha la miniatura cliccabile, titolo e anno, poi i comandi come lista a due colonne (tasti a sinistra, azione a destra) e una nota per il touch.
+
+**Verifica:** screenshot in Chromium a 1100 e 390 pixel di larghezza, nessuno scorrimento orizzontale sul telefono.

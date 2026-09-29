@@ -19,7 +19,7 @@ body {
 }
 
 main {
-  max-width: 40rem;
+  max-width: 62rem;
   margin: 0 auto;
   padding: 2rem 1rem;
   text-align: center;
@@ -34,9 +34,13 @@ a {
   color: var(--green);
 }
 
+/*
+ * One card per game, with its controls inside: the grid adds columns as the screen widens and
+ * becomes a single column on a phone, however many games there are.
+ */
 .games {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 19rem));
   justify-content: center;
   gap: 1.5rem;
   margin: 2rem 0;
@@ -44,23 +48,60 @@ a {
   list-style: none;
 }
 
-.games a {
+.game {
   display: grid;
-  gap: 0.25rem;
+  grid-template-rows: auto 1fr auto;
+  gap: 0.75rem;
   padding: 0.75rem;
   border: 2px solid var(--green);
+}
+
+.game > a {
+  display: grid;
+  justify-items: center;
+  gap: 0.25rem;
   text-decoration: none;
 }
 
-.games a:hover,
-.games a:focus-visible {
-  background: #0a2a0a;
+.game > a:hover img,
+.game > a:focus-visible img {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
 }
 
-.games img {
+.game img {
   width: 224px;
+  max-width: 100%;
   height: auto;
   image-rendering: pixelated;
+}
+
+/* Controls as a two-column list: keys on the left, what they do on the right. */
+.controls {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.35rem 0.75rem;
+  align-content: start;
+  margin: 0;
+  padding-top: 0.75rem;
+  border-top: 1px dashed var(--green);
+  text-align: left;
+  font-size: 0.875rem;
+}
+
+.controls dt {
+  justify-self: end;
+  white-space: nowrap;
+}
+
+.controls dd {
+  margin: 0;
+}
+
+.touch {
+  margin: 0;
+  font-size: 0.8rem;
+  opacity: 0.7;
 }
 
 .title {
