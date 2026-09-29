@@ -14,6 +14,12 @@ export const tuning = {
    */
   framesPerSecond: 63.4,
 
+  /**
+   * How far the arrow keys move the paddle in one frame, in scan lines [N]. The original had
+   * only the knob, which could move the paddle as fast as the hand turned it.
+   */
+  paddleKeySpeed: 3,
+
   /** The film strip over the paddle area [N]: the circuit does not say how wide it was. */
   paddleStrip: { top: 180, height: 20 },
 

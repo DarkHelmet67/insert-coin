@@ -252,3 +252,16 @@ Documento: [prompt unico](prompt-unico.md).
 **Un aggiustamento dopo lo screenshot:** le cifre in alto toccavano il muro e sembravano attaccate; abbassate di due passi e rimpicciolite (valori [N] nel file di configurazione).
 
 **Verifica:** test di mattoni, punti (448 per muro), segmenti, pellicola e cambio di modalità; screenshot in Chromium a colori e in MONO, Space Invaders ancora giocabile.
+
+## 2026-09-29 · Breakout, step 3: la racchetta
+
+**Richiesta:** muovere la racchetta con mouse, dito e frecce.
+
+**Decisioni dell'AI:**
+
+- **Posizione assoluta, come la manopola:** nuovo adattatore `createPointerPosition` in `@arcade/input`. Converte la x del puntatore nelle unità del gioco (0 a sinistra del canvas, 228 a destra), qualunque sia la dimensione del canvas sullo schermo. Come la tastiera, si legge una volta per frame: restituisce la posizione solo se il puntatore si è mosso, così le frecce funzionano quando il mouse è fermo.
+- **Ascolto su tutta la pagina,** non solo sul canvas: il mouse può uscire dal canvas senza perdere la racchetta, e sul telefono il dito scorre sotto lo schermo di gioco senza coprire la pallina. Per lo stesso motivo sui touch screen il canvas va in alto, lasciando libero lo spazio sotto.
+- **Cursore nascosto sul canvas:** la racchetta è il cursore.
+- **Valori incerti** nel file di configurazione: velocità con le frecce (3 righe per immagine) [N]; corsa fra i muri laterali [N].
+
+**Verifica:** test della conversione delle coordinate, dell'adattatore e del movimento (centro sul puntatore, frecce, fermo ai muri, righe intere). In Chromium: mouse al 25% del canvas, mouse fuori dal canvas a sinistra, freccia destra tenuta, e su telefono emulato un dito che scorre sotto lo schermo: in tutti i casi la racchetta è dove deve essere.

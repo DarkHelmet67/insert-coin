@@ -8,6 +8,11 @@ body {
 body {
   display: grid;
   place-items: center;
+  /* A finger sliding anywhere on the page steers the paddle: no scrolling or zooming. */
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 
 /*
@@ -19,4 +24,19 @@ body {
   height: min(100vh, calc(100vw * 308 / 228));
   aspect-ratio: 228 / 308;
   image-rendering: pixelated;
+  /* The paddle is the pointer: the arrow would only cover the game. */
+  cursor: none;
+}
+
+/*
+ * Touch screens: the screen goes to the top, leaving the space below it free for the finger,
+ * which steers the paddle from anywhere without covering the game.
+ */
+@media (pointer: coarse) {
+  body {
+    box-sizing: border-box;
+    place-items: start center;
+    /* Keep the top wall clear of the notch. */
+    padding-top: env(safe-area-inset-top);
+  }
 }

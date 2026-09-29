@@ -44,6 +44,9 @@ importers:
       '@arcade/input':
         specifier: workspace:*
         version: link:../../packages/input
+      '@arcade/math':
+        specifier: workspace:*
+        version: link:../../packages/math
       '@arcade/render':
         specifier: workspace:*
         version: link:../../packages/render

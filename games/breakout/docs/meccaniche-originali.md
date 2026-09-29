@@ -80,6 +80,7 @@ Fra una fila di mattoni e l'altra il circuito lascia una sottile riga scura, pi�
 ## 5. La racchetta
 
 - **Manopola a potenziometro** [M]: la posizione della manopola è la posizione della racchetta. È il motivo per cui nel remake la racchetta **segue il mouse o il dito**: è lo stesso tipo di controllo.
+- Nel remake, la racchetta si centra sulla posizione del mouse o del dito, letta in unità dello schermo di gioco con il nuovo `createPointerPosition` di `@arcade/input`. Con le frecce si sposta di 3 righe per immagine [N]. Si ferma ai muri laterali: la corsa esatta della manopola non è nota [N]. Codice: [`paddle.ts`](../src/paddle.ts).
 - **Racchetta dimezzata** [M]: quando la pallina tocca il muro in alto, la racchetta si riduce a metà (16 → 8 righe) [C]. Torna intera alla battuta successiva [C].
 
 ## 6. La pallina

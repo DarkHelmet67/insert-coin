@@ -34,3 +34,11 @@ export {
   type TouchButtonsOptions,
   type TouchTarget,
 } from './touch-buttons';
+export {
+  createPointerPosition,
+  toLogicalX,
+  type HorizontalBounds,
+  type PointerPosition,
+  type PointerPositionOptions,
+  type PointerTarget,
+} from './pointer-position';

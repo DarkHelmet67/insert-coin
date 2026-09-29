@@ -8,6 +8,11 @@ describe('updateGame', () => {
     expect(initialGameState.wall.every(Boolean)).toBe(true);
   });
 
+  it('moves the paddle', () => {
+    const moved = updateGame(initialGameState, { ...noControls, pointerX: 50 });
+    expect(moved.paddle.x).toBe(42);
+  });
+
   it('switches between mono and color', () => {
     const mono = updateGame(initialGameState, { ...noControls, colorMode: true });
     expect(mono.colorMode).toBe('mono');

@@ -1,8 +1,11 @@
 import { clearScreen, type DrawingContext } from '@arcade/render';
 import { brickPositions, brickShape, hasBrick, type Wall } from './bricks';
 import type { GameState } from './game';
+import type { Paddle } from './paddle';
 import { paletteFor } from './palette';
 import {
+  PADDLE_HEIGHT,
+  PADDLE_Y,
   RIGHT_WALL_X,
   SCREEN_HEIGHT,
   SCREEN_WIDTH,
@@ -31,6 +34,12 @@ export const renderBricks = (ctx: DrawingContext, wall: Wall, color: string): vo
     });
 };
 
+/** Draws the paddle on its row. */
+export const renderPaddle = (ctx: DrawingContext, { x, width }: Paddle, color: string): void => {
+  ctx.fillStyle = color;
+  ctx.fillRect(x, PADDLE_Y, width, PADDLE_HEIGHT);
+};
+
 /**
  * Draws the whole game. Like the original, everything is drawn in the monitor's single color;
  * the colors come last, from the film laid on top.
@@ -41,5 +50,6 @@ export const renderGame = (ctx: FilmContext, state: GameState): void => {
   renderHud(ctx, { player: 1, score: state.score, ball: state.ball, otherScore: 0 }, palette.ink);
   renderBricks(ctx, state.wall, palette.ink);
   renderWalls(ctx, palette.ink);
+  renderPaddle(ctx, state.paddle, palette.ink);
   renderFilm(ctx, palette.strips);
 };
