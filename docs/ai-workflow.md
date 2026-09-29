@@ -348,3 +348,9 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 **Scelta dell'AI:** la griglia, perché si adatta da sola alla larghezza dello schermo: più colonne su desktop, una sola colonna sul telefono, dove diventa di fatto la tabella verticale. Ogni scheda ha la miniatura cliccabile, titolo e anno, poi i comandi come lista a due colonne (tasti a sinistra, azione a destra) e una nota per il touch.
 
 **Verifica:** screenshot in Chromium a 1100 e 390 pixel di larghezza, nessuno scorrimento orizzontale sul telefono.
+
+## 2026-09-29 · Pagina iniziale: il titolo a pixel
+
+**Richiesta:** il titolo INSERT COIN in stile pixel, con i punti separati, come in un'immagine di esempio.
+
+**Implementato:** `site/title.svg`, generato dal font 5×7 di `@arcade/render`: ogni pixel acceso è un quadrato rosso separato dagli altri da uno spazio sottile, come un display a matrice di punti. Il titolo usa così lo stesso alfabeto dei giochi. Sotto c'è una riga di punti bianchi, come nell'esempio. L'SVG si ridimensiona senza sfocare, anche sul telefono.

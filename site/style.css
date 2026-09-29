@@ -26,8 +26,22 @@ main {
 }
 
 h1 {
-  color: var(--red);
-  letter-spacing: 0.3em;
+  margin: 1rem 0;
+  line-height: 0;
+}
+
+/* The title is drawn pixel by pixel in the games' own font: see title.svg. */
+.pixel-title {
+  width: min(100%, 32rem);
+  height: auto;
+}
+
+/* A dotted rule, like a row of lit pixels under the title. */
+.dots {
+  max-width: 32rem;
+  margin: 0 auto 1.5rem;
+  border: 0;
+  border-top: 0.25rem dotted var(--text);
 }
 
 a {
