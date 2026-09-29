@@ -28,10 +28,18 @@ export interface PointerPositionOptions {
   readonly logicalWidth: number;
 }
 
+/** What the pointer did since the previous poll. */
+export interface PointerSnapshot {
+  /** The pointer's x in game units if it moved, otherwise `undefined`. */
+  readonly x: number | undefined;
+  /** Whether a mouse button was clicked or a finger touched the screen. */
+  readonly pressed: boolean;
+}
+
 /** Live horizontal position of the mouse or finger, polled like a keyboard. */
 export interface PointerPosition {
-  /** The pointer's x in game units if it moved since the previous poll, otherwise `undefined`. */
-  readonly poll: () => number | undefined;
+  /** What the pointer did since the previous poll. Call it once per update. */
+  readonly poll: () => PointerSnapshot;
   /** Removes the event listeners. */
   readonly dispose: () => void;
 }
@@ -39,7 +47,8 @@ export interface PointerPosition {
 /**
  * Follows the horizontal position of the mouse or of a finger, as an absolute position: the
  * same kind of control as a knob on a potentiometer, where each angle is one place on screen.
- * A mouse counts when it moves; a finger when it touches or slides.
+ * A mouse counts when it moves; a finger when it touches or slides. Clicks and touches are
+ * reported too, as a press: a game can use them as a button.
  */
 export const createPointerPosition = ({
   target = window,
@@ -47,24 +56,31 @@ export const createPointerPosition = ({
   logicalWidth,
 }: PointerPositionOptions): PointerPosition => {
   let latest: number | undefined;
+  let pressed = false;
 
   /** Records where the pointer is, in game units. */
-  const onPointer = (event: Event): void => {
+  const onMove = (event: Event): void => {
     latest = toLogicalX((event as PointerEvent).clientX, bounds(), logicalWidth);
   };
+  /** A click or a touch: it also moves the pointer there. */
+  const onDown = (event: Event): void => {
+    onMove(event);
+    pressed = true;
+  };
 
-  target.addEventListener('pointermove', onPointer);
-  target.addEventListener('pointerdown', onPointer);
+  target.addEventListener('pointermove', onMove);
+  target.addEventListener('pointerdown', onDown);
 
   return {
     poll: () => {
-      const current = latest;
+      const snapshot = { x: latest, pressed };
       latest = undefined;
-      return current;
+      pressed = false;
+      return snapshot;
     },
     dispose: () => {
-      target.removeEventListener('pointermove', onPointer);
-      target.removeEventListener('pointerdown', onPointer);
+      target.removeEventListener('pointermove', onMove);
+      target.removeEventListener('pointerdown', onDown);
     },
   };
 };

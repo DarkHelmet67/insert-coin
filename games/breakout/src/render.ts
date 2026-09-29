@@ -1,5 +1,6 @@
 import { clearScreen, type DrawingContext } from '@arcade/render';
 import { brickPositions, brickShape, hasBrick, type Wall } from './bricks';
+import { ballRect } from './ball';
 import type { GameState } from './game';
 import type { Paddle } from './paddle';
 import { paletteFor } from './palette';
@@ -40,6 +41,14 @@ export const renderPaddle = (ctx: DrawingContext, { x, width }: Paddle, color: s
   ctx.fillRect(x, PADDLE_Y, width, PADDLE_HEIGHT);
 };
 
+/** Draws the ball, if one is in play. */
+const renderBall = (ctx: DrawingContext, state: GameState, color: string): void => {
+  if (state.play.phase !== 'inPlay') return;
+  const { x, y, width, height } = ballRect(state.play.ball);
+  ctx.fillStyle = color;
+  ctx.fillRect(x, y, width, height);
+};
+
 /**
  * Draws the whole game. Like the original, everything is drawn in the monitor's single color;
  * the colors come last, from the film laid on top.
@@ -51,5 +60,6 @@ export const renderGame = (ctx: FilmContext, state: GameState): void => {
   renderBricks(ctx, state.wall, palette.ink);
   renderWalls(ctx, palette.ink);
   renderPaddle(ctx, state.paddle, palette.ink);
+  renderBall(ctx, state, palette.ink);
   renderFilm(ctx, palette.strips);
 };

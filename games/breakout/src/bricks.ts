@@ -1,3 +1,4 @@
+import type { Rect } from '@arcade/collision';
 import {
   BRICK_COLUMNS,
   BRICK_HEIGHT,
@@ -20,14 +21,6 @@ export interface BrickPosition {
   readonly column: number;
 }
 
-/** A rectangle on the screen, in original units. */
-export interface Rect {
-  readonly x: number;
-  readonly y: number;
-  readonly width: number;
-  readonly height: number;
-}
-
 /** A complete wall: 8 rows of 14 bricks. */
 export const fullWall = (): Wall => Array.from({ length: BRICK_ROWS * BRICK_COLUMNS }, () => true);
 
@@ -37,6 +30,10 @@ const indexOf = ({ row, column }: BrickPosition): number => row * BRICK_COLUMNS 
 /** Whether the brick at `position` is still standing. */
 export const hasBrick = (wall: Wall, position: BrickPosition): boolean =>
   wall[indexOf(position)] ?? false;
+
+/** Returns the wall without the brick at `position`. */
+export const removeBrick = (wall: Wall, position: BrickPosition): Wall =>
+  wall.map((standing, index) => standing && index !== indexOf(position));
 
 /** Every position of the wall, row by row. */
 export const brickPositions = (): readonly BrickPosition[] =>

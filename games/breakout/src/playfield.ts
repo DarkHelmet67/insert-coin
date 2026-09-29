@@ -27,6 +27,10 @@ export const BRICK_HEIGHT = 4;
 /** Top of the first brick row: the gap above it holds the scores. */
 export const BRICKS_TOP = 40;
 
+/** The ball: 4 scan lines wide, 2 steps tall. */
+export const BALL_WIDTH = 4;
+export const BALL_HEIGHT = 2;
+
 /** The paddle row: 4 steps thick, near the bottom of the picture. */
 export const PADDLE_Y = 188;
 export const PADDLE_HEIGHT = 4;

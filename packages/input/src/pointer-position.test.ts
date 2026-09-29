@@ -35,22 +35,23 @@ describe('createPointerPosition', () => {
 
     target.dispatchEvent(pointerEvent('pointermove', 200));
     target.dispatchEvent(pointerEvent('pointermove', 328));
-    expect(pointer.poll()).toBe(114);
-    expect(pointer.poll()).toBeUndefined();
+    expect(pointer.poll()).toEqual({ x: 114, pressed: false });
+    expect(pointer.poll()).toEqual({ x: undefined, pressed: false });
   });
 
-  it('follows a finger touching the screen', () => {
+  it('follows a finger touching the screen and reports the touch as a press, once', () => {
     const { target, pointer } = setup();
 
     target.dispatchEvent(pointerEvent('pointerdown', 100));
-    expect(pointer.poll()).toBe(0);
+    expect(pointer.poll()).toEqual({ x: 0, pressed: true });
+    expect(pointer.poll().pressed).toBe(false);
   });
 
   it('stops listening after dispose', () => {
     const { target, pointer } = setup();
 
     pointer.dispose();
-    target.dispatchEvent(pointerEvent('pointermove', 328));
-    expect(pointer.poll()).toBeUndefined();
+    target.dispatchEvent(pointerEvent('pointerdown', 328));
+    expect(pointer.poll()).toEqual({ x: undefined, pressed: false });
   });
 });

@@ -75,6 +75,7 @@ Fra una fila di mattoni e l'altra il circuito lascia una sottile riga scura, pi�
 
 - **3 palle** per partita (5 con un interruttore interno) [M]. Il remake usa 3 [N].
 - **La battuta** [M]: il giocatore preme il pulsante **SERVE**; "entro quattro secondi" la pallina compare a metà schermo e scende lentamente verso la racchetta. Il ritardo nasce dal circuito: la pallina si muove già, invisibile, e appare solo quando attraversa una certa fascia [C]. Direzione laterale di fatto casuale [C].
+- Nel remake il pulsante SERVE è lo spazio, Invio, un clic o un tocco. L'attesa riproduce quella del circuito: un contatore di immagini fa il giro in 256 immagini (circa 4 secondi) e la pallina compare al giro successivo. Posizione, lato e angolo della battuta dipendono dall'istante esatto in cui si preme: imprevedibili come nell'originale, ma senza numeri casuali, quindi testabili. Codice: [`serve.ts`](../src/serve.ts).
 - **1 o 2 giocatori**, a turno a ogni palla persa [M]. Il remake parte con un giocatore [N].
 
 ## 5. La racchetta
@@ -97,11 +98,17 @@ La racchetta è divisa in **4 segmenti** [M: "4 directions"; C]: la metà colpit
 | Colpi 12+ (seconda accelerazione) | 2            | 3                 | 3                  |
 | Dopo un mattone arancione o rosso | 3            | 3                 | 3                  |
 
+Nel remake la pallina non memorizza una velocità: come il circuito, tiene solo la direzione, il contatore dei colpi e due indicatori (mattone veloce, segmento esterno), e la velocità si ricava a ogni immagine con `speedFor`. La tabella sta in `tuning.config.ts`. Codice: [`speed.ts`](../src/speed.ts), [`ball.ts`](../src/ball.ts).
+
+La riga "colpi 8–11" sembra un rallentamento, ma non lo è: la pallina scende di 1 passo invece di 2, però si sposta di lato di 3 righe invece di 2. Contando che un passo è 1,48 volte una riga, la velocità complessiva resta quasi la stessa; cambia solo l'angolo, più piatto.
+
 Il manuale conferma le tre accelerazioni (4° colpo, 12° colpo, primo mattone arancione o rosso) e che "gli angoli diventano più verticali con la velocità" [M]. La riga "colpi 8–11" viene solo dalla lettura del circuito ed è il valore più incerto [C].
 
 ### Un mattone per viaggio
 
-Dopo aver colpito un mattone, **la pallina attraversa gli altri mattoni** finché non tocca la racchetta o il muro in alto [C]. È ciò che rende possibile il colpo più famoso del gioco: aperto un varco, la pallina sale oltre i mattoni e **rimbalza fra il muro e le file rosse**, raccogliendo punti a ripetizione [M].
+Dopo aver colpito un mattone, **la pallina attraversa gli altri mattoni** finché non tocca la racchetta o il muro in alto [C]. Il circuito conta come "colpo" ogni volta che la pallina torna verso l'alto, anche quando a rimandarla su è un mattone colpito dall'alto; il remake fa lo stesso. Codice: [`brick-hit.ts`](../src/brick-hit.ts).
+
+È ciò che rende possibile il colpo più famoso del gioco: aperto un varco, la pallina sale oltre i mattoni e **rimbalza fra il muro e le file rosse**, raccogliendo punti a ripetizione [M].
 
 ## 7. Suoni
 

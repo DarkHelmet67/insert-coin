@@ -265,3 +265,19 @@ Documento: [prompt unico](prompt-unico.md).
 - **Valori incerti** nel file di configurazione: velocità con le frecce (3 righe per immagine) [N]; corsa fra i muri laterali [N].
 
 **Verifica:** test della conversione delle coordinate, dell'adattatore e del movimento (centro sul puntatore, frecce, fermo ai muri, righe intere). In Chromium: mouse al 25% del canvas, mouse fuori dal canvas a sinistra, freccia destra tenuta, e su telefono emulato un dito che scorre sotto lo schermo: in tutti i casi la racchetta è dove deve essere.
+
+## 2026-09-29 · Breakout, step 4: la pallina
+
+**Richiesta:** battuta, rimbalzi su muri e racchetta con gli angoli, palle perse.
+
+**Decisioni dell'AI:**
+
+- **Velocità ricavata, non memorizzata:** come nel circuito, la pallina tiene solo la direzione, il contatore dei colpi e due indicatori; `speedFor` calcola la velocità a ogni immagine dalla tabella in `tuning.config.ts`. Così cambiare una velocità è cambiare un numero nel file di configurazione, come chiesto dall'autore.
+- **Racchetta in 4 segmenti:** la metà colpita decide il lato, i segmenti esterni danno l'angolo più piatto. Sulla racchetta dimezzata (prossimo step) i segmenti si dimezzano da soli, perché sono quarti della larghezza.
+- **La battuta dell'originale:** SERVE (spazio, Invio, clic o tocco), poi la pallina compare entro circa 4 secondi, come nel circuito dove gira invisibile finché non attraversa il centro dello schermo. Posizione e direzione dipendono dall'istante della pressione: niente `Math.random`, quindi tutto resta testabile.
+- **I mattoni già in questo step:** senza, la pallina li avrebbe attraversati tutti e il gioco non si poteva provare. Il colpo rompe il mattone e somma i suoi punti; con la regola "un mattone per viaggio" del circuito. Accelerazioni per colore, racchetta dimezzata e secondo muro restano per lo step 5.
+- **Un'osservazione sulla tabella delle velocità:** la riga "colpi 8–11" sembrava un rallentamento; calcolando con i pixel non quadrati (1,48:1) la velocità complessiva resta quasi uguale, cambia solo l'angolo. Aggiunta alla guida delle meccaniche.
+
+**Adattatore del puntatore:** ora riporta anche i clic e i tocchi (`pressed`), usati come pulsante SERVE.
+
+**Verifica:** test di velocità, rimbalzi, segmenti, mattoni, battuta e fine partita. In Chromium un piccolo "robot" legge i pixel del canvas per trovare la pallina e ci porta sotto il mouse: in 25 secondi la pallina è stata servita, ha rimbalzato su muri e racchetta e ha rotto mattoni (7 punti), senza errori in console.

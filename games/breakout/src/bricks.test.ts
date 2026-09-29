@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { brickPoints, brickPositions, brickRect, brickShape, fullWall, hasBrick } from './bricks';
+import {
+  brickPoints,
+  brickPositions,
+  brickRect,
+  brickShape,
+  fullWall,
+  hasBrick,
+  removeBrick,
+} from './bricks';
 
 describe('bricks', () => {
   it('starts with 112 bricks, 8 rows of 14', () => {
@@ -10,6 +18,12 @@ describe('bricks', () => {
   it('reports missing positions as empty', () => {
     expect(hasBrick(fullWall(), { row: 0, column: 0 })).toBe(true);
     expect(hasBrick(fullWall(), { row: 8, column: 0 })).toBe(false);
+  });
+
+  it('removes one brick at a time', () => {
+    const wall = removeBrick(fullWall(), { row: 7, column: 13 });
+    expect(hasBrick(wall, { row: 7, column: 13 })).toBe(false);
+    expect(wall.filter(Boolean)).toHaveLength(111);
   });
 
   it('places bricks 16 lines apart, 4 steps per row', () => {

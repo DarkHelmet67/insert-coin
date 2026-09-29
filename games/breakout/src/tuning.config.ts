@@ -14,6 +14,32 @@ export const tuning = {
    */
   framesPerSecond: 63.4,
 
+  /** Balls per game [M]: 3, or 5 with a switch inside the cabinet. */
+  ballsPerGame: 3,
+
+  /**
+   * Ball speed in each state, per frame: `vertical` in steps, sideways in scan lines, depending
+   * on whether the ball last touched an outer or a middle segment of the paddle [C]. The row
+   * that applies is the last one whose `fromHits` the hit counter has reached. The manual
+   * confirms speed-ups at the 4th and the 12th hit [M]; the row from hit 8 comes only from
+   * the circuit [C, uncertain]: slower vertically but flatter, so about as fast overall.
+   */
+  ballSpeeds: [
+    { fromHits: 0, vertical: 1, outer: 2, middle: 1 },
+    { fromHits: 4, vertical: 2, outer: 2, middle: 1 },
+    { fromHits: 8, vertical: 1, outer: 3, middle: 3 },
+    { fromHits: 12, vertical: 2, outer: 3, middle: 3 },
+  ],
+
+  /** The fastest speed, after an orange or red brick [M, values C]. */
+  fastSpeed: { vertical: 3, sideways: 3 },
+
+  /**
+   * The serve [C]: the ball circles invisibly and shows up when it crosses the middle of the
+   * screen, which takes up to `cycleFrames` frames (about 4 seconds) after SERVE is pressed.
+   */
+  serve: { cycleFrames: 256, appearY: 120 },
+
   /**
    * How far the arrow keys move the paddle in one frame, in scan lines [N]. The original had
    * only the knob, which could move the paddle as fast as the hand turned it.

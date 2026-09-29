@@ -40,5 +40,6 @@ export {
   type HorizontalBounds,
   type PointerPosition,
   type PointerPositionOptions,
+  type PointerSnapshot,
   type PointerTarget,
 } from './pointer-position';

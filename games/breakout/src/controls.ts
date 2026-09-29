@@ -1,15 +1,23 @@
-import { isActionDown, wasActionPressed, type KeyBindings, type KeyState } from '@arcade/input';
+import {
+  isActionDown,
+  wasActionPressed,
+  type KeyBindings,
+  type KeyState,
+  type PointerSnapshot,
+} from '@arcade/input';
 
 /** The keyboard inputs the game understands so far. */
-export type Action = 'left' | 'right' | 'colorMode';
+export type Action = 'left' | 'right' | 'serve' | 'colorMode';
 
 /**
- * Keyboard layout: arrows or A/D move the paddle, V switches between the monochrome and the
- * colored screen. The mouse and the finger move the paddle too, like the cabinet's knob.
+ * Keyboard layout: arrows or A/D move the paddle, space or Enter serve, V switches between the
+ * monochrome and the colored screen. The mouse and the finger move the paddle too, like the
+ * cabinet's knob, and a click or a tap serves.
  */
 export const bindings: KeyBindings<Action> = {
   left: ['ArrowLeft', 'KeyA'],
   right: ['ArrowRight', 'KeyD'],
+  serve: ['Space', 'Enter'],
   colorMode: ['KeyV'],
 };
 
@@ -19,20 +27,28 @@ export interface Controls {
   readonly direction: -1 | 0 | 1;
   /** Where the mouse or finger moved to, in screen units, or `undefined` if it did not move. */
   readonly pointerX: number | undefined;
+  /** The SERVE button of the cabinet. */
+  readonly serve: boolean;
   /** Switch between the monochrome and the colored screen. */
   readonly colorMode: boolean;
 }
 
 /** No input: useful as a default and in tests. */
-export const noControls: Controls = { direction: 0, pointerX: undefined, colorMode: false };
+export const noControls: Controls = {
+  direction: 0,
+  pointerX: undefined,
+  serve: false,
+  colorMode: false,
+};
 
-/** Translates the keyboard state and the pointer position into game controls. */
-export const readControls = (keys: KeyState, pointerX: number | undefined): Controls => {
+/** Translates the keyboard state and the pointer into game controls. */
+export const readControls = (keys: KeyState, pointer: PointerSnapshot): Controls => {
   const left = isActionDown(keys, bindings, 'left');
   const right = isActionDown(keys, bindings, 'right');
   return {
     direction: left === right ? 0 : left ? -1 : 1,
-    pointerX,
+    pointerX: pointer.x,
+    serve: pointer.pressed || wasActionPressed(keys, bindings, 'serve'),
     colorMode: wasActionPressed(keys, bindings, 'colorMode'),
   };
 };
