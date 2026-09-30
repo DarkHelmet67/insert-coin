@@ -38,4 +38,8 @@ describe('readControls', () => {
     expect(readControls(pressedKeys('Digit1')).start).toBe(true);
     expect(readControls(clearEdges(pressedKeys('Enter'))).start).toBe(false);
   });
+
+  it('switches the sound with M', () => {
+    expect(readControls(pressedKeys('KeyM')).mute).toBe(true);
+  });
 });

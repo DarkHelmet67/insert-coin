@@ -17,7 +17,7 @@ describe('visibleMessages', () => {
   });
 
   it('blinks "PUSH START" after the game', () => {
-    const over: GameState = { ...playing, lives: 0, phase: 'over' };
+    const over: GameState = { ...playing, lives: 0, phase: 'attract' };
     expect(visibleMessages({ ...over, frame: 0 })).toEqual(['pushStart']);
     expect(visibleMessages({ ...over, frame: 0x20 })).toEqual([]);
   });

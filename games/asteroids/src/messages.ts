@@ -25,7 +25,7 @@ export type MessageName = keyof typeof MESSAGES;
 export const visibleMessages = (state: GameState): readonly MessageName[] => [
   ...(state.phase === 'playing' && state.delay > 0 ? (['player'] as const) : []),
   ...(showsGameOver(state) ? (['gameOver'] as const) : []),
-  ...(state.phase === 'over' && (state.frame & 0x20) === 0 ? (['pushStart'] as const) : []),
+  ...(state.phase === 'attract' && (state.frame & 0x20) === 0 ? (['pushStart'] as const) : []),
 ];
 
 /** The lines of the messages on screen. */

@@ -38,6 +38,9 @@ importers:
 
   games/asteroids:
     dependencies:
+      '@arcade/audio':
+        specifier: workspace:*
+        version: link:../../packages/audio
       '@arcade/engine-core':
         specifier: workspace:*
         version: link:../../packages/engine-core

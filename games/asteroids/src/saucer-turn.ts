@@ -9,7 +9,7 @@ import { countDownToSaucer, saucerShoots, steerSaucer } from './saucer';
  */
 export const saucerTurn = (state: GameState): GameState => {
   if ((state.frame & 3) !== 0 || state.saucer?.kind === 'explosion') return state;
-  const active = state.phase === 'over' || state.life.kind === 'flying';
+  const active = state.phase === 'attract' || state.life.kind === 'flying';
   if (!state.saucer) {
     if (!active) return state;
     const counted = countDownToSaucer(state, rockCount(state.rocks), state.score, state.rng);

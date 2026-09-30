@@ -1,11 +1,12 @@
 import { isActionDown, wasActionPressed, type KeyBindings, type KeyState } from '@arcade/input';
 
 /** The keyboard inputs the game understands. */
-export type Action = 'left' | 'right' | 'thrust' | 'fire' | 'hyperspace' | 'start';
+export type Action = 'left' | 'right' | 'thrust' | 'fire' | 'hyperspace' | 'start' | 'mute';
 
 /**
  * Keyboard layout, one key for each button of the cabinet: arrows or A/D rotate, up arrow or W
- * thrusts, space fires, down arrow or S jumps into hyperspace, Enter or 1 is the start button.
+ * thrusts, space fires, down arrow or S jumps into hyperspace, Enter or 1 is the start button;
+ * M switches the sound off and on, as in the other games.
  */
 export const bindings: KeyBindings<Action> = {
   left: ['ArrowLeft', 'KeyA'],
@@ -14,6 +15,7 @@ export const bindings: KeyBindings<Action> = {
   fire: ['Space'],
   hyperspace: ['ArrowDown', 'KeyS'],
   start: ['Enter', 'Digit1', 'Numpad1'],
+  mute: ['KeyM'],
 };
 
 /** What the player is doing during one frame, independent of the device used. */
@@ -33,6 +35,8 @@ export interface Controls {
   readonly hyperspace: boolean;
   /** The start button went down in this frame. */
   readonly start: boolean;
+  /** Switch the sound off or on: handled by the audio output, not by the game logic. */
+  readonly mute: boolean;
 }
 
 /** No input: useful as a default and in tests. */
@@ -42,6 +46,7 @@ export const noControls: Controls = {
   fire: false,
   hyperspace: false,
   start: false,
+  mute: false,
 };
 
 /**
@@ -57,5 +62,6 @@ export const readControls = (keys: KeyState): Controls => {
     fire: wasActionPressed(keys, bindings, 'fire'),
     hyperspace: isActionDown(keys, bindings, 'hyperspace'),
     start: wasActionPressed(keys, bindings, 'start'),
+    mute: wasActionPressed(keys, bindings, 'mute'),
   };
 };

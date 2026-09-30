@@ -449,3 +449,18 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 - **Un'approssimazione dichiarata:** la posizione fine in altezza del nuovo disco dipende in parte da quella del disco precedente; il remake la considera zero, una differenza di pochi pixel segnata [N] nella guida.
 
 **Verifica:** test di arcotangente (assi, diagonali, confronto con `Math.atan2`), mira ed errore, comparsa, dimensione, rotta, uscita dallo schermo, sparo, punti (200 e 1000), scontri del disco con nave e asteroidi, ondata e ricomparsa che aspettano il disco. In Chromium il disco entra dal bordo dopo circa 8 secondi senza colpire asteroidi.
+
+## 2026-09-30 · Asteroids, step 7: suoni e schermata di attesa
+
+**Richiesta:** i suoni del cabinato e la schermata di attesa (i comandi touch sono passati allo step 8).
+
+**Decisioni dell'AI:**
+
+- **Il battito come stato del gioco,** non come suono: nel 6502 è un piccolo automa con tre contatori (4 passi di nota, poi un silenzio che parte da 48 passi a ogni ondata e perde un passo ogni 64, fino a 8). Tenerlo nello stato puro permette di testare il ritmo con i numeri; il suono si limita a notare che è partito un nuovo battito e quale delle due note suonare.
+- **Gli altri suoni dal confronto fra due stati,** come in Space Invaders: un colpo in un posto prima vuoto è uno sparo, un asteroide diventato esplosione suona più grave se era grande. Quando la nave si schianta contro un asteroide si sente l'esplosione dell'asteroide, perché il circuito delle esplosioni è uno solo e il programma sceglie quella.
+- **Suoni continui a pezzi:** la spinta è un rumore grave suonato a pezzi di 6 passi, la sirena del disco una salita e una discesa per ogni oscillazione (5,75 al secondo il grande, 8,25 il piccolo). È lo stesso metodo usato per il disco di Space Invaders, e non serve cambiare `@arcade/audio`.
+- **Tutti i numeri incerti in `tuning.config.ts`:** le frequenze che si leggono nei circuiti di MAME (sparo da 820 a 110 Hz, sirena a 500 e 750 Hz, vita extra a 3 kHz) sono marcate [H]; le due note del battito, i volumi e i filtri sono scelti a orecchio [N]. Per Space Invaders le registrazioni originali di Luca avevano permesso di misurare tutto: lo stesso si può fare qui.
+- **La schermata di attesa** è la fase "dopo la partita", che ora c'è anche all'apertura della pagina: asteroidi e dischi vanno da soli, senza suoni come sul cabinato, e "PUSH START" lampeggia. La tabella dei 10 record con le iniziali non c'è: il remake salva un solo record, visibile in alto al centro.
+- **M** spegne e riaccende l'audio, come negli altri due giochi.
+
+**Verifica:** test del ritmo del battito (prima nota, alternanza, 52 e 12 passi, silenzio senza asteroidi), della scelta dei suoni per ogni evento e del silenzio nella schermata di attesa. In Chromium, con un contatore sulle funzioni audio del browser: nessun suono nella schermata di attesa, poi spari, battiti e spinta dopo Invio.

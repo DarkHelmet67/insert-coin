@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { noControls, type Controls } from './controls';
 import {
+  createAttractState,
   createGameState,
   showsGameOver,
   START_DELAY,
@@ -79,9 +80,9 @@ describe('updateGame', () => {
     const exploding = run(lastShip, 150);
     expect(exploding.phase).toBe('playing');
     const over = run(lastShip, 200);
-    expect(over.phase).toBe('over');
+    expect(over.phase).toBe('attract');
     expect(over.hiScore).toBe(1230);
-    expect(run(over, 10, { ...noControls, fire: true }).phase).toBe('over');
+    expect(run(over, 10, { ...noControls, fire: true }).phase).toBe('attract');
     const again = updateGame(over, { ...noControls, start: true });
     expect(again).toMatchObject({ phase: 'playing', score: 0, lives: 3, hiScore: 1230 });
     expect(again.delay).toBe(START_DELAY);
@@ -112,5 +113,14 @@ describe('updateGame', () => {
     expect(updateGame(due, noControls).saucer?.kind).toBe('saucer');
     const shipHidden = { ...due, life: { kind: 'hidden', timer: 40, reason: 'jump' } as const };
     expect(updateGame(shipHidden, noControls).saucer).toBeNull();
+  });
+
+  it('opens on the attract screen: rocks drift, the start button begins a game', () => {
+    const attract = createAttractState(seedRandom(3), 700);
+    const later = run(attract, WAVE_PAUSE + 1, { ...noControls, fire: true });
+    expect(rockCount(later.rocks)).toBe(4);
+    expect(later.shots.every((shot) => shot === null)).toBe(true);
+    const game = updateGame(later, { ...noControls, start: true });
+    expect(game).toMatchObject({ phase: 'playing', lives: 3, hiScore: 700, delay: START_DELAY });
   });
 });

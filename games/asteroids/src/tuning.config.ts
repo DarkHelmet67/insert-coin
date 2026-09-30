@@ -38,4 +38,37 @@ export const tuning = {
     maxBrightness: 15,
     gamma: 0.6,
   },
+
+  /**
+   * The sounds [H, N]. Asteroids has no sound chip: each sound is a small analog circuit that
+   * the program switches on and off. The frequencies come from MAME's models of the circuits
+   * (asteroid_a.cpp) where they can be read; the rest (the heartbeat's two notes, the volumes,
+   * the filters) is set by ear and waits for a comparison with recordings of the cabinet.
+   */
+  sound: {
+    /** The heartbeat's two notes [N]: a low square wave smoothed by the RC filter. */
+    thump: { low: 60, high: 72, cutoff: 350, volume: 0.45 },
+    /** The ship's shot [H]: 820 falling to 110 Hz in 0.28 s. */
+    fire: { from: 820, to: 110, duration: 0.28, volume: 0.1 },
+    /** The saucer's shot [H]: shorter fall, from 830 to 630 Hz. */
+    saucerFire: { from: 830, to: 630, duration: 0.28, volume: 0.08 },
+    /** The rumble of the thrust [H]: noise through a low-pass filter around 160 Hz. */
+    thrust: { cutoff: 220, volume: 0.5 },
+    /**
+     * The saucer's siren [H]: a triangle wave warbling around 500 Hz (large, 5.75 times a
+     * second) or 750 Hz (small, 8.25 times a second). The depth is set by ear [N].
+     */
+    saucer: {
+      large: { center: 500, depth: 150, rate: 5.75 },
+      small: { center: 750, depth: 200, rate: 8.25 },
+      volume: 0.07,
+    },
+    /**
+     * Explosions [P $6B4A, H]: noise dying away in about a second, deeper for large rocks and
+     * large saucers. The cut-off frequencies are the circuit's three noise clocks.
+     */
+    explosion: { low: 1000, mid: 2400, high: 4000, duration: 1.05, volume: 0.45 },
+    /** The extra ship [H, P $7BA9]: a 3 kHz beep, 4 frames on and 4 off, 11 times. */
+    extraLife: { frequency: 3000, beeps: 11, volume: 0.04 },
+  },
 } as const;

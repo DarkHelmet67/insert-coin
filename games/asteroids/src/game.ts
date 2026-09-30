@@ -20,10 +20,11 @@ import { moveSaucer, noSaucer, WAVE_SAUCER_DELAY, type SaucerState } from './sau
 import { saucerTurn } from './saucer-turn';
 import { newShip, updateShip, type Ship } from './ship';
 import { fireShot, noShots, updateShot, type ShotSlots } from './shots';
+import { newThump, speedUpThump, THUMP_START_PAUSE, updateThump, type Thump } from './thump';
 import { tuning } from './tuning.config';
 
 /** Whether a game is being played, or is over and the rocks drift on their own. */
-export type Phase = 'playing' | 'over';
+export type Phase = 'playing' | 'attract';
 
 /** Everything that changes during a game. */
 export interface GameState extends PlayerState, SaucerState {
@@ -45,6 +46,8 @@ export interface GameState extends PlayerState, SaucerState {
   /** Frames left of "PLAYER 1" at the start, when the controls do nothing yet [P $5A]. */
   readonly delay: number;
   readonly phase: Phase;
+  /** The rhythm of the heartbeat, played by the sound. */
+  readonly thump: Thump;
 }
 
 /** Frames between the end of a wave and the next one [P $6F87]: about 2 seconds. */
@@ -74,6 +77,18 @@ export const createGameState = (rng: Rng, hiScore = 0, ship: Ship = newShip): Ga
   delay: START_DELAY,
   phase: 'playing',
   ...noSaucer,
+  thump: newThump,
+});
+
+/**
+ * The screen when the page opens, and after every game [P $6885]: the rocks and the saucers go
+ * on by themselves, "PUSH START" blinks, and the start button begins a new game.
+ */
+export const createAttractState = (rng: Rng, hiScore = 0): GameState => ({
+  ...createGameState(rng, hiScore),
+  phase: 'attract',
+  lives: 0,
+  delay: 0,
 });
 
 /** Most rocks that still let an early saucer in [P $717A]. */
@@ -94,6 +109,7 @@ const startWaveIfDue = (state: GameState): GameState => {
     rng,
     waveSize,
     saucerTimer: WAVE_SAUCER_DELAY,
+    thump: { ...state.thump, pause: THUMP_START_PAUSE },
     saucerRockLimit: Math.min(MAX_SAUCER_ROCK_LIMIT, state.saucerRockLimit + 1),
   };
 };
@@ -143,21 +159,35 @@ const moveObjects = (state: GameState): GameState => {
  */
 const endIfNoLives = (state: GameState): GameState =>
   state.phase === 'playing' && state.lives === 0 && state.life.kind === 'hidden'
-    ? { ...state, phase: 'over', hiScore: Math.max(state.hiScore, state.score) }
+    ? { ...state, phase: 'attract', hiScore: Math.max(state.hiScore, state.score) }
     : state;
+
+/** Whether the heartbeat plays: rocks on screen and the ship flying or in hyperspace [P $7588]. */
+const thumpIsActive = (state: GameState): boolean =>
+  rockCount(state.rocks) > 0 &&
+  (state.life.kind === 'flying' ||
+    (state.life.kind === 'hidden' && state.life.reason !== 'respawn'));
+
+/** One frame of the heartbeat, which gets faster only once the game has really started. */
+const beat = (state: GameState): Thump => {
+  if (state.phase !== 'playing') return state.thump;
+  const thump = state.delay === 0 ? speedUpThump(state.thump, state.frame) : state.thump;
+  return updateThump(thump, thumpIsActive(state));
+};
 
 /**
  * One frame of the game, in the order of the program's main loop [P $6809-$6883]: new wave,
  * the player's buttons and ship, the saucer, moves, collisions, then the generator and the timers.
  */
 export const updateGame = (state: GameState, controls: Controls): GameState => {
-  if (state.phase === 'over' && controls.start) {
+  if (state.phase === 'attract' && controls.start) {
     return createGameState(state.rng, state.hiScore, state.ship);
   }
   const moved = moveObjects(actorsTurn(startWaveIfDue(state), controls));
   const hit = endIfNoLives({ ...moved, ...resolveHits(moved) });
   return {
     ...hit,
+    thump: beat(hit),
     frame: (hit.frame + 1) & 0xff,
     rng: nextRandom(hit.rng).rng,
     waveTimer: Math.max(0, hit.waveTimer - 1),

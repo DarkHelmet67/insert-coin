@@ -176,7 +176,9 @@ Asteroids non ha un chip sonoro programmabile: ogni suono è un piccolo circuito
 - **Disco volante** [H]: una sirena che oscilla attorno a 500 Hz (grande, lenta) o 750 Hz (piccolo, veloce).
 - **Vita extra** [H]: un bip acuto intermittente, per circa 1,5 secondi.
 
-Le frequenze vengono dai modelli dei circuiti di MAME; il remake le sintetizzerà con `@arcade/audio` e le regolerà a orecchio [N].
+Le frequenze vengono dai modelli dei circuiti di MAME; il remake le sintetizza con `@arcade/audio`, e i valori incerti (le due note del battito, i volumi, i filtri, la profondità della sirena) sono tutti nella sezione `sound` di [`tuning.config.ts`](../src/tuning.config.ts), pronti per essere confrontati con le registrazioni del cabinato [N].
+
+Nel remake i suoni nascono dal confronto fra lo stato prima e dopo ogni passo, come in Space Invaders: un colpo nuovo in un posto prima vuoto è uno sparo, un asteroide diventato esplosione è un'esplosione della sua grandezza. Il ritmo del battito invece è **stato del gioco** ([`thump.ts`](../src/thump.ts)), perché nel 6502 è un piccolo automa con i suoi contatori: 4 passi di nota, poi il silenzio, che parte da 48 passi a ogni ondata e perde un passo ogni 64, fino a 8. I suoni continui (spinta, sirena del disco) sono suonati a pezzi, uno ogni pochi passi. Come sul cabinato, nella schermata di attesa non si sente niente [P `$7555`]. Codice: [`sound-bank.ts`](../src/sound-bank.ts), [`sounds.ts`](../src/sounds.ts).
 
 ## 10. Schermate e scritte
 
@@ -184,7 +186,7 @@ Le frequenze vengono dai modelli dei circuiti di MAME; il remake le sintetizzer�
 - **In alto** [P `$724F`]: il punteggio a sinistra, il record al centro in piccolo, sotto il punteggio le navi rimaste come piccole icone.
 - **In basso** [R `$10A4`]: "© 1979 ATARI INC", sempre visibile.
 - **Scritte** [P `$77F6`]: "PUSH START" lampeggiante, "PLAYER 1", "GAME OVER", "HIGH SCORES". Il programma conteneva anche le traduzioni in tedesco, francese e spagnolo.
-- **Schermata di attesa** [P]: asteroidi e dischi volanti si muovono da soli, senza suoni; ogni 16 secondi circa compare la tabella dei record.
+- **Schermata di attesa** [P]: asteroidi e dischi volanti si muovono da soli, senza suoni; ogni 16 secondi circa compare la tabella dei record. Il remake si apre su questa schermata, con "PUSH START" che lampeggia, e ci torna a fine partita; la tabella dei record non c'è, perché il remake salva un solo record e non chiede le iniziali [N]: il record resta visibile in alto al centro.
 
 ## 11. Curiosità
 
