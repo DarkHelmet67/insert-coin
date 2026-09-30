@@ -1,7 +1,7 @@
 import './style.css';
 import { createAudio } from '@arcade/audio';
 import { createGameLoop } from '@arcade/engine-core';
-import { boundKeys, createKeyboard } from '@arcade/input';
+import { boundKeys, createKeyboard, createTouchButtons, mergeKeyStates } from '@arcade/input';
 import { getCanvasContext } from '@arcade/render';
 import { createHiScoreStore } from '@arcade/storage';
 import { bindings, readControls } from './controls';
@@ -13,6 +13,8 @@ import { tuning } from './tuning.config';
 
 const ctx = getCanvasContext('#screen');
 const keyboard = createKeyboard(window, { captureKeys: boundKeys(bindings) });
+// The whole page listens to fingers: the panel's buttons and the screen itself (START).
+const touch = createTouchButtons(document.body);
 const hiScores = createHiScoreStore('insert-coin/asteroids/hi-score');
 const audio = createAudio();
 
@@ -22,7 +24,8 @@ const audio = createAudio();
  * the browser right away. This is the only place where logic meets input, audio and storage.
  */
 const step = (state: GameState): GameState => {
-  const controls = readControls(keyboard.poll());
+  // Keyboard and touch are polled once per frame, so every press reaches exactly one frame.
+  const controls = readControls(mergeKeyStates(keyboard.poll(), touch.poll()));
   if (controls.mute) audio.toggleMute();
   const next = updateGame(state, controls);
   soundsFor(state, next).forEach((name) => {

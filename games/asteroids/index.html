@@ -7,7 +7,45 @@
     <title>Asteroids</title>
   </head>
   <body>
-    <canvas id="screen" width="1024" height="768">Serve un browser con supporto a Canvas.</canvas>
+    <!-- Touching the screen is the START button, as on the attract screen of the cabinet. -->
+    <canvas id="screen" width="1024" height="768" data-key="Enter">
+      Serve un browser con supporto a Canvas.
+    </canvas>
+    <!--
+      Cabinet control panel, visible only on touch screens (see style.css): rotation for the
+      left thumb, thrust and fire for the right one, hyperspace apart so it is not hit by chance.
+    -->
+    <div id="touch-panel" class="panel">
+      <div class="pad pad-move">
+        <button
+          type="button"
+          class="key key-arrow"
+          data-key="ArrowLeft"
+          aria-label="Ruota a sinistra"
+        >
+          ⟲
+        </button>
+        <button
+          type="button"
+          class="key key-arrow"
+          data-key="ArrowRight"
+          aria-label="Ruota a destra"
+        >
+          ⟳
+        </button>
+      </div>
+      <div class="pad pad-fire">
+        <button type="button" class="key key-thrust" data-key="ArrowUp">SPINTA</button>
+        <button type="button" class="key key-fire" data-key="Space">FUOCO</button>
+      </div>
+      <div class="pad pad-hyper">
+        <button type="button" class="key key-small" data-key="ArrowDown">IPERSPAZIO</button>
+      </div>
+      <div class="pad pad-system">
+        <button type="button" class="key key-small" data-key="KeyM">AUDIO</button>
+      </div>
+      <p class="rotate-hint">Gira il telefono: si gioca meglio in orizzontale.</p>
+    </div>
     <script type="module" src="./src/main.ts"></script>
   </body>
 </html>

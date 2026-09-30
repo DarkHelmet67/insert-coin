@@ -19,3 +19,159 @@ body {
   width: min(100vw, calc(100vh * 4 / 3));
   aspect-ratio: 4 / 3;
 }
+
+/* With mouse and keyboard the panel is not needed. */
+.panel {
+  display: none;
+}
+
+/*
+ * Touch screens (phones, tablets): the primary pointer is a finger, so show the control panel.
+ * The media query asks how the page is used, not which browser it is: no user-agent sniffing.
+ * The layout follows the cabinet: rotation on the left, thrust and fire on the right.
+ */
+@media (pointer: coarse) {
+  :root {
+    --side-width: 10rem;
+  }
+
+  html,
+  body {
+    height: 100dvh;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
+  body {
+    box-sizing: border-box;
+    /* Keep the buttons clear of the notch, the rounded corners and the home bar. */
+    padding: env(safe-area-inset-top) max(env(safe-area-inset-right), 0.5rem)
+      max(env(safe-area-inset-bottom), 0.5rem) max(env(safe-area-inset-left), 0.5rem);
+    /* Phone held upright: screen at the top, the panel below it, within reach of the thumbs. */
+    grid-template:
+      'screen screen' auto
+      'hint hint' auto
+      'system hyper' auto
+      'move fire' 1fr
+      / 1fr 1fr;
+    gap: 0.5rem;
+  }
+
+  /*
+   * The named area exists only in this grid: set outside the media query, "screen" would be an
+   * unknown name on desktop and the browser would add implicit columns.
+   */
+  #screen {
+    grid-area: screen;
+    width: min(100%, (100dvh - 14rem) * 4 / 3);
+  }
+
+  /* The pads sit directly in the page grid, so they can move to the sides in landscape. */
+  .panel {
+    display: contents;
+  }
+
+  .pad {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .pad-move {
+    grid-area: move;
+  }
+
+  .pad-fire {
+    grid-area: fire;
+  }
+
+  .pad-hyper {
+    grid-area: hyper;
+  }
+
+  .pad-system {
+    grid-area: system;
+  }
+
+  .rotate-hint {
+    grid-area: hint;
+    margin: 0;
+    color: #8a93a8;
+    font:
+      0.8rem/1.2 system-ui,
+      sans-serif;
+    text-align: center;
+  }
+
+  /* Styled after the cabinet's buttons: round, chunky, with a pressed state. */
+  .key {
+    border: 3px solid #f4f7ff;
+    border-radius: 50%;
+    background: #1a1d24;
+    color: #f4f7ff;
+    font: bold 0.8rem/1 monospace;
+    touch-action: none;
+  }
+
+  .key:active {
+    background: #4a5060;
+    transform: scale(0.95);
+  }
+
+  .key-arrow {
+    width: 4.5rem;
+    height: 4.5rem;
+    font-size: 2rem;
+  }
+
+  .key-thrust {
+    width: 4.5rem;
+    height: 4.5rem;
+  }
+
+  .key-fire {
+    width: 5.5rem;
+    height: 5.5rem;
+    border-color: #ff3030;
+    background: #601010;
+  }
+
+  .key-fire:active {
+    background: #ff3030;
+  }
+
+  .key-small {
+    border-width: 2px;
+    border-radius: 1rem;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.7rem;
+  }
+}
+
+/* Phone held sideways: screen in the middle, rotation on the left, thrust and fire on the right. */
+@media (pointer: coarse) and (orientation: landscape) {
+  body {
+    grid-template:
+      'system screen hyper' auto
+      'move screen fire' 1fr
+      / var(--side-width) 1fr var(--side-width);
+  }
+
+  #screen {
+    width: min(100%, 100dvh * 4 / 3);
+  }
+
+  .pad-fire {
+    flex-direction: column-reverse;
+  }
+
+  .pad-system,
+  .pad-hyper {
+    padding-top: 0.5rem;
+  }
+
+  .rotate-hint {
+    display: none;
+  }
+}

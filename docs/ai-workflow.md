@@ -464,3 +464,16 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 - **M** spegne e riaccende l'audio, come negli altri due giochi.
 
 **Verifica:** test del ritmo del battito (prima nota, alternanza, 52 e 12 passi, silenzio senza asteroidi), della scelta dei suoni per ogni evento e del silenzio nella schermata di attesa. In Chromium, con un contatore sulle funzioni audio del browser: nessun suono nella schermata di attesa, poi spari, battiti e spinta dopo Invio.
+
+## 2026-09-30 · Asteroids, step 8a: comandi touch
+
+**Richiesta:** Luca ha notato che il pannello di Space Invaders, pensato per un monitor verticale e 3 pulsanti, non si adatta ai 5 pulsanti di Asteroids e al suo monitor orizzontale. La sua ipotesi: solo in orizzontale, con i comandi in colonna su un lato.
+
+**Proposta dell'AI, accettata:** partire dal pannello vero del cabinato, che divide i pulsanti fra le due mani (rotazione a sinistra; spinta e fuoco a destra; iperspazio a parte). Su telefono diventa un gamepad per due pollici, perché in Asteroids si ruota e si spara nello stesso momento.
+
+- **In orizzontale** lo schermo 4:3 sta al centro e le due fasce laterali, che resterebbero vuote, ospitano i due gruppi. L'iperspazio è in alto a destra, piccolo, per non premerlo per sbaglio; l'audio in alto a sinistra.
+- **In verticale** (scelto da Luca con la scheda di decisione) gli stessi gruppi stanno sotto lo schermo, con un invito a girare il telefono.
+- **Toccare lo schermo è START:** il canvas ha `data-key="Enter"`, e i pulsanti ascoltano tutta la pagina. Con il mouse, un clic sullo schermo fa lo stesso.
+- **Nessun codice nuovo per l'input:** `createTouchButtons` e `mergeKeyStates` della guida 08 funzionano così come sono; cambiano solo l'HTML dei pulsanti e due disposizioni CSS per l'orientamento.
+
+**Verifica:** in Chromium con un iPhone emulato, in verticale e in orizzontale: un tocco sullo schermo avvia la partita, il pulsante FUOCO spara.
