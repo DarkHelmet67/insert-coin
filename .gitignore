@@ -6,3 +6,6 @@ coverage/
 logs/
 *.log
 _site/
+
+# Private notes for Claude (chat transcripts, local context): never published
+.claude/
