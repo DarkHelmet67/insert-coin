@@ -111,3 +111,5 @@ Tutta la parte geometrica (passi, trasformazioni, font, conversione in pixel) è
 | `fitViewport`, `toPixel`           | dal mondo con y verso l'alto ai pixel del canvas        |
 | `syncScreen(ctx, viewport, ratio)` | canvas grande quanto lo schermo, nitido anche su Retina |
 | `drawBeamLines(ctx, lines, ...)`   | linee luminose con alone, raggruppate per luminosità    |
+
+Prossima guida: [12 · Un terzo gioco: Asteroids](12-terzo-gioco.md).

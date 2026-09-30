@@ -90,6 +90,12 @@ a {
   image-rendering: pixelated;
 }
 
+/* A vector screen has no pixels to keep square: smooth scaling keeps its thin lines visible. */
+.game img.vector {
+  width: 100%;
+  image-rendering: auto;
+}
+
 /* Controls as a two-column list: keys on the left, what they do on the right. */
 .controls {
   display: grid;

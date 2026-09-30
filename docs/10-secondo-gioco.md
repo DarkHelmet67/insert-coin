@@ -109,4 +109,4 @@ pnpm dev:breakout
 
 All'apertura il gioco è in attesa. Clic (o tocco, spazio, Invio) per iniziare, un altro per servire; la racchetta segue il mouse o il dito. Metti `debug: true` in `tuning.config.ts` e guarda la pallina accelerare da sola.
 
-Torna all'[introduzione](00-introduzione.md) o leggi il [diario AI](ai-workflow.md) per vedere come ci si è arrivati, un passo alla volta.
+Torna all'[introduzione](00-introduzione.md) o leggi il [diario AI](ai-workflow.md) per vedere come ci si è arrivati, un passo alla volta. Prossima guida: [11 · Grafica vettoriale](11-grafica-vettoriale.md).

@@ -503,3 +503,16 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 - **Un tocco rapido conta:** l'iperspazio si leggeva come "pulsante tenuto", e un tocco più breve di un passo di gioco andava perso; ora conta anche la pressione avvenuta nel passo.
 
 **Verifica:** test del pulsante tenuto e del tocco rapido; test di `enterFullscreen` ed `enterFullscreenOnTouch` con `touchend`. In Chromium con un telefono Android emulato, con eventi touch veri: un tocco porta a schermo intero, il pulsante sparisce, IPER fa sparire la nave; su desktop il clic non cambia nulla. Il test decisivo resta il telefono vero.
+
+## 2026-09-30 · Asteroids, step 8b: documentazione e versione 1.0.0
+
+**Richiesta:** Luca ha confermato che lo schermo intero ora funziona su Android, sia con il tocco sullo schermo sia con il pulsante, e ha chiesto di chiudere il gioco aggiornando la documentazione.
+
+**Decisioni dell'AI:**
+
+- **Guida 12, [Un terzo gioco: Asteroids](12-terzo-gioco.md),** sullo stesso schema della guida 10: cosa si riusa, cosa si aggiunge, e le idee che valgono anche fuori da questo gioco. Lavorare nelle unità e con l'aritmetica del 6502, il generatore casuale nello stato, i posti fissi con `null`, i tipi con casi al posto dei byte con valori speciali, le funzioni generiche per non perdere pezzi di stato, il battito come stato, il gamepad touch nato dalle prove di Luca.
+- **Il prompt unico** ora descrive tre giochi e dodici fasi. Riporta `@arcade/vector`, lo schermo intero di `@arcade/render`, tutte le regole di Asteroids con i loro numeri e gli errori già incontrati, perché chi lo usa non li ripeta: il `-0` di JavaScript, gli spread che si cancellano, l'articolo sbagliato sull'iperspazio, l'alone che sembrava un contorno, `pointerup` al posto di `touchend`.
+- **Immagini:** uno screenshot della partita per il README, l'anteprima della scheda del sito presa a densità doppia perché le linee sottili restino nitide, e un'icona SVG per il README con il primo asteroide della ROM, la nave e un colpo.
+- **Versioni:** Asteroids 1.0.0, root 1.2.0. Il tag e la release su GitHub li crea Luca, perché l'ambiente dell'AI non può pubblicare tag.
+
+**Verifica:** typecheck, lint, test e build; il sito con le tre schede in Chromium.

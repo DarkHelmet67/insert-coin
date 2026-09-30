@@ -3,6 +3,7 @@
 <p align="center">
   <a href="https://darkhelmet67.github.io/insert-coin/space-invaders/"><img src="docs/images/games/space-invaders.svg" alt="Space Invaders" title="Space Invaders (Taito, 1978): gioca online" width="120"></a>
   <a href="https://darkhelmet67.github.io/insert-coin/breakout/"><img src="docs/images/games/breakout.svg" alt="Breakout" title="Breakout (Atari, 1976): gioca online" width="120"></a>
+  <a href="https://darkhelmet67.github.io/insert-coin/asteroids/"><img src="docs/images/games/asteroids.svg" alt="Asteroids" title="Asteroids (Atari, 1979): gioca online" width="120"></a>
 </p>
 
 <p align="center">
@@ -33,12 +34,13 @@ Il progetto ha due obiettivi:
 
 ![Space Invaders in gioco](docs/images/space-invaders-gameplay.png)
 ![Breakout in gioco](docs/images/breakout-gameplay.png)
+![Asteroids in gioco](docs/images/asteroids-gameplay.png)
 
-| Gioco                                   | Anno originale | Stato          |
-| --------------------------------------- | -------------- | -------------- |
-| [Space Invaders](games/space-invaders/) | 1978, Taito    | Completo       |
-| [Breakout](games/breakout/)             | 1976, Atari    | Completo       |
-| [Asteroids](games/asteroids/)           | 1979, Atari    | In costruzione |
+| Gioco                                   | Anno originale | Stato    |
+| --------------------------------------- | -------------- | -------- |
+| [Space Invaders](games/space-invaders/) | 1978, Taito    | Completo |
+| [Breakout](games/breakout/)             | 1976, Atari    | Completo |
+| [Asteroids](games/asteroids/)           | 1979, Atari    | Completo |
 
 ## Avvio rapido
 
@@ -69,7 +71,7 @@ insert-coin/
 ├── packages/             codice condiviso fra i giochi (@arcade/*)
 │   ├── engine-core/      game loop a timestep fisso, scene/stati
 │   ├── input/            tastiera, pulsanti touch, posizione di mouse e dito
-│   ├── render/           canvas, scaling nitido, sprite bitmap, font pixel, cifre a 7 segmenti
+│   ├── render/           canvas, schermo intero, sprite bitmap, font pixel, cifre a 7 segmenti
 │   ├── vector/           grafica vettoriale: linee luminose, disegni delle ROM, font Atari
 │   ├── audio/            effetti sonori con Web Audio API
 │   ├── collision/        AABB e collisione pixel-perfect
@@ -78,7 +80,7 @@ insert-coin/
 ├── games/
 │   ├── space-invaders/   un gioco = un'app Vite che usa i pacchetti @arcade/*
 │   ├── breakout/         il secondo gioco, costruito sugli stessi pacchetti
-│   └── asteroids/        il terzo gioco, in costruzione: grafica vettoriale
+│   └── asteroids/        il terzo gioco: grafica vettoriale e programma 6502 riprodotto
 ├── site/                 pagina iniziale del sito pubblicato
 ├── scripts/              script di build del sito
 └── .github/workflows/    controlli e deploy su GitHub Pages
@@ -114,6 +116,7 @@ Il codice è scritto per essere letto da persone (_code for humans, not for AI_)
 | [09 · Record salvato](docs/09-record-salvato.md)                                 | Record in localStorage senza errori, fanfara del nuovo record          |
 | [10 · Un secondo gioco: Breakout](docs/10-secondo-gioco.md)                      | Cosa si riusa, cosa si aggiunge, pixel non quadrati, valori incerti    |
 | [11 · Grafica vettoriale](docs/11-grafica-vettoriale.md)                         | Monitor vettoriali, disegni a passi del fascio, linee luminose nitide  |
+| [12 · Un terzo gioco: Asteroids](docs/12-terzo-gioco.md)                         | Aritmetica del 6502, caso nello stato, tipi con casi, gamepad touch    |
 | [Space Invaders · meccaniche](games/space-invaders/docs/meccaniche-originali.md) | Marcia, bombe, bunker, UFO: come funzionava l'originale                |
 | [Breakout · meccaniche](games/breakout/docs/meccaniche-originali.md)             | Mattoni, pallina, suoni: il circuito senza processore                  |
 | [Asteroids · meccaniche](games/asteroids/docs/meccaniche-originali.md)           | Nave, asteroidi, dischi volanti: il programma 6502 letto riga per riga |
