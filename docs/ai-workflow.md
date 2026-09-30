@@ -434,3 +434,18 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 - **Il pulsante START è Invio (o 1),** non lo Spazio: chi sta ancora sparando quando perde l'ultima nave non riparte per sbaglio.
 
 **Verifica:** test di vite, esplosione (192 passi), iperspazio (margini, rischio, 48 passi), ricomparsa, collisioni con la nave, vita extra (anche al giro del contatore), fine partita e record. In Chromium un robot gioca fino al "GAME OVER": il record viene salvato nel browser e resta dopo "Invio".
+
+## 2026-09-30 · Asteroids, step 6: i dischi volanti
+
+**Richiesta:** i dischi volanti, il grande che spara a caso e il piccolo che mira. Dopo il test dello step 5 Luca ha anche spostato i comandi touch allo step 8: con 5 pulsanti il pannello "alla Space Invaders" potrebbe non essere la scelta giusta, e se ne parlerà a gioco da desktop finito, prima della documentazione definitiva.
+
+**Decisioni dell'AI:**
+
+- **La mira del disco piccolo con l'aritmetica a 8 bit** del programma: distanza divisa per 64 in un byte con segno, meno metà della velocità del disco, arcotangente da una tabella di 16 angoli. Una formula moderna con `Math.atan2` sarebbe stata più corta, ma avrebbe cambiato il carattere del disco: l'originale sbaglia in modo riconoscibile, per esempio non "vede" la nave oltre il bordo.
+- **La regola contro chi si nasconde**, riprodotta com'è: chi continua a colpire asteroidi vede i dischi solo verso la fine dell'ondata, chi aspetta in un angolo li vede arrivare a intervalli sempre più brevi.
+- **Un contatore per due lavori:** il programma usa lo stesso timer per l'arrivo del disco e per i suoi colpi. Il remake lo tiene unico, con un commento che lo spiega, invece di inventare due timer che l'originale non ha.
+- **Il disco è un oggetto come gli altri** nello stato del gioco (disco, esplosione o posto libero), con i suoi due posti per i colpi. I colpi di nave e disco nascono dalla stessa funzione, come nel 6502, dove una sola routine serve entrambi.
+- **Funzioni generiche per lo stato:** un primo tentativo ha perso l'esplosione della nave, perché due funzioni restituivano ciascuna "tutto lo stato" e la seconda cancellava il lavoro della prima. Ora le funzioni che aggiornano una parte dello stato sono generiche (`<T extends PlayerState>(state: T) => T`) e si applicano una dopo l'altra; l'ha scoperto un test sulla fine partita.
+- **Un'approssimazione dichiarata:** la posizione fine in altezza del nuovo disco dipende in parte da quella del disco precedente; il remake la considera zero, una differenza di pochi pixel segnata [N] nella guida.
+
+**Verifica:** test di arcotangente (assi, diagonali, confronto con `Math.atan2`), mira ed errore, comparsa, dimensione, rotta, uscita dallo schermo, sparo, punti (200 e 1000), scontri del disco con nave e asteroidi, ondata e ricomparsa che aspettano il disco. In Chromium il disco entra dal bordo dopo circa 8 secondi senza colpire asteroidi.

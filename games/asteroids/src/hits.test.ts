@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { resolveHits, type HitState } from './hits';
 import { seedRandom } from './random';
 import { noRocks, type Rock } from './rocks';
+import { noSaucer, type Saucer } from './saucer';
 import { newShip } from './ship';
 import { noShots, type Shot } from './shots';
 
@@ -24,6 +25,7 @@ const state: HitState = {
   ship: { ...newShip, position: { x: 500, y: 500 } },
   life: { kind: 'flying' },
   lives: 3,
+  ...noSaucer,
 };
 
 describe('resolveHits', () => {
@@ -83,5 +85,58 @@ describe('resolveHits', () => {
       life: { kind: 'hidden', timer: 10, reason: 'jump' } as const,
     };
     expect(resolveHits(hidden)).toEqual(hidden);
+  });
+
+  const SAUCER: Saucer = {
+    kind: 'saucer',
+    position: { x: 6000, y: 1000 },
+    vx: 16,
+    vy: 0,
+    size: 'small',
+  };
+
+  it('gives 1000 points for the small saucer and 200 for the large one', () => {
+    const shotAtSaucer = {
+      ...state,
+      saucer: SAUCER,
+      shots: noShots.map((shot, i) => (i === 3 ? { ...SHOT, position: SAUCER.position } : shot)),
+    };
+    const small = resolveHits(shotAtSaucer);
+    expect(small.saucer).toMatchObject({ kind: 'explosion', status: 0xa0 });
+    expect(small.score).toBe(1000);
+    expect(resolveHits({ ...shotAtSaucer, saucer: { ...SAUCER, size: 'large' } }).score).toBe(200);
+  });
+
+  it("lets the saucer's shots destroy the ship", () => {
+    const saucerShot = { ...SHOT, position: state.ship.position };
+    const next = resolveHits({ ...state, shots: noShots, saucerShots: [null, saucerShot] });
+    expect(next.life.kind).toBe('exploding');
+    expect(next.saucerShots).toEqual([null, null]);
+  });
+
+  it("breaks rocks with the saucer's shots, for no points", () => {
+    const next = resolveHits({ ...state, shots: noShots, saucerShots: [SHOT, null] });
+    expect(next.rocks[26]?.kind).toBe('explosion');
+    expect(next.score).toBe(0);
+    expect(next.rockHitTimer).toBe(0x50);
+  });
+
+  it('gives the saucer points when it runs into the ship, and none when it hits a rock', () => {
+    const crash = resolveHits({
+      ...state,
+      shots: noShots,
+      saucer: { ...SAUCER, position: state.ship.position },
+    });
+    expect(crash.life.kind).toBe('exploding');
+    expect(crash.saucer?.kind).toBe('explosion');
+    expect(crash.score).toBe(1000);
+    const intoRock = resolveHits({
+      ...state,
+      shots: noShots,
+      saucer: { ...SAUCER, position: ROCK.position },
+    });
+    expect(intoRock.saucer?.kind).toBe('explosion');
+    expect(intoRock.rocks[26]?.kind).toBe('explosion');
+    expect(intoRock.score).toBe(0);
   });
 });

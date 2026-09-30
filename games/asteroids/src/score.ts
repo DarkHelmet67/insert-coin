@@ -1,7 +1,14 @@
 import type { RockSize } from './rocks';
+import type { SaucerSize } from './saucer';
 
 /** Points for a rock [P $7659]: the smaller, the more it is worth. */
 export const ROCK_POINTS: Readonly<Record<RockSize, number>> = { 4: 20, 2: 50, 1: 100 };
+
+/**
+ * Points for a saucer [P $6B79-$6B8B]: 200 for the large one, 1000 for the small one. Many
+ * sources say 990, reading the `$99` in the code, but a carry adds the missing 10 points.
+ */
+export const SAUCER_POINTS: Readonly<Record<SaucerSize, number>> = { large: 200, small: 1000 };
 
 /**
  * Adds points to a score. The cabinet counts up to 99,990 and then starts again from 0

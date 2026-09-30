@@ -118,6 +118,23 @@ Un dettaglio del 6502: per le distanze negative il programma inverte i bit invec
   - Il **grande** spara in una direzione a caso.
   - Il **piccolo** mira alla nave, con un errore a caso di ±16 unità di direzione (±22 gradi), che si dimezza a ±8 da **35.000 punti**.
 - **Il disegno** [R `$1252`]: lo stesso disegno a due scale, 40 unità del DVG il grande e 20 il piccolo.
+- **Scontri** [P `$6B0F`]: il disco che urta un asteroide esplode insieme a lui, senza punti per nessuno; i suoi colpi distruggono gli asteroidi, anche questi senza punti. Se invece urta la nave, esplodono entrambi e **il giocatore guadagna i punti del disco**. Finché il disco è sullo schermo, anche mentre esplode, la nuova ondata aspetta e una nave distrutta non ricompare [P `$7172`, `$705D`].
+
+### Come mira il disco piccolo
+
+Il 6502 non ha divisioni né trigonometria, e la mira è un piccolo capolavoro di economia [P `$6C65`–`$6CC2`, `$76F0`]:
+
+1. la distanza dalla nave, su ciascun asse, viene divisa per 64 e tenuta in un byte con segno, **meno metà della velocità del disco**; non tiene conto del bordo che si richiude, quindi il disco spara "dalla parte lunga" quando la nave è vicina ma oltre il bordo;
+2. la direzione si ricava dal rapporto fra i due assi, calcolato in sedicesimi con quattro sottrazioni, e da una tabella di 16 angoli per un ottavo di giro; gli altri sette ottavi si ottengono per simmetria;
+3. all'angolo si aggiunge l'errore a caso.
+
+Un solo contatore fa due lavori [P `$02F7`]: senza disco conta il tempo al prossimo disco, con il disco conta il tempo al prossimo colpo. Il remake lo tiene così, con un nome che dice entrambe le cose.
+
+L'altezza del disco viene da un solo numero casuale: i 5 bit alti scelgono il blocco di 256 unità, i 3 bassi la posizione fine. Il programma ci mescola anche una parte della posizione del disco precedente; il remake la considera zero [N], una differenza di pochi pixel.
+
+Dopo la partita i dischi continuano ad arrivare e a sparare da soli, come nella schermata di attesa del cabinato.
+
+Codice: [`saucer.ts`](../src/saucer.ts) (comparsa, rotta, sparo), [`saucer-aim.ts`](../src/saucer-aim.ts) (la mira), [`saucer-turn.ts`](../src/saucer-turn.ts) (quando agisce), [`hits.ts`](../src/hits.ts) (scontri e punti), [`render-saucer.ts`](../src/render-saucer.ts).
 
 ## 6. L'iperspazio
 

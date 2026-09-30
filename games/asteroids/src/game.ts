@@ -16,6 +16,8 @@ import {
   updateRockSlot,
   type RockSlot,
 } from './rocks';
+import { moveSaucer, noSaucer, WAVE_SAUCER_DELAY, type SaucerState } from './saucer';
+import { saucerTurn } from './saucer-turn';
 import { newShip, updateShip, type Ship } from './ship';
 import { fireShot, noShots, updateShot, type ShotSlots } from './shots';
 import { tuning } from './tuning.config';
@@ -24,7 +26,7 @@ import { tuning } from './tuning.config';
 export type Phase = 'playing' | 'over';
 
 /** Everything that changes during a game. */
-export interface GameState extends PlayerState {
+export interface GameState extends PlayerState, SaucerState {
   /**
    * Frame counter, 0-255 like the program's fast timer [P $5C]: many rules happen "every
    * second frame" or "4 frames on, 4 off" and read its bits.
@@ -71,14 +73,29 @@ export const createGameState = (rng: Rng, hiScore = 0, ship: Ship = newShip): Ga
   waveTimer: WAVE_PAUSE,
   delay: START_DELAY,
   phase: 'playing',
+  ...noSaucer,
 });
 
-/** A new wave when the pause is over and nothing is left on screen [P $6883, $7168]. */
+/** Most rocks that still let an early saucer in [P $717A]. */
+const MAX_SAUCER_ROCK_LIMIT = 10;
+
+/**
+ * A new wave when the pause is over and nothing is left on screen, saucer included
+ * [P $6883, $7168-$71D7]. Each wave lets the saucers come early with one more rock left, and
+ * gives the player a longer pause before the first one.
+ */
 const startWaveIfDue = (state: GameState): GameState => {
-  if (state.waveTimer > 0 || rockCount(state.rocks) > 0) return state;
+  if (state.waveTimer > 0 || rockCount(state.rocks) > 0 || state.saucer !== null) return state;
   const waveSize = nextWaveSize(state.waveSize);
   const { slots, rng } = spawnWave(waveSize, state.rng);
-  return { ...state, rocks: slots, rng, waveSize };
+  return {
+    ...state,
+    rocks: slots,
+    rng,
+    waveSize,
+    saucerTimer: WAVE_SAUCER_DELAY,
+    saucerRockLimit: Math.min(MAX_SAUCER_ROCK_LIMIT, state.saucerRockLimit + 1),
+  };
 };
 
 /** Fire and hyperspace, which work only while the ship is flying [P $6CD7, $6E74]. */
@@ -94,13 +111,15 @@ const useButtons = (state: GameState, controls: Controls): GameState => {
 const steerShip = (state: GameState, controls: Controls): GameState =>
   state.life.kind === 'flying'
     ? { ...state, ship: updateShip(state.ship, controls, state.frame) }
-    : { ...state, ...updateHidden(state, state.rocks) };
+    : updateHidden(state, state.rocks, state.saucer);
 
-/** The player's part of a frame: nothing during "PLAYER 1" or after the game is over. */
+/** The player's part of a frame: nothing after the game is over. */
 const playerTurn = (state: GameState, controls: Controls): GameState =>
-  state.phase === 'playing' && state.delay === 0
-    ? steerShip(useButtons(state, controls), controls)
-    : state;
+  state.phase === 'playing' ? steerShip(useButtons(state, controls), controls) : state;
+
+/** The player and the saucer act only after "PLAYER 1" [P $684E]; the rocks move anyway. */
+const actorsTurn = (state: GameState, controls: Controls): GameState =>
+  state.delay === 0 ? saucerTurn(playerTurn(state, controls)) : state;
 
 /**
  * Moves every object and runs the explosions [P $6F57]; when the last rock explosion ends, the
@@ -110,9 +129,9 @@ const moveObjects = (state: GameState): GameState => {
   const rocks = state.rocks.map(updateRockSlot);
   const waveEnded = rockCount(state.rocks) > 0 && rockCount(rocks) === 0;
   return {
-    ...state,
-    ...updateExplosion(state, state.frame),
+    ...updateExplosion(moveSaucer(state), state.frame),
     shots: state.shots.map((shot) => updateShot(shot, state.frame)),
+    saucerShots: state.saucerShots.map((shot) => updateShot(shot, state.frame)),
     rocks,
     waveTimer: waveEnded ? WAVE_PAUSE : state.waveTimer,
   };
@@ -129,13 +148,13 @@ const endIfNoLives = (state: GameState): GameState =>
 
 /**
  * One frame of the game, in the order of the program's main loop [P $6809-$6883]: new wave,
- * the player's buttons and ship, moves, collisions, then the generator and the timers.
+ * the player's buttons and ship, the saucer, moves, collisions, then the generator and the timers.
  */
 export const updateGame = (state: GameState, controls: Controls): GameState => {
   if (state.phase === 'over' && controls.start) {
     return createGameState(state.rng, state.hiScore, state.ship);
   }
-  const moved = moveObjects(playerTurn(startWaveIfDue(state), controls));
+  const moved = moveObjects(actorsTurn(startWaveIfDue(state), controls));
   const hit = endIfNoLives({ ...moved, ...resolveHits(moved) });
   return {
     ...hit,

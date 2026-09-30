@@ -1,6 +1,7 @@
 import type { Point } from './position';
 import { nextRandom, nextRandomAfter, type Rng } from './random';
 import { EXPLOSION_START, rockCount, type RockSlot } from './rocks';
+import type { SaucerSlot } from './saucer';
 import { SHIP_START, type Ship } from './ship';
 
 /**
@@ -129,10 +130,13 @@ const closeOnAxis = (a: number, b: number): boolean => {
 
 /**
  * Whether the middle of the screen is clear for a new ship [P $7139]: no rock (even exploding)
- * in a square of about 256 × 256 screen units around the starting point.
+ * or saucer in a square of about 256 × 256 screen units around the starting point.
  */
-export const spawnIsClear = (rocks: readonly RockSlot[], at: Point = SHIP_START): boolean =>
-  !rocks.some(
+export const spawnIsClear = (
+  objects: readonly (RockSlot | SaucerSlot)[],
+  at: Point = SHIP_START,
+): boolean =>
+  !objects.some(
     (slot) =>
       slot !== null && closeOnAxis(slot.position.x, at.x) && closeOnAxis(slot.position.y, at.y),
   );
@@ -140,15 +144,23 @@ export const spawnIsClear = (rocks: readonly RockSlot[], at: Point = SHIP_START)
 /**
  * One frame of a hidden ship [P $703F-$7085]: the timer runs down, then the ship comes back.
  * After a jump it appears where it landed, with no check; after a fatal jump it explodes there;
- * after an explosion it waits, a frame at a time, until the middle of the screen is clear.
+ * after an explosion it waits, a frame at a time, until the middle of the screen is clear, and
+ * never comes back while a saucer is on screen: it checks again two frames later [P $705D].
  */
-export const updateHidden = (player: PlayerState, rocks: readonly RockSlot[]): PlayerState => {
+export const updateHidden = <T extends PlayerState>(
+  player: T,
+  rocks: readonly RockSlot[],
+  saucer: SaucerSlot = null,
+): T => {
   const { life } = player;
   if (life.kind !== 'hidden') return player;
   if (life.timer > 1) return { ...player, life: { ...life, timer: life.timer - 1 } };
-  if (life.reason === 'fatal-jump') return killShip(player);
-  if (life.reason === 'respawn' && !spawnIsClear(rocks, player.ship.position)) {
-    return { ...player, life: { ...life, timer: 1 } };
+  if (life.reason === 'fatal-jump') return { ...player, ...killShip(player) };
+  if (life.reason === 'respawn') {
+    if (!spawnIsClear([...rocks, saucer], player.ship.position)) {
+      return { ...player, life: { ...life, timer: 1 } };
+    }
+    if (saucer !== null) return { ...player, life: { ...life, timer: 2 } };
   }
   return { ...player, life: { kind: 'flying' } };
 };
@@ -158,7 +170,7 @@ export const updateHidden = (player: PlayerState, rocks: readonly RockSlot[]): P
  * in all. At the end the ship goes back to the start, still, but keeps its direction: the
  * program never resets it [P $71E8].
  */
-export const updateExplosion = (player: PlayerState, frame: number): PlayerState => {
+export const updateExplosion = <T extends PlayerState>(player: T, frame: number): T => {
   const { life } = player;
   if (life.kind !== 'exploding') return player;
   const status = life.status + (frame & 1);

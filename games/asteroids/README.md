@@ -2,7 +2,7 @@
 
 Remake di _Asteroids_ (Atari, 1979) su HTML5 Canvas, costruito sui pacchetti condivisi `@arcade/*`.
 
-Stato: **in costruzione**. C'è la partita completa senza dischi volanti: nave, colpi, asteroidi che si dividono, ondate da 4 a 11, tre vite con una in più ogni 10.000 punti, iperspazio, fine partita e record salvato nel browser. Mancano i dischi volanti e i suoni. Il gioco arriva un passo alla volta, e ogni passo è pubblicato online.
+Stato: **in costruzione**. La partita è completa: nave, colpi, asteroidi che si dividono, ondate da 4 a 11, dischi volanti grandi e piccoli, tre vite con una in più ogni 10.000 punti, iperspazio, fine partita e record salvato nel browser. Mancano i suoni, la schermata di attesa e i comandi touch. Il gioco arriva un passo alla volta, e ogni passo è pubblicato online.
 
 | Comando                  | Azione        |
 | ------------------------ | ------------- |

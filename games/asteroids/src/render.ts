@@ -5,6 +5,7 @@ import { hudLines } from './hud';
 import { VIEWPORT } from './playfield';
 import { rocksLines, shotsLines } from './render-rocks';
 import { messageLines } from './messages';
+import { saucerLines } from './render-saucer';
 import { playerLines } from './render-ship';
 import { tuning } from './tuning.config';
 
@@ -13,7 +14,9 @@ export const gameLines = (state: GameState): readonly BeamLine[] => [
   ...hudLines(state.score, state.hiScore, state.lives),
   ...messageLines(state),
   ...rocksLines(state.rocks),
+  ...saucerLines(state.saucer),
   ...shotsLines(state.shots),
+  ...shotsLines(state.saucerShots),
   ...playerLines(state.ship, state.life, state.frame),
 ];
 

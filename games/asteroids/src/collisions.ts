@@ -1,5 +1,6 @@
 import type { Point } from './position';
 import type { RockSize } from './rocks';
+import type { SaucerSize } from './saucer';
 
 /**
  * The collision test of the 6502 program [P $6A13-$6A8F]: no circles, no rectangles, but an
@@ -37,3 +38,9 @@ export const collides = (target: Point, attacker: Point, radius: number): boolea
   if (dx === undefined || dy === undefined) return false;
   return dx <= radius && dy <= radius && dx + dy < radius + (radius >> 1);
 };
+
+/** Size of a saucer when something hits it [P $6A55]: like a small or a medium rock. */
+export const SAUCER_SIZE: Readonly<Record<SaucerSize, number>> = { small: 0x2a, large: 0x48 };
+
+/** What a saucer adds to the size of what it runs into [P $6A6B]. */
+export const SAUCER_REACH: Readonly<Record<SaucerSize, number>> = { small: 19, large: 37 };

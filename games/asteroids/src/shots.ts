@@ -12,7 +12,7 @@ export interface Shot {
   readonly life: number;
 }
 
-/** The ship's four shot slots [P $6CF0]: `null` is a free slot. */
+/** Shot slots, four for the ship and two for the saucer [P $6CF0]: `null` is a free slot. */
 export type ShotSlots = readonly (Shot | null)[];
 
 /** Four free slots. */
@@ -27,36 +27,55 @@ export const MAX_SHOT_SPEED = 111;
 /** Half a signed value, rounded down, like the 6502's `CMP #$80; ROR` [P $6D0B]. */
 export const halfSigned = (value: number): number => Math.floor(value / 2);
 
-/** The ship's speed on one axis plus half the sine or cosine, within the limit. */
-export const shotAxisSpeed = (shipVelocity: number, trig: number): number =>
-  Math.max(
-    -MAX_SHOT_SPEED,
-    Math.min(MAX_SHOT_SPEED, unitsPerFrame(shipVelocity) + halfSigned(trig)),
-  );
+/** The shooter's speed on one axis (units per frame) plus half the sine or cosine, within the limit. */
+export const shotAxisSpeed = (speed: number, trig: number): number =>
+  Math.max(-MAX_SHOT_SPEED, Math.min(MAX_SHOT_SPEED, speed + halfSigned(trig)));
+
+/** Where a shot comes from: the ship or the saucer, with its velocity in units per frame. */
+export interface Shooter {
+  readonly position: Point;
+  readonly vx: number;
+  readonly vy: number;
+  /** 0-255 for a full turn, like the ship's direction. */
+  readonly direction: number;
+}
 
 /**
- * A new shot leaving the nose of the ship [P $6D04-$6D87]: it starts 3/4 of the half cosine
- * ahead of the ship's center and flies at the ship's speed plus the half cosine and sine.
+ * A new shot [P $6D04-$6D87]: it starts 3/4 of the half cosine ahead of the shooter's center
+ * and flies at the shooter's speed plus the half cosine and sine. The ship and the saucer use
+ * the same routine.
  */
-export const newShot = (ship: Ship): Shot => {
-  const cx = halfSigned(cosine(ship.direction));
-  const cy = halfSigned(sine(ship.direction));
+export const shotFrom = (shooter: Shooter): Shot => {
+  const cx = halfSigned(cosine(shooter.direction));
+  const cy = halfSigned(sine(shooter.direction));
   return {
-    position: movePoint(ship.position, cx + halfSigned(cx), cy + halfSigned(cy)),
-    vx: shotAxisSpeed(ship.vx, cosine(ship.direction)),
-    vy: shotAxisSpeed(ship.vy, sine(ship.direction)),
+    position: movePoint(shooter.position, cx + halfSigned(cx), cy + halfSigned(cy)),
+    vx: shotAxisSpeed(shooter.vx, cosine(shooter.direction)),
+    vy: shotAxisSpeed(shooter.vy, sine(shooter.direction)),
     life: SHOT_LIFE,
   };
 };
 
+/** A new shot leaving the nose of the ship: only the high byte of its velocity counts. */
+export const newShot = (ship: Ship): Shot =>
+  shotFrom({
+    position: ship.position,
+    vx: unitsPerFrame(ship.vx),
+    vy: unitsPerFrame(ship.vy),
+    direction: ship.direction,
+  });
+
 /** Index of the free slot the program uses: it searches from the last one down [P $6CF0]. */
 export const freeShotSlot = (shots: ShotSlots): number => shots.lastIndexOf(null);
 
-/** Fires a shot if a slot is free; with four shots flying, nothing happens. */
-export const fireShot = (shots: ShotSlots, ship: Ship): ShotSlots => {
+/** Puts a shot in the last free slot; with every slot taken, nothing happens. */
+export const addShot = (shots: ShotSlots, shot: Shot): ShotSlots => {
   const slot = freeShotSlot(shots);
-  return slot < 0 ? shots : shots.map((shot, index) => (index === slot ? newShot(ship) : shot));
+  return slot < 0 ? shots : shots.map((old, index) => (index === slot ? shot : old));
 };
+
+/** Fires a shot from the ship if a slot is free; with four shots flying, nothing happens. */
+export const fireShot = (shots: ShotSlots, ship: Ship): ShotSlots => addShot(shots, newShot(ship));
 
 /**
  * One frame of a shot: it moves (wrapping around the edges), and every 4 frames it loses a tick

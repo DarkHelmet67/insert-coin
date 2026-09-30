@@ -116,13 +116,18 @@ export const spawnWave = (
   );
 
 /**
- * One frame of a slot: a rock moves and wraps; an explosion grows by about 1/16 of what it has
- * left until it passes $FF, then frees the slot [P $6F62].
+ * One frame of an explosion of a rock or a saucer: it grows by about 1/16 of what it has left
+ * until it passes $FF, then it is over and frees the slot [P $6F62].
  */
+export const growExplosion = (explosion: RockExplosion): RockExplosion | null => {
+  const status = explosion.status + ((256 - explosion.status) >> 4) + 1;
+  return status > 0xff ? null : { ...explosion, status };
+};
+
+/** One frame of a slot: a rock moves and wraps, an explosion grows. */
 export const updateRockSlot = (slot: RockSlot): RockSlot => {
   if (!slot) return null;
   if (slot.kind === 'rock')
     return { ...slot, position: movePoint(slot.position, slot.vx, slot.vy) };
-  const status = slot.status + ((256 - slot.status) >> 4) + 1;
-  return status > 0xff ? null : { ...slot, status };
+  return growExplosion(slot);
 };

@@ -91,4 +91,26 @@ describe('updateGame', () => {
     const lastShip = { ...flying, ...killShip({ ...flying, lives: 1 }), score: 100, hiScore: 500 };
     expect(run(lastShip, 200).hiScore).toBe(500);
   });
+
+  it('waits for the saucer to go before a new wave or a new ship', () => {
+    const saucer = {
+      kind: 'saucer',
+      position: { x: 100, y: 100 },
+      vx: 16,
+      vy: 0,
+      size: 'large',
+    } as const;
+    const empty = { ...flying, waveTimer: 0, saucer };
+    expect(rockCount(updateGame(empty, noControls).rocks)).toBe(0);
+    const respawning = { ...empty, life: { kind: 'hidden', timer: 1, reason: 'respawn' } as const };
+    expect(run(respawning, 5).life.kind).toBe('hidden');
+    expect(run({ ...respawning, saucer: null }, 1).life.kind).toBe('flying');
+  });
+
+  it('sends a saucer when its countdown runs out while the ship flies', () => {
+    const due = { ...flying, frame: 4, saucerTimer: 1, rocks: start.rocks };
+    expect(updateGame(due, noControls).saucer?.kind).toBe('saucer');
+    const shipHidden = { ...due, life: { kind: 'hidden', timer: 40, reason: 'jump' } as const };
+    expect(updateGame(shipHidden, noControls).saucer).toBeNull();
+  });
 });
