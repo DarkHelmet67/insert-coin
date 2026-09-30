@@ -71,6 +71,8 @@ Comandi del remake [N]: frecce ← → (o A e D) per ruotare, freccia ↑ (o W) 
 - **Anche i colpi si richiudono sui bordi**, e possono colpire **la propria nave** [P `$69FD`]: un colpo sparato in avanti a tutta velocità può fare il giro dello schermo e tornare indietro.
 - **Il disegno** [P `$7384`]: un punto alla luminosità massima.
 
+Nel remake i quattro posti dei colpi sono un array con `null` per il posto libero, riempito dall'ultimo al primo come nel programma. Codice: [`shots.ts`](../src/shots.ts); il tasto che spara in [`controls.ts`](../src/controls.ts).
+
 ## 4. Gli asteroidi
 
 - **Quattro forme** [R `$11E6`, `$11FE`, `$121A`, `$1234`], scelte a caso, e **tre grandezze** dallo stesso disegno [P `$7018`]: grande a scala piena (circa 64 unità del DVG di diametro), medio alla metà, piccolo a un quarto.
@@ -79,6 +81,12 @@ Comandi del remake [N]: frecce ← → (o A e D) per ruotare, freccia ↑ (o W) 
 - **Divisione** [P `$75EC`]: colpito, un grande diventa **due medi**, un medio **due piccoli**, un piccolo sparisce. Ogni figlio parte dalla velocità del genitore più un valore a caso fra −16 e +15 su ciascun asse, sempre fra 6 e 31: i pezzi piccoli tendono a essere più veloci.
 - **Punti** [P `$7659`]: grande **20**, medio **50**, piccolo **100**. Solo la nave e i suoi colpi fanno punti: se un asteroide lo distrugge il disco volante, nessuno guadagna niente.
 - **Pausa fra le ondate** [P `$6F87`]: quando esplode l'ultimo asteroide passano **127 passi** (circa 2 secondi) prima della nuova ondata, e la nuova ondata aspetta anche che il disco volante se ne vada.
+
+### Il caso
+
+Forme, velocità, punti di partenza e divisioni vengono dal generatore di numeri casuali del programma [P `$77B5`]: un registro a scorrimento di 16 bit che avanza una volta per passo e una volta per ogni scelta. Il remake lo copia com'è e lo tiene nello stato del gioco, così la logica resta pura e un test può ripetere una partita identica partendo dallo stesso seme. Anche l'ordine delle estrazioni è quello del 6502: per ogni figlio di un asteroide diviso si estraggono la forma, la velocità orizzontale e, quattro estrazioni dopo, quella verticale [P `$75EC`]. I due figli occupano i posti liberi più alti, cercati dal 27° in giù [P `$745A`]; il primo si sposta un po' in orizzontale e il secondo in verticale, perché non nascano uno sopra l'altro.
+
+Codice: [`random.ts`](../src/random.ts), [`rocks.ts`](../src/rocks.ts) (ondate e movimento), [`split.ts`](../src/split.ts) (divisione), [`score.ts`](../src/score.ts), [`game.ts`](../src/game.ts) (l'ordine delle cose in ogni passo); il disegno in [`render-rocks.ts`](../src/render-rocks.ts).
 
 ### Le collisioni
 
@@ -95,7 +103,9 @@ I valori sono in unità di posizione, sulla metà della distanza: per esempio un
 
 Chi può colpire chi [P `$69F0`]: i colpi della nave colpiscono asteroidi, disco volante e **la nave stessa**; i colpi del disco colpiscono nave e asteroidi; il disco si scontra con nave e asteroidi; la nave con gli asteroidi. I colpi non si colpiscono fra loro.
 
-Una curiosità: il controllo **non tiene conto del bordo che si richiude** [P]. Due oggetti che si toccano a cavallo del bordo, uno a destra e uno a sinistra, non si scontrano. Il remake farà lo stesso.
+Una curiosità: il controllo **non tiene conto del bordo che si richiude** [P]. Due oggetti che si toccano a cavallo del bordo, uno a destra e uno a sinistra, non si scontrano. Il remake fa lo stesso.
+
+Un dettaglio del 6502: per le distanze negative il programma inverte i bit invece di cambiare segno [P `$6A2E`], e la metà di −266 diventa 132, come quella di +264. Il risultato è un ottagono leggermente asimmetrico, un'unità più largo da un lato: il remake lo riproduce, e un test lo verifica. Codice: [`collisions.ts`](../src/collisions.ts), [`hits.ts`](../src/hits.ts).
 
 ## 5. I dischi volanti
 

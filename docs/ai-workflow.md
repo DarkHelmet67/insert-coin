@@ -402,3 +402,19 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 - **Comandi:** frecce ← → o A/D per ruotare, ↑ o W per la spinta. La schermata di prova dello step 2 è stata tolta: resta nella storia di git.
 
 **Verifica:** test di tabella, seno e coseno, rotazione, spinta (velocità massima in circa 2 secondi), attrito (dimezza in circa 3 secondi), bordi. In Chromium un robot tiene premute le frecce: la nave ruota, la fiamma tremola, la nave esce in alto e rientra dal basso.
+
+## 2026-09-30 · Asteroids, step 4: asteroidi e colpi
+
+**Richiesta:** i colpi della nave e gli asteroidi, con divisione, punteggio e ondate.
+
+**Decisioni dell'AI:**
+
+- **Il generatore casuale del 6502** (`$77B5`), copiato bit per bit e tenuto nello stato del gioco invece di `Math.random()`. La logica resta pura, e un test può rigiocare la stessa partita dallo stesso seme. Anche l'ordine delle estrazioni è quello originale: per dividere un asteroide il programma estrae sei numeri per figlio e ne usa solo alcuni, e il remake fa lo stesso.
+- **I 27 posti degli asteroidi e i 4 dei colpi** come array di lunghezza fissa con `null` per il posto libero, riempiti nello stesso ordine del programma. Così si comportano come l'originale anche i casi limite, per esempio un asteroide colpito quando tutti i posti sono occupati, che sparisce senza dividersi.
+- **L'esplosione occupa il posto dell'asteroide** per circa 37 passi, come nel 6502: la nuova ondata parte solo quando anche l'ultima nuvola si è spenta, più 127 passi di pausa.
+- **Le collisioni a ottagono** con la stessa aritmetica a 8 bit, compresa una piccola asimmetria: per le distanze negative il programma inverte i bit invece di cambiare segno, e l'ottagono risulta un'unità più largo da un lato.
+- **Il disegno dell'esplosione:** la scala cresce per potenze di due (da 1/32 alla grandezza piena) e la ROM ha quattro versioni della nuvola per riempire i salti. Il remake usa gli stessi due numeri che usava il programma, presi dal contatore dell'esplosione.
+
+**Due test sbagliati, non il codice:** un test si aspettava che due colpi nello stesso punto ne fermassero solo uno. Invece il secondo colpisce uno dei due figli appena nati nello stesso punto, come nel cabinato: è corretto il codice, ed è stato corretto il test. Un altro controllava la distanza massima dal lato "sbagliato" dell'ottagono asimmetrico.
+
+**Verifica:** test di generatore, colpi, ondate, divisione, collisioni, punti e disegno. In Chromium un robot spara ruotando: gli asteroidi si dividono, le nuvole si allargano, il punteggio sale.

@@ -1,0 +1,33 @@
+import type { Point } from './position';
+import type { RockSize } from './rocks';
+
+/**
+ * The collision test of the 6502 program [P $6A13-$6A8F]: no circles, no rectangles, but an
+ * octagon, cheap to compute with 8-bit numbers. Distances are halved to fit in a byte; objects
+ * touching across the edge of the playfield do not collide, as in the original.
+ */
+
+/**
+ * Half the distance between two coordinates as the program computes it, or `undefined` when they
+ * are 512 units or more apart. Going left or down it comes out one smaller, because the program
+ * inverts the bits instead of negating [P $6A2E].
+ */
+export const halfDistance = (from: number, to: number): number | undefined => {
+  const d = to - from;
+  if (d >= 512 || d < -512) return undefined;
+  return d >= 0 ? d >> 1 : (-d - 1) >> 1;
+};
+
+/** Size of the object being hit [P $6A55]: small rocks and the ship 42, medium 72, large 132. */
+export const TARGET_SIZE: Readonly<Record<RockSize, number>> = { 1: 0x2a, 2: 0x48, 4: 0x84 };
+
+/**
+ * Whether an object at `attacker` touches one at `target`: both half distances within `radius`,
+ * and their sum within one and a half times it (the octagon's cut corners).
+ */
+export const collides = (target: Point, attacker: Point, radius: number): boolean => {
+  const dx = halfDistance(attacker.x, target.x);
+  const dy = halfDistance(attacker.y, target.y);
+  if (dx === undefined || dy === undefined) return false;
+  return dx <= radius && dy <= radius && dx + dy < radius + (radius >> 1);
+};

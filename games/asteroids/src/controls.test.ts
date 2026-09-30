@@ -1,4 +1,4 @@
-import { applyKeyEvent, emptyKeyState, type KeyCode } from '@arcade/input';
+import { applyKeyEvent, clearEdges, emptyKeyState, type KeyCode } from '@arcade/input';
 import { describe, expect, it } from 'vitest';
 import { noControls, readControls } from './controls';
 
@@ -20,5 +20,11 @@ describe('readControls', () => {
   it('thrusts with the up arrow or W', () => {
     expect(readControls(pressedKeys('ArrowUp')).thrust).toBe(true);
     expect(readControls(pressedKeys('KeyW')).thrust).toBe(true);
+  });
+
+  it('fires on a new press of space only', () => {
+    const pressed = pressedKeys('Space');
+    expect(readControls(pressed).fire).toBe(true);
+    expect(readControls(clearEdges(pressed)).fire).toBe(false);
   });
 });

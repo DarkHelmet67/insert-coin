@@ -3,12 +3,15 @@ import { drawBeamLines, syncScreen, type BeamLine } from '@arcade/vector';
 import type { GameState } from './game';
 import { hudLines } from './hud';
 import { VIEWPORT } from './playfield';
+import { rocksLines, shotsLines } from './render-rocks';
 import { shipLines } from './render-ship';
 import { tuning } from './tuning.config';
 
-/** Everything on screen in one frame, as beam lines. Score and lives are fixed for now. */
+/** Everything on screen in one frame, as beam lines. Record and lives are fixed for now. */
 export const gameLines = (state: GameState): readonly BeamLine[] => [
-  ...hudLines(0, 0, 3),
+  ...hudLines(state.score, 0, 3),
+  ...rocksLines(state.rocks),
+  ...shotsLines(state.shots),
   ...shipLines(state.ship, state.frame),
 ];
 

@@ -2,12 +2,13 @@
 
 Remake di _Asteroids_ (Atari, 1979) su HTML5 Canvas, costruito sui pacchetti condivisi `@arcade/*`.
 
-Stato: **in costruzione**. Per ora c'è la nave, sola nello spazio: ruota, spinge con l'inerzia dell'originale e attraversa i bordi. Il gioco arriva un passo alla volta, e ogni passo è pubblicato online.
+Stato: **in costruzione**. Ci sono la nave, i colpi e gli asteroidi: le ondate crescono da 4 a 11 asteroidi, che si dividono quando li colpisci, e il punteggio sale. Mancano ancora vite, iperspazio, dischi volanti e suoni. Il gioco arriva un passo alla volta, e ogni passo è pubblicato online.
 
 | Comando                  | Azione        |
 | ------------------------ | ------------- |
 | Frecce ← → o **A**/**D** | Ruota la nave |
 | Freccia ↑ o **W**        | Spinta        |
+| **Spazio**               | Spara         |
 
 I valori incerti (per ora l'aspetto del fascio: spessore, alone, luminosità) sono tutti in [`src/tuning.config.ts`](src/tuning.config.ts).
 
