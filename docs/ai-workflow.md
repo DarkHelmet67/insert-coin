@@ -477,3 +477,16 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 - **Nessun codice nuovo per l'input:** `createTouchButtons` e `mergeKeyStates` della guida 08 funzionano così come sono; cambiano solo l'HTML dei pulsanti e due disposizioni CSS per l'orientamento.
 
 **Verifica:** in Chromium con un iPhone emulato, in verticale e in orizzontale: un tocco sullo schermo avvia la partita, il pulsante FUOCO spara.
+
+## 2026-09-30 · Asteroids, step 8a bis: schermo intero sui telefoni
+
+**Richiesta:** Luca ha provato i comandi touch su smartphone: funzionano, ma in orizzontale le barre del browser occupano circa il 25% dell'altezza, e in verticale il gioco è piccolo.
+
+**Decisioni dell'AI:**
+
+- **Schermo intero al primo tocco,** con la Fullscreen API, in un aiuto condiviso di `@arcade/render` (`enterFullscreenOnTouch`), così potranno usarlo anche gli altri giochi. Il browser la concede solo dopo un gesto, e per il dito il gesto è il distacco (`pointerup`), come già scoperto per l'audio. Il mouse non la attiva.
+- **Niente blocco dell'orientamento:** Luca ha scelto di poter giocare anche in verticale.
+- **iPhone:** Safari non offre lo schermo intero alle pagine. La soluzione standard è l'app web: manifesto con `display: fullscreen`, icona (la nave del ROM) e meta `apple-mobile-web-app-*`; aggiunto alla schermata Home, il gioco si apre senza barre.
+- **Verticale:** lo schermo è 4:3 e il telefono è stretto, quindi il limite è la larghezza, non l'altezza. Tolti i margini laterali, lo schermo ora è largo quanto il telefono; di più non si può senza ruotare l'immagine, e per quello c'è l'orizzontale.
+
+**Verifica:** test di `wantsFullscreen` ed `enterFullscreenOnTouch` con un documento finto. In Chromium con un telefono Android emulato un tocco porta la pagina a schermo intero; un clic del mouse su desktop no. Manifesto e icone vengono pubblicati accanto al gioco.

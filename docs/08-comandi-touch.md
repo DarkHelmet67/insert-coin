@@ -101,6 +101,19 @@ Altri accorgimenti: `touch-action: none` (niente zoom col doppio tocco né scrol
 
 I browser concedono l'audio solo dopo un gesto dell'utente. Con il dito, però, il gesto valido è **il distacco** (`pointerup`, `touchend`), non il tocco: se `createAudio` ascoltasse solo `pointerdown`, sui telefoni il gioco resterebbe muto. Per questo gli eventi di sblocco ora sono `keydown`, `pointerdown`, `pointerup` e `touchend`.
 
+## 8. Schermo intero (aggiunto con Asteroids)
+
+Su un telefono in orizzontale le barre del browser si mangiano circa un quarto dell'altezza. `enterFullscreenOnTouch()` di `@arcade/render` (`packages/render/src/fullscreen.ts`) chiede lo schermo intero al primo tocco, con la [Fullscreen API](https://developer.mozilla.org/it/docs/Web/API/Fullscreen_API):
+
+- come per l'audio, il browser la concede solo dopo un gesto, e per il dito il gesto valido è `pointerup`;
+- il mouse non conta: su desktop la finestra resta com'è;
+- se il giocatore esce dallo schermo intero, il tocco successivo lo riporta;
+- la decisione è una funzione pura, `wantsFullscreen(tipoPuntatore, documento)`, testata con un documento finto.
+
+**Safari su iPhone non ha la Fullscreen API per le pagine.** L'unico modo è **Condividi → Aggiungi alla schermata Home**: per questo la pagina ha un manifesto (`public/manifest.webmanifest`, `display: fullscreen`), un'icona e i meta `apple-mobile-web-app-*`. Aperto dall'icona, il gioco parte senza barre.
+
+In verticale lo schermo 4:3 è largo quanto il telefono: lì il limite è la larghezza, e l'unico guadagno possibile è togliere i margini laterali.
+
 ## Verifica
 
 ```bash

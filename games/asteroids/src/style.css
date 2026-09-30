@@ -44,9 +44,12 @@ body {
 
   body {
     box-sizing: border-box;
-    /* Keep the buttons clear of the notch, the rounded corners and the home bar. */
-    padding: env(safe-area-inset-top) max(env(safe-area-inset-right), 0.5rem)
-      max(env(safe-area-inset-bottom), 0.5rem) max(env(safe-area-inset-left), 0.5rem);
+    /*
+     * Keep the buttons clear of the notch, the rounded corners and the home bar. Upright, the
+     * width of the phone is what limits the 4:3 screen, so the sides get no margin at all.
+     */
+    padding: env(safe-area-inset-top) env(safe-area-inset-right)
+      max(env(safe-area-inset-bottom), 0.5rem) env(safe-area-inset-left);
     /* Phone held upright: screen at the top, the panel below it, within reach of the thumbs. */
     grid-template:
       'screen screen' auto
@@ -152,6 +155,8 @@ body {
 /* Phone held sideways: screen in the middle, rotation on the left, thrust and fire on the right. */
 @media (pointer: coarse) and (orientation: landscape) {
   body {
+    padding: env(safe-area-inset-top) max(env(safe-area-inset-right), 0.5rem)
+      max(env(safe-area-inset-bottom), 0.5rem) max(env(safe-area-inset-left), 0.5rem);
     grid-template:
       'system screen hyper' auto
       'move screen fire' 1fr

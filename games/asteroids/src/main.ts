@@ -2,7 +2,7 @@ import './style.css';
 import { createAudio } from '@arcade/audio';
 import { createGameLoop } from '@arcade/engine-core';
 import { boundKeys, createKeyboard, createTouchButtons, mergeKeyStates } from '@arcade/input';
-import { getCanvasContext } from '@arcade/render';
+import { enterFullscreenOnTouch, getCanvasContext } from '@arcade/render';
 import { createHiScoreStore } from '@arcade/storage';
 import { bindings, readControls } from './controls';
 import { createAttractState, updateGame, type GameState } from './game';
@@ -15,6 +15,8 @@ const ctx = getCanvasContext('#screen');
 const keyboard = createKeyboard(window, { captureKeys: boundKeys(bindings) });
 // The whole page listens to fingers: the panel's buttons and the screen itself (START).
 const touch = createTouchButtons(document.body);
+// On phones and tablets the first touch hides the browser's bars, where the browser allows it.
+enterFullscreenOnTouch();
 const hiScores = createHiScoreStore('insert-coin/asteroids/hi-score');
 const audio = createAudio();
 

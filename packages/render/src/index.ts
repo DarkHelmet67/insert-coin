@@ -8,6 +8,7 @@ export {
   type FontDefinition,
   type PixelFont,
 } from './font';
+export { enterFullscreenOnTouch, wantsFullscreen, type FullscreenDocument } from './fullscreen';
 export { getCanvasContext } from './screen';
 export { isPixelOn, parseSprite, PIXEL_ON, spriteRuns, type PixelRun, type Sprite } from './sprite';
 export {

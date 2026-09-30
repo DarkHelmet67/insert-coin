@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Canvas setup, crisp pixel scaling, bitmap sprites and pixel font.",
+  "description": "Canvas setup, fullscreen on touch, crisp pixel scaling, bitmap sprites and pixel font.",
   "exports": {
     ".": "./src/index.ts"
   }

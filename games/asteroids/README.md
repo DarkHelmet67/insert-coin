@@ -2,7 +2,7 @@
 
 Remake di _Asteroids_ (Atari, 1979) su HTML5 Canvas, costruito sui pacchetti condivisi `@arcade/*`.
 
-Stato: **in costruzione**. La partita è completa: nave, colpi, asteroidi che si dividono, ondate da 4 a 11, dischi volanti grandi e piccoli, tre vite con una in più ogni 10.000 punti, iperspazio, fine partita e record salvato nel browser. Ci sono anche i suoni del cabinato e la schermata di attesa. Su telefoni e tablet compare il pannello del cabinato: in orizzontale ai lati dello schermo, in verticale sotto; toccare lo schermo equivale a START. Il gioco arriva un passo alla volta, e ogni passo è pubblicato online.
+Stato: **in costruzione**. La partita è completa: nave, colpi, asteroidi che si dividono, ondate da 4 a 11, dischi volanti grandi e piccoli, tre vite con una in più ogni 10.000 punti, iperspazio, fine partita e record salvato nel browser. Ci sono anche i suoni del cabinato e la schermata di attesa. Su telefoni e tablet compare il pannello del cabinato: in orizzontale ai lati dello schermo, in verticale sotto; toccare lo schermo equivale a START e porta il gioco a schermo intero (su iPhone serve "Aggiungi alla schermata Home"). Il gioco arriva un passo alla volta, e ogni passo è pubblicato online.
 
 | Comando                  | Azione        |
 | ------------------------ | ------------- |
