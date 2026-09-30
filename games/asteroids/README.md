@@ -2,15 +2,17 @@
 
 Remake di _Asteroids_ (Atari, 1979) su HTML5 Canvas, costruito sui pacchetti condivisi `@arcade/*`.
 
-Stato: **in costruzione**. Ci sono la nave, i colpi e gli asteroidi: le ondate crescono da 4 a 11 asteroidi, che si dividono quando li colpisci, e il punteggio sale. Mancano ancora vite, iperspazio, dischi volanti e suoni. Il gioco arriva un passo alla volta, e ogni passo è pubblicato online.
+Stato: **in costruzione**. C'è la partita completa senza dischi volanti: nave, colpi, asteroidi che si dividono, ondate da 4 a 11, tre vite con una in più ogni 10.000 punti, iperspazio, fine partita e record salvato nel browser. Mancano i dischi volanti e i suoni. Il gioco arriva un passo alla volta, e ogni passo è pubblicato online.
 
 | Comando                  | Azione        |
 | ------------------------ | ------------- |
 | Frecce ← → o **A**/**D** | Ruota la nave |
 | Freccia ↑ o **W**        | Spinta        |
 | **Spazio**               | Spara         |
+| Freccia ↓ o **S**        | Iperspazio    |
+| **Invio** o **1**        | Nuova partita |
 
-I valori incerti (per ora l'aspetto del fascio: spessore, alone, luminosità) sono tutti in [`src/tuning.config.ts`](src/tuning.config.ts).
+I valori incerti (l'aspetto del fascio, il numero di vite iniziali) sono tutti in [`src/tuning.config.ts`](src/tuning.config.ts).
 
 ```bash
 pnpm dev:asteroids  # dalla root del monorepo

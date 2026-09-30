@@ -47,6 +47,9 @@ importers:
       '@arcade/render':
         specifier: workspace:*
         version: link:../../packages/render
+      '@arcade/storage':
+        specifier: workspace:*
+        version: link:../../packages/storage
       '@arcade/vector':
         specifier: workspace:*
         version: link:../../packages/vector

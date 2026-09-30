@@ -418,3 +418,19 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 **Due test sbagliati, non il codice:** un test si aspettava che due colpi nello stesso punto ne fermassero solo uno. Invece il secondo colpisce uno dei due figli appena nati nello stesso punto, come nel cabinato: è corretto il codice, ed è stato corretto il test. Un altro controllava la distanza massima dal lato "sbagliato" dell'ottagono asimmetrico.
 
 **Verifica:** test di generatore, colpi, ondate, divisione, collisioni, punti e disegno. In Chromium un robot spara ruotando: gli asteroidi si dividono, le nuvole si allargano, il punteggio sale.
+
+## 2026-09-30 · Asteroids, step 5: vite, iperspazio e record
+
+**Richiesta:** vite, esplosione della nave, ricomparsa sicura, iperspazio e fine partita. Luca ha chiesto anche il record salvato, previsto allo step 7: anticipato qui, insieme alla fine partita.
+
+**Decisioni dell'AI:**
+
+- **La vita della nave come tipo con tre casi:** in volo, nascosta, in esplosione. Il 6502 usa un byte di stato e un timer, con valori speciali difficili da leggere; il remake dà un nome a ogni caso, e la nave nascosta ricorda il motivo (attende di ricomparire, salto riuscito, salto fatale). TypeScript obbliga a gestirli tutti.
+- **Il rischio dell'iperspazio come nel programma,** non come negli articoli: la nave esplode più spesso quando restano **pochi** asteroidi. Un sito di riferimento dice il contrario, ma le istruzioni a `$6EBF` non lasciano dubbi; un test prova tutti i 65.536 stati del generatore casuale e trova esattamente il 25% con 4 asteroidi e zero con 19.
+- **Chi colpisce chi, nell'ordine del programma:** ogni colpo cerca prima la nave e poi gli asteroidi, e alla fine la nave cerca gli asteroidi. Così un colpo che fa il giro dello schermo può distruggere la propria nave, e la nave che si schianta contro un asteroide lo divide e ne guadagna i punti, come sul cabinato.
+- **Ricomparsa sicura** con lo stesso controllo "grossolano" del 6502: blocchi di 256 unità attorno al centro, compresi gli asteroidi che stanno esplodendo.
+- **Il record cambia solo a fine partita:** sul cabinato il numero al centro è il primo della tabella dei record, che si aggiorna quando la partita finisce. In Breakout il record cresceva durante la partita; qui si segue l'originale.
+- **"PLAYER 1" all'inizio, "GAME OVER", "PUSH START":** le scritte del programma, nelle sue posizioni. La direzione della nave non si azzera fra una partita e l'altra, una curiosità dell'originale che il remake conserva.
+- **Il pulsante START è Invio (o 1),** non lo Spazio: chi sta ancora sparando quando perde l'ultima nave non riparte per sbaglio.
+
+**Verifica:** test di vite, esplosione (192 passi), iperspazio (margini, rischio, 48 passi), ricomparsa, collisioni con la nave, vita extra (anche al giro del contatore), fine partita e record. In Chromium un robot gioca fino al "GAME OVER": il record viene salvato nel browser e resta dopo "Invio".

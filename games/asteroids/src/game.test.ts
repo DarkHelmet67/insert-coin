@@ -1,10 +1,20 @@
 import { describe, expect, it } from 'vitest';
 import { noControls, type Controls } from './controls';
-import { createGameState, updateGame, WAVE_PAUSE, type GameState } from './game';
+import {
+  createGameState,
+  showsGameOver,
+  START_DELAY,
+  updateGame,
+  WAVE_PAUSE,
+  type GameState,
+} from './game';
+import { killShip } from './player';
 import { seedRandom } from './random';
 import { rockCount } from './rocks';
 
 const start = createGameState(seedRandom(1979));
+/** The game once "PLAYER 1" is over and the ship is flying. */
+const flying: GameState = { ...start, delay: 0, life: { kind: 'flying' } };
 
 /** Runs `frames` frames with the same controls. */
 const run = (state: GameState, frames: number, controls: Controls = noControls): GameState =>
@@ -20,7 +30,19 @@ describe('updateGame', () => {
   });
 
   it('turns the ship with the controls', () => {
-    expect(updateGame(start, { ...noControls, turn: 1 }).ship.direction).toBe(3);
+    expect(updateGame(flying, { ...noControls, turn: 1 }).ship.direction).toBe(3);
+  });
+
+  it('shows "PLAYER 1" first, then the ship appears', () => {
+    expect(run(start, START_DELAY - 1, { ...noControls, turn: 1 }).ship.direction).toBe(0);
+    expect(run(start, START_DELAY).life.kind).toBe('hidden');
+    expect(run(start, START_DELAY + 1).life.kind).toBe('flying');
+  });
+
+  it('jumps into hyperspace while the button is held', () => {
+    const jumped = updateGame(flying, { ...noControls, hyperspace: true });
+    expect(jumped.life.kind).toBe('hidden');
+    expect(jumped.ship.position).not.toEqual(flying.ship.position);
   });
 
   it('brings the first wave of 4 rocks after the pause', () => {
@@ -31,8 +53,9 @@ describe('updateGame', () => {
   });
 
   it('fires one shot per press', () => {
-    const fired = updateGame(start, { ...noControls, fire: true });
+    const fired = updateGame(flying, { ...noControls, fire: true });
     expect(fired.shots.filter(Boolean)).toHaveLength(1);
+    expect(updateGame(start, { ...noControls, fire: true }).shots.filter(Boolean)).toHaveLength(0);
   });
 
   it('starts the pause when the last explosion ends, then a bigger wave', () => {
@@ -48,5 +71,24 @@ describe('updateGame', () => {
     expect(rockCount(cleared.rocks)).toBe(0);
     expect(cleared.waveTimer).toBe(WAVE_PAUSE - 1);
     expect(rockCount(run(cleared, WAVE_PAUSE).rocks)).toBe(6);
+  });
+
+  it('ends the game after the last explosion, keeps the record and restarts with start', () => {
+    const lastShip = { ...flying, ...killShip({ ...flying, lives: 1 }), score: 1230, hiScore: 500 };
+    expect(showsGameOver(lastShip)).toBe(true);
+    const exploding = run(lastShip, 150);
+    expect(exploding.phase).toBe('playing');
+    const over = run(lastShip, 200);
+    expect(over.phase).toBe('over');
+    expect(over.hiScore).toBe(1230);
+    expect(run(over, 10, { ...noControls, fire: true }).phase).toBe('over');
+    const again = updateGame(over, { ...noControls, start: true });
+    expect(again).toMatchObject({ phase: 'playing', score: 0, lives: 3, hiScore: 1230 });
+    expect(again.delay).toBe(START_DELAY);
+  });
+
+  it('keeps a lower record when the game ends', () => {
+    const lastShip = { ...flying, ...killShip({ ...flying, lives: 1 }), score: 100, hiScore: 500 };
+    expect(run(lastShip, 200).hiScore).toBe(500);
   });
 });

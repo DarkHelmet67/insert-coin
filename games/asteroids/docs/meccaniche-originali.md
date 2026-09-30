@@ -55,7 +55,7 @@ Due contatori scandiscono il tempo [P `$6828`]: uno veloce, che avanza a ogni pa
 - **Fiamma** [P `$753B`]: con la spinta dietro la nave compare la fiamma, accesa 4 passi e spenta 4, e per questo tremola.
 - **Il disegno** [R `$126E`–`$14D8`]: la ROM contiene 17 disegni della nave, uno ogni 4 unità di direzione per un quarto di giro, ognuno seguito dalla sua fiamma; gli altri tre quarti si ottengono cambiando il segno delle coordinate. La nave è lunga circa 24 unità del DVG. La rotazione a scatti dell'originale nasce da qui: 64 disegni per 256 direzioni.
 - **Partenza** [P `$71E8`]: la nave nasce ferma, in (4192, 3168), un po' a destra e in alto rispetto al centro esatto (4096, 3072).
-- **Ripartenza sicura** [P `$7139`]: dopo la morte la nave riappare solo quando un quadrato di circa 256 × 256 unità del DVG attorno al centro è libero da asteroidi, e **mai mentre c'è un disco volante** sullo schermo.
+- **Ripartenza sicura** [P `$7139`]: dopo la morte la nave riappare solo quando un quadrato di circa 256 × 256 unità del DVG attorno al centro è libero da asteroidi, e **mai mentre c'è un disco volante** sullo schermo. Prima del controllo passano 17 passi dalla fine dell'esplosione [P `$6992`]; se il centro è occupato, il programma riprova al passo successivo.
 
 Nel remake la nave usa la stessa aritmetica intera del programma: la velocità sta in 256esimi di unità di posizione, come nei due byte per asse del 6502, e la nave si sposta solo della parte intera. Seno e coseno vengono dalla stessa tabella di 65 valori. Codice: [`ship.ts`](../src/ship.ts), [`trig.ts`](../src/trig.ts), [`position.ts`](../src/position.ts); il disegno scelto per ogni direzione in [`ship-shapes.ts`](../src/ship-shapes.ts).
 
@@ -122,7 +122,11 @@ Un dettaglio del 6502: per le distanze negative il programma inverte i bit invec
 ## 6. L'iperspazio
 
 - **Il salto** [P `$6E74`]: la nave sparisce per **48 passi** (0,8 secondi), si ferma e riappare in un punto a caso, lontano dai bordi. **Nessun controllo di sicurezza**: può riapparire sopra un asteroide.
-- **Il rischio** [P `$6EB3`]: su 32 casi, 24 vanno sempre bene. Negli altri 8 il programma calcola un numero fra 4 e 18 e **fa esplodere la nave se è maggiore o uguale al numero di asteroidi** sullo schermo. Quindi il rischio è più alto **con pochi asteroidi**: 25% quando ne restano 4 o meno, zero da 19 in su. Un articolo di 6502disassembly.com dice il contrario; il remake segue il programma.
+- **Il rischio** [P `$6EB3`]: su 32 casi, 24 vanno sempre bene. Negli altri 8 il programma calcola un numero fra 4 e 18 e **fa esplodere la nave se è maggiore o uguale al numero di asteroidi** sullo schermo. Quindi il rischio è più alto **con pochi asteroidi**: 25% quando ne restano 4 o meno, zero da 19 in su. Un articolo di 6502disassembly.com dice il contrario; il remake segue il programma, e un test lo verifica su tutti i 65.536 stati possibili del generatore casuale.
+- **Il pulsante si tiene premuto** [P `$6E82`]: a differenza del fuoco non serve rilasciarlo, e tenendolo premuto la nave salta di nuovo appena riappare.
+- **Dove si atterra** [P `$6E97`]: il programma cambia solo il byte alto delle due coordinate, cioè sceglie un blocco di 256 × 256 unità di posizione e lascia la nave nello stesso punto dentro il blocco.
+
+Nel remake la vita della nave (in volo, nascosta, in esplosione) è un tipo con tre casi, e la nave nascosta ricorda perché lo è: attende di ricomparire, è in un salto riuscito o in un salto fatale. Codice: [`player.ts`](../src/player.ts).
 
 ## 7. Vite, punteggio, fine partita
 
@@ -131,13 +135,18 @@ Un dettaglio del 6502: per le distanze negative il programma inverte i bit invec
 - **Punteggio** [P]: quattro cifre in memoria più uno zero finale fisso, quindi il massimo è **99.990**; poi riparte da zero. I giocatori più bravi dell'epoca facevano il giro del contatore.
 - **Inizio partita** [P `$68F0`]: per circa 2 secondi compare "PLAYER 1" e la nave non si muove, mentre gli asteroidi sì.
 - **Fine partita** [P `$6970`]: quando le navi finiscono (e i colpi ancora in volo si sono spenti) compare "GAME OVER".
-- **Record**: l'originale ha una tabella dei 10 migliori con le iniziali, tenuta in RAM e persa allo spegnimento. Il remake salverà nel browser il record, come negli altri due giochi [N].
+- **Punti anche morendo** [P `$75EC`]: se la nave si schianta contro un asteroide, l'asteroide si divide e i suoi punti si contano lo stesso. Un colpo che torna indietro e distrugge la propria nave, invece, non vale niente.
+- **Record**: l'originale ha una tabella dei 10 migliori con le iniziali, tenuta in RAM e persa allo spegnimento; il record in alto al centro è il primo della tabella, quindi cambia solo a fine partita. Il remake fa lo stesso e lo salva nel browser, come negli altri due giochi [N]. Dopo la partita "PUSH START" lampeggia: il pulsante START del cabinato è **Invio** (o **1**) sulla tastiera [N].
 - **Due giocatori** [P]: a turno a ogni vita persa. Il remake parte con un giocatore [N], come Breakout.
+
+Codice: [`game.ts`](../src/game.ts) (inizio e fine partita), [`score.ts`](../src/score.ts) (vita extra), [`hits.ts`](../src/hits.ts) (chi colpisce chi), [`messages.ts`](../src/messages.ts) (le scritte); il record è salvato da [`main.ts`](../src/main.ts) con `@arcade/storage`.
 
 ## 8. Le esplosioni
 
 - **Asteroidi e dischi** [R `$10F8`, P `$6F62`]: una nuvola di 10 punti che si allarga per circa 37 passi (0,6 secondi). La ROM ha quattro versioni dello stesso disegno, sempre più larghe, per riempire i salti di scala per potenze di due: un trucco elegante per ottenere un'espansione fluida.
 - **La nave** [R `$10E0`, P `$7465`]: si rompe in **6 segmenti** che volano via ognuno con la sua velocità [R `$10EC`] e spariscono uno alla volta; l'esplosione dura 192 passi (circa 3 secondi).
+
+Codice: nuvola degli asteroidi in [`render-rocks.ts`](../src/render-rocks.ts), pezzi della nave in [`render-debris.ts`](../src/render-debris.ts).
 
 ## 9. I suoni
 

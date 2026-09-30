@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { newShip } from './ship';
-import { flameVisible, shipLines } from './render-ship';
+import { flameVisible, playerLines, shipLines } from './render-ship';
 
 describe('flameVisible', () => {
   it('flickers 4 frames on and 4 off while thrusting', () => {
@@ -27,5 +27,13 @@ describe('shipLines', () => {
     // Start point $1060 / 8 = 524: the ship is about 24 units long around it.
     expect(Math.min(...xs)).toBeGreaterThan(510);
     expect(Math.max(...xs)).toBeLessThan(540);
+  });
+});
+
+describe('playerLines', () => {
+  it('draws the ship, its pieces or nothing', () => {
+    expect(playerLines(newShip, { kind: 'flying' }, 0)).toHaveLength(5);
+    expect(playerLines(newShip, { kind: 'exploding', status: 0xa0, age: 0 }, 0)).toHaveLength(6);
+    expect(playerLines(newShip, { kind: 'hidden', timer: 3, reason: 'jump' }, 0)).toEqual([]);
   });
 });

@@ -4,15 +4,17 @@ import type { GameState } from './game';
 import { hudLines } from './hud';
 import { VIEWPORT } from './playfield';
 import { rocksLines, shotsLines } from './render-rocks';
-import { shipLines } from './render-ship';
+import { messageLines } from './messages';
+import { playerLines } from './render-ship';
 import { tuning } from './tuning.config';
 
-/** Everything on screen in one frame, as beam lines. Record and lives are fixed for now. */
+/** Everything on screen in one frame, as beam lines. */
 export const gameLines = (state: GameState): readonly BeamLine[] => [
-  ...hudLines(state.score, 0, 3),
+  ...hudLines(state.score, state.hiScore, state.lives),
+  ...messageLines(state),
   ...rocksLines(state.rocks),
   ...shotsLines(state.shots),
-  ...shipLines(state.ship, state.frame),
+  ...playerLines(state.ship, state.life, state.frame),
 ];
 
 /**

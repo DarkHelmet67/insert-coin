@@ -21,6 +21,12 @@ export const halfDistance = (from: number, to: number): number | undefined => {
 /** Size of the object being hit [P $6A55]: small rocks and the ship 42, medium 72, large 132. */
 export const TARGET_SIZE: Readonly<Record<RockSize, number>> = { 1: 0x2a, 2: 0x48, 4: 0x84 };
 
+/** Size of the ship when something hits it [P $6A55]: the same as a small rock. */
+export const SHIP_SIZE = 0x2a;
+
+/** What the ship adds to the size of a rock it runs into [P $6A67]; a shot adds nothing. */
+export const SHIP_REACH = 0x1c;
+
 /**
  * Whether an object at `attacker` touches one at `target`: both half distances within `radius`,
  * and their sum within one and a half times it (the octagon's cut corners).

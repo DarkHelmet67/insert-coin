@@ -27,4 +27,15 @@ describe('readControls', () => {
     expect(readControls(pressed).fire).toBe(true);
     expect(readControls(clearEdges(pressed)).fire).toBe(false);
   });
+
+  it('jumps while the down arrow or S is held', () => {
+    expect(readControls(pressedKeys('ArrowDown')).hyperspace).toBe(true);
+    expect(readControls(clearEdges(pressedKeys('KeyS'))).hyperspace).toBe(true);
+  });
+
+  it('starts on a new press of Enter or 1', () => {
+    expect(readControls(pressedKeys('Enter')).start).toBe(true);
+    expect(readControls(pressedKeys('Digit1')).start).toBe(true);
+    expect(readControls(clearEdges(pressedKeys('Enter'))).start).toBe(false);
+  });
 });

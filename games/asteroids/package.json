@@ -13,6 +13,7 @@
     "@arcade/engine-core": "workspace:*",
     "@arcade/input": "workspace:*",
     "@arcade/render": "workspace:*",
+    "@arcade/storage": "workspace:*",
     "@arcade/vector": "workspace:*"
   }
 }

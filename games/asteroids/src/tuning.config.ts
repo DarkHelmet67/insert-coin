@@ -4,6 +4,7 @@
  * - [P] read in the 6502 program, with its address;
  * - [R] read in the vector ROM;
  * - [H] from the hardware, through MAME;
+ * - [W] from written sources (manuals, articles);
  * - [N] our choice, where the sources say nothing or the browser asks for something else.
  * See docs/meccaniche-originali.md for the details. Values that are certain (the ROM drawings,
  * their sizes) live in shapes.ts and ship-shapes.ts instead.
@@ -15,6 +16,12 @@ export const tuning = {
    * common 60 Hz screens.
    */
   framesPerSecond: 60,
+
+  /**
+   * Ships at the start of a game. The cabinet had a DIP switch for 3 or 4 [P $6ED8]; the
+   * remake uses 3 [N], the usual arcade setting.
+   */
+  startingLives: 3,
 
   /**
    * How the beam looks on the monitor [N]: the real tube cannot be measured from the sources.
