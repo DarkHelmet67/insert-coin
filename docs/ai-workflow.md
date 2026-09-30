@@ -354,3 +354,19 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 **Richiesta:** il titolo INSERT COIN in stile pixel, con i punti separati, come in un'immagine di esempio.
 
 **Implementato:** `site/title.svg`, generato dal font 5×7 di `@arcade/render`: ogni pixel acceso è un quadrato rosso separato dagli altri da uno spazio sottile, come un display a matrice di punti. Il titolo usa così lo stesso alfabeto dei giochi. Sotto c'è una riga di punti bianchi, come nell'esempio. L'SVG si ridimensiona senza sfocare, anche sul telefono.
+
+## 2026-09-30 · Asteroids, step 1: meccaniche originali e pagina vuota
+
+**Scelta del terzo gioco.** L'AI proponeva Asteroids, con Galaxian, Pac-Man e Frogger come alternative. L'autore ha scelto Asteroids, uno dei suoi giochi preferiti, con un'osservazione: un motore per la **grafica vettoriale** apre la strada a molti altri giochi (Battlezone, Tempest, Star Wars, Lunar Lander...). Per questo il disegno vettoriale nascerà come pacchetto condiviso, `@arcade/vector`, non dentro il gioco.
+
+**Metodo:** lo stesso di Breakout. Una checklist di otto step (meccaniche, motore vettoriale, nave, asteroidi e colpi, vite e iperspazio, dischi volanti, suoni e record, documentazione); dopo ogni step l'autore prova nel browser, anche gli altri due giochi.
+
+**Ricerca.** Asteroids, a differenza di Breakout, ha un processore (un 6502) e il suo programma è stato disassemblato e commentato. Un sotto-agente AI ha letto tutto il listato, la ROM vettoriale con i disegni e i modelli dei circuiti sonori di MAME, annotando ogni valore con l'indirizzo dell'istruzione da cui viene. Scoperte non ovvie: la direzione della nave non si azzera mai; i propri colpi possono distruggere la nave; le collisioni ignorano il bordo che si richiude; l'iperspazio è più rischioso **con pochi** asteroidi (un articolo online dice il contrario: vince il codice); il disco piccolo vale 1000 punti anche se i commenti del disassemblato dicono 990; una regola "anti-attesa" fa arrivare i dischi volanti più spesso a chi non spara agli asteroidi.
+
+**Decisioni tecniche:**
+
+- **Le unità del programma originale:** posizioni da 0 a 8191 × 6143, velocità in unità per passo. Ogni numero del disassemblato si copia senza conversioni; solo il disegno divide per 8 per arrivare alle 1024 × 768 unità dello schermo vettoriale.
+- **La y del DVG cresce verso l'alto**, quella del canvas verso il basso: una sola funzione, `toCanvasY`, fa la conversione.
+- **60 passi al secondo** invece dei 61,5 dell'originale, come in Breakout: un passo per ogni immagine degli schermi a 60 Hz.
+
+**Step 1:** pagina `games/asteroids` con "COMING SOON" e, come anteprima, il primo asteroide della ROM (`$11E6`) disegnato con le sue coordinate originali; terza scheda nel sito, comando `pnpm dev:asteroids`, guida [delle meccaniche](../games/asteroids/docs/meccaniche-originali.md). Verifica: build del sito con tre giochi; in Chromium Asteroids su desktop e telefono, Space Invaders e Breakout invariati, pagina iniziale con le tre schede.
