@@ -2,7 +2,12 @@
 
 Remake di _Asteroids_ (Atari, 1979) su HTML5 Canvas, costruito sui pacchetti condivisi `@arcade/*`.
 
-Stato: **in costruzione**. Per ora la pagina mostra, fermi, tutti i disegni della ROM originale (asteroidi, nave, dischi volanti, esplosioni, scritte) tracciati dal motore vettoriale `@arcade/vector`; il gioco arriva un passo alla volta, e ogni passo è pubblicato online.
+Stato: **in costruzione**. Per ora c'è la nave, sola nello spazio: ruota, spinge con l'inerzia dell'originale e attraversa i bordi. Il gioco arriva un passo alla volta, e ogni passo è pubblicato online.
+
+| Comando                  | Azione        |
+| ------------------------ | ------------- |
+| Frecce ← → o **A**/**D** | Ruota la nave |
+| Freccia ↑ o **W**        | Spinta        |
 
 I valori incerti (per ora l'aspetto del fascio: spessore, alone, luminosità) sono tutti in [`src/tuning.config.ts`](src/tuning.config.ts).
 

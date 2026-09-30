@@ -388,3 +388,17 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 **Una scoperta nei dati:** alcuni disegni ruotati della nave non si chiudono esattamente, mancano l'angolo di partenza di un'unità. Atari li calcolò e arrotondò a mano; il remake li tiene così.
 
 **Step 2:** schermata ferma con tutti i disegni: asteroidi nelle tre grandezze, i due dischi, 16 navi in cerchio, una nave con fiamma e colpi, le schegge e i pezzi della nave, punteggio, record, vite, "PUSH START" e "© 1979 ATARI INC". Nuova [guida 11](11-grafica-vettoriale.md). Verifica: test del pacchetto e del gioco; screenshot in Chromium a densità 1, 2 e 3 e su telefono emulato.
+
+## 2026-09-30 · Asteroids, step 3: la nave
+
+**Richiesta:** la nave che ruota, spinge con inerzia e attraversa i bordi.
+
+**Decisioni dell'AI:**
+
+- **La stessa aritmetica del 6502,** non una fisica "moderna" con numeri decimali. La velocità sta in 256esimi di unità, come nei due byte per asse del programma; la spinta aggiunge due volte il seno o il coseno della tabella originale; l'attrito toglie il doppio del byte alto (circa 1/128); la velocità massima è limitata asse per asse. La nave si sposta solo della parte intera, e lo schermo mostra la posizione divisa per 8. Così l'inerzia è quella del cabinato, anche nei dettagli: in diagonale la nave va più veloce, e una nave lenta scivola a lungo prima di fermarsi.
+- **Spinta e attrito un passo sì e uno no,** come nel programma; la rotazione a ogni passo.
+- **Il contatore dei passi da 0 a 255** nello stato del gioco, come il "fast timer" del 6502: la fiamma lo usa già (4 passi accesa, 4 spenta) e lo useranno molte regole dei prossimi step.
+- **Un dettaglio di JavaScript:** il seno di 128 veniva `-0`, un numero che il 6502 non conosce e che fa fallire i confronti nei test. Corretto con `0 - valore`.
+- **Comandi:** frecce ← → o A/D per ruotare, ↑ o W per la spinta. La schermata di prova dello step 2 è stata tolta: resta nella storia di git.
+
+**Verifica:** test di tabella, seno e coseno, rotazione, spinta (velocità massima in circa 2 secondi), attrito (dimezza in circa 3 secondi), bordi. In Chromium un robot tiene premute le frecce: la nave ruota, la fiamma tremola, la nave esce in alto e rientra dal basso.

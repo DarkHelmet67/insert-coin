@@ -57,6 +57,10 @@ Due contatori scandiscono il tempo [P `$6828`]: uno veloce, che avanza a ogni pa
 - **Partenza** [P `$71E8`]: la nave nasce ferma, in (4192, 3168), un po' a destra e in alto rispetto al centro esatto (4096, 3072).
 - **Ripartenza sicura** [P `$7139`]: dopo la morte la nave riappare solo quando un quadrato di circa 256 × 256 unità del DVG attorno al centro è libero da asteroidi, e **mai mentre c'è un disco volante** sullo schermo.
 
+Nel remake la nave usa la stessa aritmetica intera del programma: la velocità sta in 256esimi di unità di posizione, come nei due byte per asse del 6502, e la nave si sposta solo della parte intera. Seno e coseno vengono dalla stessa tabella di 65 valori. Codice: [`ship.ts`](../src/ship.ts), [`trig.ts`](../src/trig.ts), [`position.ts`](../src/position.ts); il disegno scelto per ogni direzione in [`ship-shapes.ts`](../src/ship-shapes.ts).
+
+Comandi del remake [N]: frecce ← → (o A e D) per ruotare, freccia ↑ (o W) per la spinta. Con entrambe le frecce premute la nave gira a sinistra, perché il programma controlla prima quel pulsante [P `$7086`].
+
 ## 3. I colpi della nave
 
 - **Al massimo 4 colpi** sullo schermo [P `$6CEC`].
