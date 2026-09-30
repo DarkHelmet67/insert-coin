@@ -23,7 +23,7 @@ Il codice di questo progetto sarà letto da persone: **code for humans, not for 
 
 ### Eccezioni consentite
 
-- **Il canvas è lo schermo.** Disegnare significa modificare il contesto 2D (`ctx.fillStyle = ...`): è l'unica mutazione ammessa, e il contesto si chiama sempre `ctx`.
+- **Il canvas è lo schermo.** Disegnare significa modificare il contesto 2D (`ctx.fillStyle = ...`), e adattare il canvas allo schermo significa cambiarne le dimensioni (`ctx.canvas.width = ...`): sono le uniche mutazioni ammesse, e il contesto si chiama sempre `ctx`.
 - **I nodi Web Audio.** Come il canvas, si configurano per assegnamento (`oscillator.type = 'square'`): la regola sull'immutabilità è disattivata solo per `packages/audio/src/synth.ts`.
 - **Il "guscio" imperativo.** Il game loop e gli adattatori verso il browser (`requestAnimationFrame`, eventi da tastiera) tengono lo stato in variabili `let` private a una closure. La logica di gioco resta pura.
 - **Test.** Nei file `*.test.ts` mock e fixture mutabili sono ammessi.

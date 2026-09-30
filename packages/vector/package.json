@@ -1,0 +1,10 @@
+{
+  "name": "@arcade/vector",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Vector graphics like the Atari vector monitors: glowing lines, ROM shapes, vector font.",
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

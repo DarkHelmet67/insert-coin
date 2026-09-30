@@ -40,8 +40,9 @@ export default tseslint.config(
       'functional/no-this-expressions': 'error',
       // `let` only inside functions, e.g. the private state of the game loop closure.
       'functional/no-let': ['error', { allowInFunctions: true }],
-      // The canvas context is the screen: drawing on it is the one allowed mutation.
-      'functional/immutable-data': ['error', { ignoreAccessorPattern: ['ctx.*'] }],
+      // The canvas context is the screen: drawing on it (and sizing its canvas) is the one
+      // allowed mutation.
+      'functional/immutable-data': ['error', { ignoreAccessorPattern: ['ctx.*', 'ctx.canvas.*'] }],
       'functional/prefer-property-signatures': 'error',
       'functional/readonly-type': ['error', 'keyword'],
       'jsdoc/require-jsdoc': [

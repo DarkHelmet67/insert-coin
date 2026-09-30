@@ -370,3 +370,21 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 - **60 passi al secondo** invece dei 61,5 dell'originale, come in Breakout: un passo per ogni immagine degli schermi a 60 Hz.
 
 **Step 1:** pagina `games/asteroids` con "COMING SOON" e, come anteprima, il primo asteroide della ROM (`$11E6`) disegnato con le sue coordinate originali; terza scheda nel sito, comando `pnpm dev:asteroids`, guida [delle meccaniche](../games/asteroids/docs/meccaniche-originali.md). Verifica: build del sito con tre giochi; in Chromium Asteroids su desktop e telefono, Space Invaders e Breakout invariati, pagina iniziale con le tre schede.
+
+## 2026-09-30 · Asteroids, step 2: il motore vettoriale
+
+**Richiesta:** il disegno vettoriale come pacchetto riutilizzabile, non dentro il gioco, perché apre la strada ad altri giochi.
+
+**Decisioni dell'AI:**
+
+- **I disegni come passi del fascio**, esattamente come nella ROM: `[dx, dy, luminosità]`, con luminosità 0 per spostarsi senza disegnare. Uno script ha estratto i numeri dal listato della ROM vettoriale: 4 asteroidi, 17 disegni della nave con le fiamme, il disco volante, l'icona delle vite, le schegge delle esplosioni, i pezzi della nave e tutto il font. Ogni disegno riporta nel codice l'indirizzo da cui viene.
+- **Il font Atari nel pacchetto**, non nel gioco: gli altri giochi vettoriali Atari usano lettere uguali o molto simili.
+- **La nave con i disegni originali**, specchiati come fa il programma (`$750B`), invece di ruotare un disegno solo. La rotazione a scatti di 5,6 gradi è quella del cabinato. Il pacchetto sa comunque ruotare liberamente, per i giochi futuri.
+- **Canvas grande quanto lo schermo** (dimensione CSS × `devicePixelRatio`), aggiornato solo quando cambia: linee nitide anche su Retina. Spessore e alone sono in unità del gioco, così l'immagine è la stessa su telefono e monitor.
+- **La luce:** alone azzurrino con `shadowBlur`, luce che si somma dove le linee si incrociano (`lighter`), curva di luminosità che schiarisce i valori bassi. Una prima versione con un secondo tratto largo e trasparente sembrava un contorno grigio, non un bagliore: sostituita dopo lo screenshot.
+- **Schermo un po' più grande del campo:** il punteggio arriva a y = 900, oltre le 768 righe del campo. Lo schermo mostrato è 1044 × 788 unità, come in MAME.
+- **Una piccola eccezione alle regole:** ridimensionare il canvas (`ctx.canvas.width = ...`) è ammesso come disegnare, aggiunto a CLAUDE.md e alla configurazione di ESLint.
+
+**Una scoperta nei dati:** alcuni disegni ruotati della nave non si chiudono esattamente, mancano l'angolo di partenza di un'unità. Atari li calcolò e arrotondò a mano; il remake li tiene così.
+
+**Step 2:** schermata ferma con tutti i disegni: asteroidi nelle tre grandezze, i due dischi, 16 navi in cerchio, una nave con fiamma e colpi, le schegge e i pezzi della nave, punteggio, record, vite, "PUSH START" e "© 1979 ATARI INC". Nuova [guida 11](11-grafica-vettoriale.md). Verifica: test del pacchetto e del gioco; screenshot in Chromium a densità 1, 2 e 3 e su telefono emulato.

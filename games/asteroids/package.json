@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@arcade/render": "workspace:*"
+    "@arcade/engine-core": "workspace:*",
+    "@arcade/render": "workspace:*",
+    "@arcade/vector": "workspace:*"
   }
 }

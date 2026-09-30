@@ -38,9 +38,15 @@ importers:
 
   games/asteroids:
     dependencies:
+      '@arcade/engine-core':
+        specifier: workspace:*
+        version: link:../../packages/engine-core
       '@arcade/render':
         specifier: workspace:*
         version: link:../../packages/render
+      '@arcade/vector':
+        specifier: workspace:*
+        version: link:../../packages/vector
 
   games/breakout:
     dependencies:
@@ -103,6 +109,8 @@ importers:
   packages/render: {}
 
   packages/storage: {}
+
+  packages/vector: {}
 
 packages:
 

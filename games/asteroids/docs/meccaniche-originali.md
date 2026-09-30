@@ -4,7 +4,7 @@ Questa guida spiega come funziona _Asteroids_ (Atari, 1979) "dentro": lo schermo
 
 A differenza di Breakout, Asteroids **ha un processore**: un 6502 a 1,5 MHz, lo stesso dell'Apple II e del Commodore 64, con 6 KB di programma. Non disegna pixel: scrive una lista di linee che un secondo circuito, il **generatore di vettori** (DVG, _Digital Vector Generator_), traccia muovendo il fascio di elettroni del monitor. Il programma è stato disassemblato e commentato, quindi quasi ogni regola si può leggere istruzione per istruzione.
 
-Tutti i valori incerti o da regolare staranno in un solo file, `src/tuning.config.ts`, ognuno con la sua marcatura. Ogni valore di questa guida è marcato così:
+Tutti i valori incerti o da regolare stanno in un solo file, [`tuning.config.ts`](../src/tuning.config.ts), ognuno con la sua marcatura. Ogni valore di questa guida è marcato così:
 
 - **[P]** letto nel programma 6502, con l'indirizzo dell'istruzione (per esempio `$6CFF`);
 - **[R]** letto nella ROM vettoriale, cioè nei disegni (per esempio `$11E6`);
@@ -30,7 +30,7 @@ Un monitor normale (raster) disegna l'immagine riga per riga, come Space Invader
 - **Scala** [R, H]: ogni disegno della ROM si può tracciare più grande o più piccolo per potenze di due. Così un solo disegno fa l'asteroide grande, medio e piccolo (vedi la sezione 4).
 - **Bianco e nero** [W]: il monitor è monocromatico, senza pellicole colorate. Niente modalità a colori in questo gioco.
 
-Nel remake il canvas disegnerà le linee alla risoluzione vera dello schermo (anche Retina), non ingrandendo pixel: è il compito del nuovo pacchetto `@arcade/vector` dello step 2. Una formula sola, `toCanvasY` in [`playfield.ts`](../src/playfield.ts), converte la y del DVG in quella del canvas.
+Nel remake il canvas disegna le linee alla risoluzione vera dello schermo (anche Retina), non ingrandendo pixel: è il compito del pacchetto `@arcade/vector`, spiegato nella [guida 11](../../../docs/11-grafica-vettoriale.md). Il gioco ragiona nelle coordinate del DVG, con la y verso l'alto, e il pacchetto le converte in pixel. Lo schermo mostrato è un po' più grande del campo di gioco, 1044 × 788 unità come in MAME [H]: il programma disegna la parte alta del punteggio a y = 900, qualche unità sopra il campo. Codice: [`playfield.ts`](../src/playfield.ts).
 
 ### Posizioni degli oggetti
 

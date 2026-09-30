@@ -70,6 +70,7 @@ insert-coin/
 │   ├── engine-core/      game loop a timestep fisso, scene/stati
 │   ├── input/            tastiera, pulsanti touch, posizione di mouse e dito
 │   ├── render/           canvas, scaling nitido, sprite bitmap, font pixel, cifre a 7 segmenti
+│   ├── vector/           grafica vettoriale: linee luminose, disegni delle ROM, font Atari
 │   ├── audio/            effetti sonori con Web Audio API
 │   ├── collision/        AABB e collisione pixel-perfect
 │   ├── storage/          record salvato nel browser
@@ -99,23 +100,25 @@ Il codice è scritto per essere letto da persone (_code for humans, not for AI_)
 
 ## Documentazione
 
-| Guida                                                                            | Argomento                                                             |
-| -------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| [00 · Introduzione](docs/00-introduzione.md)                                     | Obiettivi e metodo di lavoro con l'AI                                 |
-| [01 · Setup del monorepo](docs/01-setup-monorepo.md)                             | Creare il monorepo da zero, passo per passo                           |
-| [02 · Game loop](docs/02-game-loop.md)                                           | Loop a timestep fisso, testabile senza timer reali                    |
-| [03 · Input da tastiera](docs/03-input-tastiera.md)                              | Stato della tastiera, azioni, un poll per passo                       |
-| [04 · Rendering e sprite](docs/04-rendering-sprite.md)                           | Sprite come testo, font bitmap, test senza browser                    |
-| [05 · Collisioni](docs/05-collisioni.md)                                         | Rettangoli, pixel per pixel, tunneling                                |
-| [06 · Audio](docs/06-audio.md)                                                   | Suoni sintetizzati con Web Audio, autoplay, suoni dedotti dallo stato |
-| [07 · Build e deploy](docs/07-build-deploy.md)                                   | Build di produzione, sito multi-gioco, GitHub Actions e Pages         |
-| [08 · Comandi touch](docs/08-comandi-touch.md)                                   | Pannello di comandi per smartphone, tasti virtuali, multitouch        |
-| [09 · Record salvato](docs/09-record-salvato.md)                                 | Record in localStorage senza errori, fanfara del nuovo record         |
-| [10 · Un secondo gioco: Breakout](docs/10-secondo-gioco.md)                      | Cosa si riusa, cosa si aggiunge, pixel non quadrati, valori incerti   |
-| [Space Invaders · meccaniche](games/space-invaders/docs/meccaniche-originali.md) | Marcia, bombe, bunker, UFO: come funzionava l'originale               |
-| [Breakout · meccaniche](games/breakout/docs/meccaniche-originali.md)             | Mattoni, pallina, suoni: il circuito senza processore                 |
-| [Prompt unico](docs/prompt-unico.md)                                             | Un solo prompt per ricreare l'intero progetto con un assistente AI    |
-| [Diario AI](docs/ai-workflow.md)                                                 | Prompt, decisioni e correzioni durante lo sviluppo                    |
+| Guida                                                                            | Argomento                                                              |
+| -------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| [00 · Introduzione](docs/00-introduzione.md)                                     | Obiettivi e metodo di lavoro con l'AI                                  |
+| [01 · Setup del monorepo](docs/01-setup-monorepo.md)                             | Creare il monorepo da zero, passo per passo                            |
+| [02 · Game loop](docs/02-game-loop.md)                                           | Loop a timestep fisso, testabile senza timer reali                     |
+| [03 · Input da tastiera](docs/03-input-tastiera.md)                              | Stato della tastiera, azioni, un poll per passo                        |
+| [04 · Rendering e sprite](docs/04-rendering-sprite.md)                           | Sprite come testo, font bitmap, test senza browser                     |
+| [05 · Collisioni](docs/05-collisioni.md)                                         | Rettangoli, pixel per pixel, tunneling                                 |
+| [06 · Audio](docs/06-audio.md)                                                   | Suoni sintetizzati con Web Audio, autoplay, suoni dedotti dallo stato  |
+| [07 · Build e deploy](docs/07-build-deploy.md)                                   | Build di produzione, sito multi-gioco, GitHub Actions e Pages          |
+| [08 · Comandi touch](docs/08-comandi-touch.md)                                   | Pannello di comandi per smartphone, tasti virtuali, multitouch         |
+| [09 · Record salvato](docs/09-record-salvato.md)                                 | Record in localStorage senza errori, fanfara del nuovo record          |
+| [10 · Un secondo gioco: Breakout](docs/10-secondo-gioco.md)                      | Cosa si riusa, cosa si aggiunge, pixel non quadrati, valori incerti    |
+| [11 · Grafica vettoriale](docs/11-grafica-vettoriale.md)                         | Monitor vettoriali, disegni a passi del fascio, linee luminose nitide  |
+| [Space Invaders · meccaniche](games/space-invaders/docs/meccaniche-originali.md) | Marcia, bombe, bunker, UFO: come funzionava l'originale                |
+| [Breakout · meccaniche](games/breakout/docs/meccaniche-originali.md)             | Mattoni, pallina, suoni: il circuito senza processore                  |
+| [Asteroids · meccaniche](games/asteroids/docs/meccaniche-originali.md)           | Nave, asteroidi, dischi volanti: il programma 6502 letto riga per riga |
+| [Prompt unico](docs/prompt-unico.md)                                             | Un solo prompt per ricreare l'intero progetto con un assistente AI     |
+| [Diario AI](docs/ai-workflow.md)                                                 | Prompt, decisioni e correzioni durante lo sviluppo                     |
 
 ## Licenza e diritti
 
