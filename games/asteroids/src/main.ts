@@ -8,6 +8,7 @@ import { bindings, readControls } from './controls';
 import { createAttractState, updateGame, type GameState } from './game';
 import { seedRandom } from './random';
 import { renderGame } from './render';
+import { showFullscreenButton } from './fullscreen-button';
 import { sounds, soundsFor } from './sounds';
 import { tuning } from './tuning.config';
 
@@ -17,6 +18,7 @@ const keyboard = createKeyboard(window, { captureKeys: boundKeys(bindings) });
 const touch = createTouchButtons(document.body);
 // On phones and tablets the first touch hides the browser's bars, where the browser allows it.
 enterFullscreenOnTouch();
+showFullscreenButton(document.querySelector('#fullscreen'));
 const hiScores = createHiScoreStore('insert-coin/asteroids/hi-score');
 const audio = createAudio();
 

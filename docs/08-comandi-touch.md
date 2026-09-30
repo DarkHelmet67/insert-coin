@@ -105,10 +105,11 @@ I browser concedono l'audio solo dopo un gesto dell'utente. Con il dito, però, 
 
 Su un telefono in orizzontale le barre del browser si mangiano circa un quarto dell'altezza. `enterFullscreenOnTouch()` di `@arcade/render` (`packages/render/src/fullscreen.ts`) chiede lo schermo intero al primo tocco, con la [Fullscreen API](https://developer.mozilla.org/it/docs/Web/API/Fullscreen_API):
 
-- come per l'audio, il browser la concede solo dopo un gesto, e per il dito il gesto valido è `pointerup`;
-- il mouse non conta: su desktop la finestra resta com'è;
+- il browser la concede solo dopo un gesto dell'utente. Per il dito il gesto che conta è `touchend`: Chrome per Android **non** la concede a `pointerup`, anche se arriva un istante prima (la prima versione ascoltava `pointerup`, e su un telefono vero non funzionava);
+- `touchend` lo producono solo le dita, quindi il mouse non attiva mai lo schermo intero;
 - se il giocatore esce dallo schermo intero, il tocco successivo lo riporta;
-- la decisione è una funzione pura, `wantsFullscreen(tipoPuntatore, documento)`, testata con un documento finto.
+- nel pannello c'è anche un pulsante esplicito, SCHERMO INTERO, visibile solo dove il browser lo permette e nascosto mentre la pagina è già a schermo intero. Il pulsante entra soltanto, non esce: se facesse le due cose, lo stesso tocco entrerebbe (con `touchend`) e poi uscirebbe (con il `click`);
+- la condizione è una funzione pura, `wantsFullscreen(documento)`, testata con un documento finto.
 
 **Safari su iPhone non ha la Fullscreen API per le pagine.** L'unico modo è **Condividi → Aggiungi alla schermata Home**: per questo la pagina ha un manifesto (`public/manifest.webmanifest`, `display: fullscreen`), un'icona e i meta `apple-mobile-web-app-*`. Aperto dall'icona, il gioco parte senza barre.
 

@@ -23,7 +23,7 @@
     </canvas>
     <!--
       Cabinet control panel, visible only on touch screens (see style.css): rotation for the
-      left thumb, thrust and fire for the right one, hyperspace apart so it is not hit by chance.
+      left thumb, fire, thrust and hyperspace for the right one.
     -->
     <div id="touch-panel" class="panel">
       <div class="pad pad-move">
@@ -44,12 +44,17 @@
           ⟳
         </button>
       </div>
+      <!-- Hyperspace is the escape of the last moment: it stays next to fire and thrust. -->
       <div class="pad pad-fire">
-        <button type="button" class="key key-thrust" data-key="ArrowUp">SPINTA</button>
+        <button type="button" class="key key-hyper" data-key="ArrowDown" aria-label="Iperspazio">
+          IPER
+        </button>
         <button type="button" class="key key-fire" data-key="Space">FUOCO</button>
+        <button type="button" class="key key-thrust" data-key="ArrowUp">SPINTA</button>
       </div>
-      <div class="pad pad-hyper">
-        <button type="button" class="key key-small" data-key="ArrowDown">IPERSPAZIO</button>
+      <!-- Shown by main.ts only where the browser can go fullscreen. -->
+      <div class="pad pad-view">
+        <button type="button" id="fullscreen" class="key key-small" hidden>SCHERMO INTERO</button>
       </div>
       <div class="pad pad-system">
         <button type="button" class="key key-small" data-key="KeyM">AUDIO</button>

@@ -1,14 +1,19 @@
 import { describe, expect, it, vi } from 'vitest';
-import { enterFullscreenOnTouch, wantsFullscreen, type FullscreenDocument } from './fullscreen';
+import {
+  enterFullscreen,
+  enterFullscreenOnTouch,
+  wantsFullscreen,
+  type FullscreenDocument,
+} from './fullscreen';
 
-/** A fake document with a spy on `requestFullscreen` and a way to lift a pointer. */
+/** A fake document with a spy on `requestFullscreen` and a way to lift a finger. */
 const fakeDocument = (
   fullscreenEnabled = true,
   fullscreenElement: Element | null = null,
 ): {
   readonly doc: FullscreenDocument;
   readonly request: ReturnType<typeof vi.fn>;
-  readonly lift: (pointerType: string) => void;
+  readonly lift: () => void;
 } => {
   const target = new EventTarget();
   const request = vi.fn(() => Promise.resolve());
@@ -17,66 +22,71 @@ const fakeDocument = (
     fullscreenElement,
     documentElement: { requestFullscreen: request },
     addEventListener: (type, listener) => {
-      target.addEventListener(type, listener as EventListener);
+      target.addEventListener(type, listener);
     },
     removeEventListener: (type, listener) => {
-      target.removeEventListener(type, listener as EventListener);
+      target.removeEventListener(type, listener);
     },
   };
-  /** Dispatches a `pointerup` with the given pointer type. */
-  const lift = (pointerType: string): void => {
-    target.dispatchEvent(Object.assign(new Event('pointerup'), { pointerType }));
+  /** Dispatches a `touchend`, as a finger leaving the screen. */
+  const lift = (): void => {
+    target.dispatchEvent(new Event('touchend'));
   };
   return { doc, request, lift };
 };
 
+/** Something shown fullscreen, for a fake document that is already fullscreen. */
+const shown = {} as Element;
+
 describe('wantsFullscreen', () => {
-  it('asks for fullscreen for a finger when the browser allows it', () => {
-    expect(wantsFullscreen('touch', fakeDocument().doc)).toBe(true);
+  it('is true when the browser allows it and the page is in its window', () => {
+    expect(wantsFullscreen(fakeDocument().doc)).toBe(true);
   });
 
-  it('never asks for the mouse', () => {
-    expect(wantsFullscreen('mouse', fakeDocument().doc)).toBe(false);
+  it('is false where fullscreen is not available', () => {
+    expect(wantsFullscreen(fakeDocument(false).doc)).toBe(false);
   });
 
-  it('does not ask where fullscreen is not available', () => {
-    expect(wantsFullscreen('touch', fakeDocument(false).doc)).toBe(false);
-  });
-
-  it('does not ask again when the page is already fullscreen', () => {
-    expect(wantsFullscreen('touch', fakeDocument(true, {} as Element).doc)).toBe(false);
+  it('is false when the page is already fullscreen', () => {
+    expect(wantsFullscreen(fakeDocument(true, shown).doc)).toBe(false);
   });
 });
 
-describe('enterFullscreenOnTouch', () => {
-  it('requests fullscreen when a finger is lifted', () => {
-    const { doc, request, lift } = fakeDocument();
-    enterFullscreenOnTouch(doc);
-    lift('touch');
+describe('enterFullscreen', () => {
+  it('asks for the whole page without the navigation bar', () => {
+    const { doc, request } = fakeDocument();
+    enterFullscreen(doc);
     expect(request).toHaveBeenCalledWith({ navigationUI: 'hide' });
   });
 
-  it('ignores the mouse', () => {
-    const { doc, request, lift } = fakeDocument();
-    enterFullscreenOnTouch(doc);
-    lift('mouse');
+  it('does not ask where fullscreen is not available', () => {
+    const { doc, request } = fakeDocument(false);
+    enterFullscreen(doc);
     expect(request).not.toHaveBeenCalled();
   });
 
   // An unhandled rejection would make Vitest fail the run, so settling quietly is the check.
   it('swallows a refusal of the browser', async () => {
-    const { doc, request, lift } = fakeDocument();
+    const { doc, request } = fakeDocument();
     request.mockImplementation(() => Promise.reject(new Error('denied')));
-    enterFullscreenOnTouch(doc);
-    lift('touch');
+    enterFullscreen(doc);
     await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(request).toHaveBeenCalledOnce();
+  });
+});
+
+describe('enterFullscreenOnTouch', () => {
+  it('asks for fullscreen when a finger is lifted', () => {
+    const { doc, request, lift } = fakeDocument();
+    enterFullscreenOnTouch(doc);
+    lift();
     expect(request).toHaveBeenCalledOnce();
   });
 
   it('stops listening once disposed', () => {
     const { doc, request, lift } = fakeDocument();
     enterFullscreenOnTouch(doc)();
-    lift('touch');
+    lift();
     expect(request).not.toHaveBeenCalled();
   });
 });

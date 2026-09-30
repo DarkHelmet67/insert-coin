@@ -54,7 +54,7 @@ body {
     grid-template:
       'screen screen' auto
       'hint hint' auto
-      'system hyper' auto
+      'system view' auto
       'move fire' 1fr
       / 1fr 1fr;
     gap: 0.5rem;
@@ -89,8 +89,33 @@ body {
     grid-area: fire;
   }
 
-  .pad-hyper {
+  .pad-view {
+    grid-area: view;
+  }
+
+  /*
+   * Right thumb, upright: fire and thrust side by side as on the cabinet, hyperspace just above
+   * them, where the thumb gets in one move.
+   */
+  .pad-fire {
+    display: grid;
+    grid-template:
+      'hyper hyper' auto
+      'thrust fire' auto
+      / auto auto;
+    justify-items: center;
+  }
+
+  .key-hyper {
     grid-area: hyper;
+  }
+
+  .key-thrust {
+    grid-area: thrust;
+  }
+
+  .key-fire {
+    grid-area: fire;
   }
 
   .pad-system {
@@ -133,6 +158,13 @@ body {
     height: 4.5rem;
   }
 
+  .key-hyper {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-width: 2px;
+    font-size: 0.7rem;
+  }
+
   .key-fire {
     width: 5.5rem;
     height: 5.5rem;
@@ -158,7 +190,7 @@ body {
     padding: env(safe-area-inset-top) max(env(safe-area-inset-right), 0.5rem)
       max(env(safe-area-inset-bottom), 0.5rem) max(env(safe-area-inset-left), 0.5rem);
     grid-template:
-      'system screen hyper' auto
+      'system screen view' auto
       'move screen fire' 1fr
       / var(--side-width) 1fr var(--side-width);
   }
@@ -167,12 +199,17 @@ body {
     width: min(100%, 100dvh * 4 / 3);
   }
 
+  /* Sideways, the right thumb moves up and down: hyperspace, fire, thrust in one column. */
   .pad-fire {
-    flex-direction: column-reverse;
+    grid-template:
+      'hyper' auto
+      'fire' auto
+      'thrust' auto
+      / auto;
   }
 
   .pad-system,
-  .pad-hyper {
+  .pad-view {
     padding-top: 0.5rem;
   }
 

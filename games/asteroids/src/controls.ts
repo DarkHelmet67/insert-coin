@@ -30,7 +30,8 @@ export interface Controls {
   readonly fire: boolean;
   /**
    * The hyperspace button is held. Unlike fire, holding it is enough: the ship jumps again as
-   * soon as it reappears [P $6E82].
+   * soon as it reappears [P $6E82]. A press counts even if released within the same frame,
+   * as a quick tap on a touch screen can be.
    */
   readonly hyperspace: boolean;
   /** The start button went down in this frame. */
@@ -60,7 +61,8 @@ export const readControls = (keys: KeyState): Controls => {
     turn: left ? 1 : right ? -1 : 0,
     thrust: isActionDown(keys, bindings, 'thrust'),
     fire: wasActionPressed(keys, bindings, 'fire'),
-    hyperspace: isActionDown(keys, bindings, 'hyperspace'),
+    hyperspace:
+      isActionDown(keys, bindings, 'hyperspace') || wasActionPressed(keys, bindings, 'hyperspace'),
     start: wasActionPressed(keys, bindings, 'start'),
     mute: wasActionPressed(keys, bindings, 'mute'),
   };

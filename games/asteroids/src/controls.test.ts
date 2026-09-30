@@ -33,6 +33,11 @@ describe('readControls', () => {
     expect(readControls(clearEdges(pressedKeys('KeyS'))).hyperspace).toBe(true);
   });
 
+  it('counts a hyperspace tap released within the same frame', () => {
+    const tapped = applyKeyEvent(pressedKeys('ArrowDown'), { type: 'up', code: 'ArrowDown' });
+    expect(readControls(tapped).hyperspace).toBe(true);
+  });
+
   it('starts on a new press of Enter or 1', () => {
     expect(readControls(pressedKeys('Enter')).start).toBe(true);
     expect(readControls(pressedKeys('Digit1')).start).toBe(true);

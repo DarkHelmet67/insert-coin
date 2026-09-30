@@ -490,3 +490,16 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 - **Verticale:** lo schermo è 4:3 e il telefono è stretto, quindi il limite è la larghezza, non l'altezza. Tolti i margini laterali, lo schermo ora è largo quanto il telefono; di più non si può senza ruotare l'immagine, e per quello c'è l'orizzontale.
 
 **Verifica:** test di `wantsFullscreen` ed `enterFullscreenOnTouch` con un documento finto. In Chromium con un telefono Android emulato un tocco porta la pagina a schermo intero; un clic del mouse su desktop no. Manifesto e icone vengono pubblicati accanto al gioco.
+
+## 2026-09-30 · Asteroids, step 8a ter: iperspazio a portata di pollice, schermo intero su Android
+
+**Richiesta:** Luca ha provato su tablet e smartphone. L'iperspazio, in alto nell'angolo, nella frenesia del gioco è irraggiungibile; lo schermo intero su Chrome per Android non parte. Ha proposto un gesto più esplicito, come un doppio tocco.
+
+**Decisioni dell'AI:**
+
+- **L'iperspazio va con fuoco e spinta,** come terzo pulsante tondo per il pollice destro: sopra FUOCO in orizzontale, sopra la coppia SPINTA-FUOCO in verticale. Il suo posto in alto a destra passa al nuovo pulsante SCHERMO INTERO.
+- **La causa del problema su Android:** l'aiuto chiedeva lo schermo intero su `pointerup`, ma Chrome per Android concede i permessi legati ai gesti solo a `touchend`, che arriva subito dopo. L'audio funzionava perché ascolta anche `touchend`. Ora lo schermo intero ascolta `touchend`, che per di più lo producono solo le dita.
+- **Un pulsante invece del doppio tocco:** il doppio tocco sullo schermo avrebbe fatto partire anche la partita (toccare lo schermo è START) e non si scopre da soli. Il pulsante SCHERMO INTERO è esplicito, compare solo dove il browser lo permette e sparisce a schermo intero.
+- **Un tocco rapido conta:** l'iperspazio si leggeva come "pulsante tenuto", e un tocco più breve di un passo di gioco andava perso; ora conta anche la pressione avvenuta nel passo.
+
+**Verifica:** test del pulsante tenuto e del tocco rapido; test di `enterFullscreen` ed `enterFullscreenOnTouch` con `touchend`. In Chromium con un telefono Android emulato, con eventi touch veri: un tocco porta a schermo intero, il pulsante sparisce, IPER fa sparire la nave; su desktop il clic non cambia nulla. Il test decisivo resta il telefono vero.
