@@ -8,6 +8,20 @@
   </head>
   <body>
     <canvas id="screen" width="1044" height="800">Serve un browser con supporto a Canvas.</canvas>
+    <!--
+      The cabinet's lit buttons, under the screen: the four missions (SELECT walks through them)
+      and START, plus the record kept by this browser. main.ts lights them every frame.
+    -->
+    <div id="cabinet" class="cabinet">
+      <div class="lamps">
+        <span class="lamp" data-mission="training">TRAINING</span>
+        <span class="lamp" data-mission="cadet">CADET</span>
+        <span class="lamp" data-mission="prime">PRIME</span>
+        <span class="lamp" data-mission="command">COMMAND</span>
+        <span id="start" class="lamp lamp-start">START</span>
+      </div>
+      <p class="record">RECORD <span id="record">0000</span></p>
+    </div>
     <script type="module" src="./src/main.ts"></script>
   </body>
 </html>

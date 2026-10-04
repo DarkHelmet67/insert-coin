@@ -593,3 +593,14 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 - **Una macchina a stati pura** ([`game.ts`](../games/lunar-lander/src/game.ts)): attract, schermata dopo la moneta, volo, sequenza di atterraggio; il disegno sta tutto in [`render.ts`](../games/lunar-lander/src/render.ts). In attract il tasto START vale anche come moneta [N], perché la tastiera non ha una gettoniera.
 
 **Verifica:** 36 nuovi test su verdetto, punti, penale, ABORT, esplosione, messaggi e partita completa (moneta, START, atterraggio, schianto, fine del carburante); schermate dell'ABORT e di uno schianto con la sua sequenza.
+
+## 2026-10-04 · Lunar Lander, step 7: suoni, missioni e record
+
+**Decisioni dell'AI:**
+
+- **Tre suoni, come il cabinato:** il rombo del motore, l'esplosione e il bip di carburante basso. Il volume del rombo segue la formula del programma (spinta / 2 + 1: livelli 1, 3, 5, 7), quindi il motore si sente anche con la leva giù, come nell'originale. I filtri del circuito (71 Hz e un passa-banda a 89,5 Hz, letti nel modello di MAME) darebbero un rombo inudibile sugli altoparlanti di un telefono: il taglio è alzato a 180 Hz [N] e annotato in `tuning.config.ts`.
+- **Suoni calcolati dallo stato, non dagli eventi:** `soundsFor` guarda solo lo stato prodotto dal fotogramma, come in Asteroids; i suoni continui sono pezzi di rumore da 6 fotogrammi che si susseguono.
+- **Le lampade del cabinato in HTML:** i quattro pulsanti illuminati delle missioni e START stanno sotto lo schermo, accesi da `cabinet-panel.ts` (che tocca la pagina solo quando qualcosa cambia). In attract le quattro lampade restano a mezza luce, come faceva l'interruzione del cabinato con un ciclo del 50%.
+- **Il record** [N]: il cabinato non salvava punteggi; il remake tiene il migliore nel browser con `@arcade/storage`, come gli altri giochi, e lo mostra accanto alle lampade.
+
+**Verifica:** 9 nuovi test su suoni e pannello; schermata della scelta della missione con TAB.

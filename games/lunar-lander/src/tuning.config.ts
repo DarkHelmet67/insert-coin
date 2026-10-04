@@ -29,6 +29,24 @@ export const tuning = {
   fuelPerCoin: 750,
 
   /**
+   * The sounds [H, N]. The cabinet has three: the engine's rumble, the explosion and the
+   * low-fuel beep [P S.SND; H asteroid.cpp llander]. The engine and the explosion are the same
+   * noise generator (12 kHz) through different filters; the volume steps come from the program,
+   * filters and loudness are set by ear [N].
+   */
+  sound: {
+    /**
+     * Engine rumble [H]: noise through a 71 Hz RC filter and a 89.5 Hz band-pass, so very deep;
+     * Web Audio's low-pass alone needs a higher cut-off to be heard on small speakers [N].
+     */
+    rumble: { cutoff: 180, volume: 0.55 },
+    /** Explosion [H]: the same noise, unfiltered, added on top [P BOOM]. */
+    explosion: { cutoff: 2500, volume: 0.5 },
+    /** Low fuel [H]: a 3 kHz tone, on while LOW ON FUEL is written [P STATUS]. */
+    lowFuel: { frequency: 3000, volume: 0.04 },
+  },
+
+  /**
    * How the beam looks on the monitor [N], as in Asteroids: sizes in DVG units, a slightly blue
    * glow, `gamma` below 1 to lift the dim lines.
    */

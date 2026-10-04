@@ -5,13 +5,65 @@ body {
   background: #000;
 }
 
+:root {
+  /* Height of the strip of lamps under the screen. */
+  --cabinet-height: 3rem;
+}
+
 body {
   display: grid;
-  place-items: center;
+  grid-template-rows: auto var(--cabinet-height);
+  place-content: center;
+  justify-items: center;
 }
 
 /* The vector monitor shows 1044 x 800 units of the DVG: as large as the window allows. */
 #screen {
-  width: min(100vw, calc(100vh * 1044 / 800));
+  width: min(100vw, calc((100vh - var(--cabinet-height)) * 1044 / 800));
   aspect-ratio: 1044 / 800;
+}
+
+/* The lit buttons of the cabinet: the mission lamps, START, and the record. */
+.cabinet {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  color: #8a93a8;
+  font: bold 0.75rem/1 monospace;
+}
+
+.lamps {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.lamp {
+  padding: 0.35rem 0.6rem;
+  border: 2px solid #3a4050;
+  border-radius: 0.3rem;
+  color: #5a6070;
+}
+
+.lamp[data-lamp='on'] {
+  border-color: #ffd36b;
+  background: #5a4210;
+  color: #fff3c8;
+  box-shadow: 0 0 0.6rem #ffb020;
+}
+
+.lamp[data-lamp='dim'] {
+  border-color: #806a30;
+  color: #b8a070;
+}
+
+.lamp-start[data-lamp='on'] {
+  border-color: #6bff8a;
+  background: #105a20;
+  color: #d0ffd8;
+  box-shadow: 0 0 0.6rem #20ff60;
+}
+
+.record {
+  margin: 0;
+  letter-spacing: 0.1em;
 }
