@@ -7,7 +7,7 @@ Stato: **completo** (versione 1.0.0). Le regole vengono dal codice sorgente orig
 | Comando                  | Azione                                         |
 | ------------------------ | ---------------------------------------------- |
 | **C** o **5**            | Moneta (750 unità di carburante)               |
-| **Tab**                  | Sceglie la missione                            |
+| **Tab**                  | Passa alla missione successiva (SELECT)        |
 | **Invio** o **1**        | START                                          |
 | Frecce ← → o **A**/**D** | Ruota il modulo                                |
 | Frecce ↑ ↓ o **W**/**S** | Muove la leva della spinta (resta dov'è)       |

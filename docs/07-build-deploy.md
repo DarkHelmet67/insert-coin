@@ -151,7 +151,7 @@ jobs:
 - **Push su qualunque branch tranne `main`:** ogni commit di un feature branch ha il suo segno verde o rosso, anche prima che esista la PR.
 - **`pull_request` solo per i fork:** una PR da un branch dello stesso repository è già controllata dal suo push, e la condizione `if` evita di farlo due volte. Una PR da un fork (un contributor esterno, che non può fare push sul repository) invece ha solo questo evento.
 - **Anche la build:** un gioco che compila nei test ma non nella build di produzione romperebbe il deploy successivo.
-- **Permessi minimi:** solo `contents: read`. Il workflow dei branch non può pubblicare nulla: Pages resta legato a `main`.
+- **Permessi minimi:** solo `contents: read`. Il workflow dei branch non può pubblicare nulla: il sito principale resta legato a `main`, e le anteprime delle PR le pubblica un workflow a parte ([guida 14](14-pull-request.md)).
 
 ## 4. Attivare GitHub Pages (una volta sola)
 
