@@ -6,10 +6,13 @@ export interface FullscreenDocument {
   readonly fullscreenElement: Element | null;
   /** The element to show fullscreen: the whole page, so the touch panel stays visible. */
   readonly documentElement: Pick<Element, 'requestFullscreen'>;
-  /** Where to listen for the finger lifted from the screen. */
-  readonly addEventListener: (type: 'touchend', listener: () => void) => void;
+  /** Where to listen for the finger lifted from the screen, and for fullscreen changes. */
+  readonly addEventListener: (type: 'touchend' | 'fullscreenchange', listener: () => void) => void;
   /** Stops listening. */
-  readonly removeEventListener: (type: 'touchend', listener: () => void) => void;
+  readonly removeEventListener: (
+    type: 'touchend' | 'fullscreenchange',
+    listener: () => void,
+  ) => void;
 }
 
 /** True when the page can go fullscreen and is not fullscreen yet. */

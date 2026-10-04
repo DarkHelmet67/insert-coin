@@ -2,13 +2,12 @@ import './style.css';
 import { createAudio } from '@arcade/audio';
 import { createGameLoop } from '@arcade/engine-core';
 import { boundKeys, createKeyboard, createTouchButtons, mergeKeyStates } from '@arcade/input';
-import { enterFullscreenOnTouch, getCanvasContext } from '@arcade/render';
+import { enterFullscreenOnTouch, getCanvasContext, showFullscreenButton } from '@arcade/render';
 import { createHiScoreStore } from '@arcade/storage';
 import { bindings, readControls } from './controls';
 import { createAttractState, updateGame, type GameState } from './game';
 import { seedRandom } from './random';
 import { renderGame } from './render';
-import { showFullscreenButton } from './fullscreen-button';
 import { sounds, soundsFor } from './sounds';
 import { tuning } from './tuning.config';
 

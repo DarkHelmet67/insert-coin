@@ -14,6 +14,7 @@ export {
   wantsFullscreen,
   type FullscreenDocument,
 } from './fullscreen';
+export { showFullscreenButton, type FullscreenButton } from './fullscreen-button';
 export { getCanvasContext } from './screen';
 export { isPixelOn, parseSprite, PIXEL_ON, spriteRuns, type PixelRun, type Sprite } from './sprite';
 export {

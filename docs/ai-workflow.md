@@ -544,3 +544,15 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 - Documentato nella [guida 07](07-build-deploy.md), nel prompt unico e con un secondo badge nel README.
 
 **Verifica:** il primo run di `ci.yml` sul branch `feature/lunar-lander`, visibile nei controlli della PR.
+
+## 2026-10-04 · Lunar Lander, step 3: i disegni della ROM
+
+**Decisioni dell'AI:**
+
+- **I disegni copiati dal sorgente, non ridisegnati:** uno script ha letto le macro `VCTR dx, dy, luminosità` dei file della ROM vettoriale e le ha trascritte in [`module-shapes.ts`](../games/lunar-lander/src/module-shapes.ts), con il nome dell'etichetta originale accanto a ogni disegno: 8 cabine ottagonali, 9 moduli grandi, 9 moduli piccoli.
+- **32 orientamenti da 9 disegni,** rovesciando i segni come la routine `MODULE` del programma ([`module-view.ts`](../games/lunar-lander/src/module-view.ts)). Una pagina di prova (non pubblicata) li ha disegnati tutti e 32 in fila, per vedere che la rotazione fosse continua.
+- **La fiamma** nasce dove il disegno lascia il fascio, l'angolo sinistro dell'ugello: lo conferma il test, che per il modulo dritto trova (-6, -16) e, con la tabella `FLAMEA`, l'altro angolo in (8, -16).
+- **Nei pacchetti condivisi:** `@arcade/vector` ora scrive il testo a una luminosità scelta (Asteroids scrive a 7, Lunar Lander a 12) e sa ritagliare le linee su un rettangolo, come fa il DVG ai bordi dello schermo (`clipLines`): servirà al terreno che scorre. Il pulsante SCHERMO INTERO di Asteroids passa in `@arcade/render` (`showFullscreenButton`), con i suoi test.
+- **Il font è lo stesso:** l'alfabeto della ROM di Lunar Lander (`VECAN`, di Ed Logg) coincide con quello di Asteroids già nel pacchetto.
+
+**Verifica:** test dei disegni, degli orientamenti e della fiamma; la pagina mostra il modulo grande e quello piccolo che girano con la fiamma a tutti i livelli di spinta.

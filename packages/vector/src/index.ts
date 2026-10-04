@@ -7,6 +7,7 @@ export {
   type BeamContext,
   type BeamStyle,
 } from './beam';
+export { clipLine, clipLines, DVG_CLIP, type ClipRect } from './clip';
 export {
   atariVectorFont,
   textShape,

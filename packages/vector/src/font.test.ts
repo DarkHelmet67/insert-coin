@@ -39,4 +39,9 @@ describe('text', () => {
     expect(textToLines(atariVectorFont, '?', { x: 0, y: 0 })).toEqual([]);
     expect(vectorTextWidth(atariVectorFont, 'A?')).toBe(20);
   });
+
+  it('draws every stroke at the requested brightness', () => {
+    const lines = textToLines(atariVectorFont, 'L', { x: 0, y: 0, brightness: 12 });
+    expect(lines.map((line) => line.brightness)).toEqual([12, 12]);
+  });
 });

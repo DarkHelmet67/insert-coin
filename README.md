@@ -84,7 +84,7 @@ insert-coin/
 │   └── asteroids/        il terzo gioco: grafica vettoriale e programma 6502 riprodotto
 ├── site/                 pagina iniziale del sito pubblicato
 ├── scripts/              script di build del sito
-└── .github/             controlli (CI su branch e PR) e deploy su GitHub Pages
+└── .github/            controlli (CI su branch e PR) e deploy su GitHub Pages
 ```
 
 Ogni pacchetto ha una sola responsabilità e non conosce i giochi: i giochi dipendono dai pacchetti, mai il contrario.
