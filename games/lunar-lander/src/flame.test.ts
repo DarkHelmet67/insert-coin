@@ -1,12 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import {
-  ABORT_THRUST,
-  drawingEnd,
-  flameBrightness,
-  flameLength,
-  flameShape,
-  moduleLines,
-} from './flame';
+import { drawingEnd, flameBrightness, flameLength, flameShape, moduleLines } from './flame';
+import { ABORT_THRUST } from './thrust';
 
 describe('the flame', () => {
   it('starts at the left corner of the bell of the upright module', () => {

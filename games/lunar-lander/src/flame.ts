@@ -1,5 +1,6 @@
 import { shapeEnd, shapeToLines, type BeamLine, type Offset } from '@arcade/vector';
 import { moduleShape, moduleView, type ModuleSize, type Orientation } from './module-view';
+import { ABORT_THRUST } from './thrust';
 
 /**
  * Half of the base of the engine bell, for each ROM drawing [P FLAMEA, FLAMEB]: the flame starts
@@ -29,9 +30,6 @@ const BELL_HALF_BASE: Readonly<Record<ModuleSize, readonly (readonly [number, nu
     [4, 0],
   ],
 };
-
-/** Thrust level of the ABORT button: one above the lever's maximum [P ABORT]. */
-export const ABORT_THRUST = 16;
 
 /**
  * How far the flame reaches, in multiples of the half base [P FLAME, FLMFRC]: the thrust times

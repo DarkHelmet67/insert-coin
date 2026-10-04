@@ -1,0 +1,27 @@
+/**
+ * Speeds as the program keeps them: 16 bits of magnitude plus a sign [P SUMSUM]. In the remake a
+ * speed is a signed integer; what matters is that the magnitude stops at 0xFFFF instead of
+ * wrapping around. A speed of 4096 moves the module by one world unit per frame.
+ */
+
+/** The largest magnitude of a speed [P SUMSUM]. */
+export const MAX_SPEED = 0xffff;
+
+/** `speed + change`, with the magnitude saturated at {@link MAX_SPEED}. */
+export const addSpeed = (speed: number, change: number): number =>
+  Math.max(-MAX_SPEED, Math.min(MAX_SPEED, speed + change));
+
+/**
+ * The speed the instruments show: the top 10 bits of the magnitude [P DISPLY]. The starting
+ * horizontal speed 0x3200 shows as 200.
+ */
+export const shownSpeed = (speed: number): number => Math.abs(speed) >> 6;
+
+/**
+ * TRAINING friction, every 16 frames: each speed loses 1/32 of its magnitude, the shift of the
+ * program rounding the loss down [P FRICTN].
+ */
+export const applyFriction = (speed: number): number => {
+  const magnitude = Math.abs(speed) - (Math.abs(speed) >> 5);
+  return speed < 0 ? -magnitude : magnitude;
+};

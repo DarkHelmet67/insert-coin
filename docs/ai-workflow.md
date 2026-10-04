@@ -556,3 +556,16 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 - **Il font è lo stesso:** l'alfabeto della ROM di Lunar Lander (`VECAN`, di Ed Logg) coincide con quello di Asteroids già nel pacchetto.
 
 **Verifica:** test dei disegni, degli orientamenti e della fiamma; la pagina mostra il modulo grande e quello piccolo che girano con la fiamma a tutti i livelli di spinta.
+
+## 2026-10-04 · Lunar Lander, step 4: la fisica del modulo e gli strumenti
+
+**Decisioni dell'AI:**
+
+- **La fisica è quella del programma, numero per numero:** tabella della spinta (`TRSTAB`), "seni" (`SINES`), gravità per missione (`GRAVT`), moltiplicazione frazionaria (`MULTPA`), velocità a 16 bit con saturazione (`SUMSUM`), attrito di TRAINING ogni 16 passi (`FRICTN`). Anche l'ordine è lo stesso del ciclo principale: prima la spinta con l'orientamento attuale, poi la rotazione, poi il carburante, infine il movimento con la velocità del passo precedente.
+- **Una correzione alla ricerca:** rileggendo `ROT.NI` si vede che la rotazione costa 0,06 unità a ogni passo con il tasto premuto, non a ogni scatto: la guida delle meccaniche è stata corretta.
+- **Il modulo vive nel mondo, non sullo schermo** [N]: il programma tiene la posizione sullo schermo e fa scorrere il paesaggio; il remake la tiene in unità del mondo (1/4096) e conserva l'arrotondamento del programma, che nella vista lontana ignora gli 8 bit bassi della velocità (`stepOf`).
+- **La leva da tastiera** [N]: frecce su e giù spostano una leva virtuale da 0 a 255 che resta dove la si lascia; il valore passa per la stessa formula del potenziometro (`THRLVL`), quindi la spinta salta da 0 a 4 e da 13 a 15 come sul cabinato. Il passo della leva è in `tuning.config.ts`.
+- **COMMAND con inerzia** è una piccola macchina a stati (`settleSpin`): un tocco avvia la rotazione minima, un tocco opposto la ferma. I test la percorrono passo per passo.
+- **Strumenti** alle coordinate della ROM (`MESSVG`, `DATAVG`), compresi i due punti dell'orologio e le frecce della velocità, che spariscono quando lo strumento segna 0.
+
+**Verifica:** 44 nuovi test su missioni, leva, spinta, rotazione, carburante, movimento e strumenti; la pagina mostra il modulo che vola sopra un suolo piatto, con leva, rotazione e strumenti funzionanti.

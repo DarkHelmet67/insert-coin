@@ -17,6 +17,18 @@ export const tuning = {
   framesPerSecond: 1000 / 24,
 
   /**
+   * How far one frame of the up or down key moves the thrust lever, out of 255 [N]: the whole
+   * travel in about 0.75 seconds. The cabinet lever is moved by hand, so the program says nothing.
+   */
+  leverStep: 8,
+
+  /**
+   * Fuel units given by one coin [P CRDTBL]: the DIP switches choose 450, 600, 750 or 900;
+   * 750 is the factory setting and the one the attract screen announces.
+   */
+  fuelPerCoin: 750,
+
+  /**
    * How the beam looks on the monitor [N], as in Asteroids: sizes in DVG units, a slightly blue
    * glow, `gamma` below 1 to lift the dim lines.
    */
