@@ -45,7 +45,7 @@ gh api graphql -F owner='{owner}' -F repo='{repo}' -F pr=<n> -f query='
   }' --jq '.data.repository.pullRequest.reviewThreads.nodes[] | select(.isResolved | not)'
 ```
 
-In Claude Code sul web GraphQL non è disponibile: usa `gh api repos/{owner}/{repo}/pulls/<n>/ccr/review_threads` e tieni le conversazioni con `is_resolved` falso.
+In Claude Code sul web GraphQL non è disponibile: usa `gh api repos/{owner}/{repo}/pulls/<n>/ccr/review_threads`, che restituisce per ogni conversazione `resolved`, `outdated`, `path`, `line` e `comment_ids` (il primo è il commento che l'ha aperta). Tieni quelle con `resolved` falso e leggi il testo dei commenti con `gh api repos/{owner}/{repo}/pulls/comments/<id> --jq '{user: .user.login, body}'`.
 
 Di ogni conversazione ti servono: il file e la riga, tutti i commenti nell'ordine (l'ultimo può aver già cambiato la richiesta) e l'id numerico del **primo** commento, che serve per rispondere e chiudere.
 
@@ -53,7 +53,7 @@ Di ogni conversazione ti servono: il file e la riga, tutti i commenti nell'ordin
 
 Applica il commento solo se è **tutto** questo:
 
-- **pertinente**: riguarda una riga o un file cambiati da questa PR, quel codice esiste ancora, e la richiesta è chiara (un blocco ` ```suggestion ` o un'istruzione precisa). Una conversazione `isOutdated` va riletta sul codice attuale;
+- **pertinente**: riguarda una riga o un file cambiati da questa PR, quel codice esiste ancora, e la richiesta è chiara (un blocco ` ```suggestion ` o un'istruzione precisa). Una conversazione `isOutdated` (o `outdated`) va riletta sul codice attuale;
 - **sicuro**: è una modifica locale, che non tocca segreti o credenziali, non allarga i permessi dei workflow, non aggiunge dipendenze, non cancella né indebolisce test, non disattiva regole di ESLint e non cambia comportamento oltre a quello richiesto;
 - **coerente** con [CLAUDE.md](../../../CLAUDE.md) e con la guida delle meccaniche del gioco: un commento che chiede di copiare un valore diverso dall'originale va verificato sulla fonte citata, non accettato sulla fiducia.
 
