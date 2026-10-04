@@ -44,7 +44,7 @@ Lunar Lander è stato il primo videogioco con **più punti di vista**: da lontan
 - **Il cielo** [P `SCAPMJR`]: nella vista lontana, salendo sopra y = 660, il cielo scorre verso l'alto e compare un secondo campo di stelle. Dopo 512 unità di salita la missione è persa: **il modulo è uscito nello spazio**, ricomincia da capo e paga una penale di carburante (sezione 5).
 - **Le stelle** [R `STAR0A`–`STAR3B`, `STRM0`–`STRM15`]: due campi di stelle disegnati a mano, uno per vista, che scorrono con il terreno.
 
-Nel remake il terreno è una funzione "altezza in x" ricavata dai vettori della ROM, e la posizione del modulo è nelle coordinate del mondo; la telecamera applica le stesse regole del programma. Codice: [`terrain.ts`](../src/terrain.ts), [`camera.ts`](../src/camera.ts).
+Nel remake il terreno è una funzione "altezza in x" ricavata dai vettori della ROM, e la posizione del modulo è nelle coordinate del mondo; la telecamera applica le stesse regole del programma. Codice: [`surface.ts`](../src/surface.ts), [`surface-data.ts`](../src/surface-data.ts), [`camera.ts`](../src/camera.ts).
 
 ## 3. Il modulo lunare
 

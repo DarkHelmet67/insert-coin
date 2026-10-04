@@ -568,4 +568,16 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 - **COMMAND con inerzia** è una piccola macchina a stati (`settleSpin`): un tocco avvia la rotazione minima, un tocco opposto la ferma. I test la percorrono passo per passo.
 - **Strumenti** alle coordinate della ROM (`MESSVG`, `DATAVG`), compresi i due punti dell'orologio e le frecce della velocità, che spariscono quando lo strumento segna 0.
 
-**Verifica:** 44 nuovi test su missioni, leva, spinta, rotazione, carburante, movimento e strumenti; la pagina mostra il modulo che vola sopra un suolo piatto, con leva, rotazione e strumenti funzionanti.
+**Verifica:** 45 nuovi test su missioni, leva, spinta, rotazione, carburante, movimento e strumenti; la pagina mostra il modulo che vola sopra un suolo piatto, con leva, rotazione e strumenti funzionanti.
+
+## 2026-10-04 · Lunar Lander, step 5: terreno, piazzole, scorrimento e zoom
+
+**Decisioni dell'AI:**
+
+- **Il terreno generato da uno script** a partire dalle 16 sezioni della ROM (`SECT01`–`SECT16`, fatte di 25 segmenti riusati): 159 punti in [`surface-data.ts`](../games/lunar-lander/src/surface-data.ts), con le due stelle di campo e i punti di contatto del modulo. I test controllano che ogni sezione parta all'altezza della tabella `MINTBL` e che tutte e 15 le piazzole della ROM cadano su tratti piatti: due conferme indipendenti che la trascrizione è giusta.
+- **Una sorpresa nella tabella delle piazzole:** `TBMNA` scrive prima la y e poi la x. Lo si è capito confrontandola con le posizioni della vista lontana (`TBLABS`), che coincidono solo leggendola così.
+- **Una telecamera al posto dello scorrimento** [N]: il programma muove il modulo sullo schermo e fa scorrere il paesaggio vicino ai bordi; il remake tiene il modulo nel mondo e sposta una telecamera con le stesse soglie (x 128 e 896, y 660 e 256, cambio di vista a 384 e 520 unità di altitudine, fuga nello spazio dopo 512 unità di cielo). Il risultato sullo schermo è lo stesso, il codice è molto più semplice.
+- **Il ritaglio del DVG**: il terreno della vista vicina esce dallo schermo, e il generatore di vettori del cabinato lo tagliava sui bordi del suo quadrato 1024 × 1024. Il remake fa lo stesso con `clipLines`, aggiunto a `@arcade/vector` nello step 3.
+- **Contatto semplificato** [N]: il programma misura metà dei punti del modulo nei passi pari e metà nei dispari, e la distanza dalle pareti in orizzontale; il remake controlla tutti e quattro i punti a ogni passo e dichiara lo schianto quando uno finisce sotto la superficie.
+
+**Verifica:** 30 nuovi test su terreno, piazzole, telecamera, contatto e stelle; schermate della vista lontana (identica a quella del cabinato) e del passaggio alla vista vicina durante una caduta libera.
