@@ -8,6 +8,7 @@
 
 <p align="center">
   <a href="https://github.com/DarkHelmet67/insert-coin/actions/workflows/deploy.yml"><img src="https://github.com/DarkHelmet67/insert-coin/actions/workflows/deploy.yml/badge.svg" alt="Deploy to GitHub Pages"></a>
+  <a href="https://github.com/DarkHelmet67/insert-coin/actions/workflows/ci.yml"><img src="https://github.com/DarkHelmet67/insert-coin/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="Licenza MIT"></a>
   <br>
   <img src="https://img.shields.io/badge/TypeScript-6.0_strict-3178C6?logo=typescript&logoColor=white" alt="TypeScript 6.0 strict">
@@ -83,7 +84,7 @@ insert-coin/
 │   └── asteroids/        il terzo gioco: grafica vettoriale e programma 6502 riprodotto
 ├── site/                 pagina iniziale del sito pubblicato
 ├── scripts/              script di build del sito
-└── .github/workflows/    controlli e deploy su GitHub Pages
+└── .github/             controlli (CI su branch e PR) e deploy su GitHub Pages
 ```
 
 Ogni pacchetto ha una sola responsabilità e non conosce i giochi: i giochi dipendono dai pacchetti, mai il contrario.

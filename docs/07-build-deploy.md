@@ -83,6 +83,16 @@ Il workflow [`.github/workflows/deploy.yml`](../.github/workflows/deploy.yml) pa
 
 ```yaml
 - uses: actions/checkout@v5
+- uses: ./.github/actions/checks # installazione, typecheck, lint, test
+- run: pnpm build:site
+- uses: actions/upload-pages-artifact@v4
+  with:
+    path: _site
+```
+
+I controlli stanno in un'azione composta, [`.github/actions/checks/action.yml`](../.github/actions/checks/action.yml), condivisa con il workflow dei feature branch (sezione 3 bis): i due workflow non possono controllare cose diverse.
+
+```yaml
 - uses: pnpm/action-setup@v4 # legge la versione di pnpm da "packageManager"
 - uses: actions/setup-node@v5
   with:
@@ -92,10 +102,6 @@ Il workflow [`.github/workflows/deploy.yml`](../.github/workflows/deploy.yml) pa
 - run: pnpm typecheck
 - run: pnpm lint
 - run: pnpm test
-- run: pnpm build:site
-- uses: actions/upload-pages-artifact@v4
-  with:
-    path: _site
 ```
 
 Tre dettagli:
@@ -118,6 +124,34 @@ deploy:
 ```
 
 I permessi del workflow sono i minimi necessari: `contents: read` per leggere il codice, `pages: write` e `id-token: write` per pubblicare. Il blocco `concurrency` evita due deploy contemporanei.
+
+## 3 bis. Feature branch e pull request
+
+Finché si lavora direttamente su `main`, il deploy è anche l'unico controllo. Quando il lavoro passa da un branch e da una pull request (dal quarto gioco, _Lunar Lander_, in poi), chi rivede la PR deve sapere se è verde **prima** di unirla. Lo fa un secondo workflow, [`.github/workflows/ci.yml`](../.github/workflows/ci.yml), che controlla e costruisce ma non pubblica:
+
+```yaml
+on:
+  push:
+    branches-ignore: [main] # main ha già deploy.yml
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true # un push più recente rende inutile il run precedente
+
+jobs:
+  checks:
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/checks
+      - run: pnpm build
+```
+
+- **Push su qualunque branch tranne `main`:** ogni commit di un feature branch ha il suo segno verde o rosso, anche prima che esista la PR.
+- **`pull_request` solo per i fork:** una PR da un branch dello stesso repository è già controllata dal suo push, e la condizione `if` evita di farlo due volte. Una PR da un fork (un contributor esterno, che non può fare push sul repository) invece ha solo questo evento.
+- **Anche la build:** un gioco che compila nei test ma non nella build di produzione romperebbe il deploy successivo.
+- **Permessi minimi:** solo `contents: read`. Il workflow dei branch non può pubblicare nulla: Pages resta legato a `main`.
 
 ## 4. Attivare GitHub Pages (una volta sola)
 

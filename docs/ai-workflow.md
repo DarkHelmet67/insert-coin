@@ -530,3 +530,17 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 - **La pagina vuota** ha lo schermo nelle proporzioni di MAME (1044 × 800 unità) e il titolo scritto con il font vettoriale di `@arcade/vector`.
 
 **Verifica:** typecheck, lint, test e build; il terreno ricostruito dai vettori della ROM parte da (0, 896) e torna esattamente a (4096, 896), passando per le altezze della tabella `MINTBL`.
+
+## 2026-10-04 · Lunar Lander, step 2: la CI anche sui branch e sulle PR
+
+**Richiesta:** aperta la pull request, Luca ha chiesto che la CI giri anche da un feature branch, non solo da `main`.
+
+**Decisioni dell'AI:**
+
+- **Un secondo workflow, `ci.yml`,** per i push su ogni branch tranne `main` e per le pull request: controlla e costruisce, non pubblica. Il deploy su Pages resta solo su `main`, in `deploy.yml`.
+- **I controlli in un posto solo:** installazione, typecheck, lint e test passano in un'azione composta (`.github/actions/checks`) usata da entrambi i workflow, così non possono divergere.
+- **Niente run doppi:** una PR da un branch dello stesso repository è già controllata dal push; l'evento `pull_request` serve solo per le PR dai fork, cioè per i contributor esterni che non possono fare push sul repository.
+- **Anche `pnpm build`:** un gioco che passa i test ma non la build di produzione romperebbe il deploy successivo.
+- Documentato nella [guida 07](07-build-deploy.md), nel prompt unico e con un secondo badge nel README.
+
+**Verifica:** il primo run di `ci.yml` sul branch `feature/lunar-lander`, visibile nei controlli della PR.

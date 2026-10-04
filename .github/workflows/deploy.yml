@@ -1,4 +1,5 @@
-# Checks every push to main and publishes the games on GitHub Pages.
+# Checks every push to main and publishes the games on GitHub Pages (feature branches and pull
+# requests are checked by ci.yml, without publishing).
 # One job verifies and builds, the next one deploys: a red check never reaches the site.
 name: Deploy to GitHub Pages
 
@@ -22,15 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: pnpm/action-setup@v4 # reads the pnpm version from "packageManager"
-      - uses: actions/setup-node@v5
-        with:
-          node-version-file: .nvmrc
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm typecheck
-      - run: pnpm lint
-      - run: pnpm test
+      - uses: ./.github/actions/checks # the same checks as ci.yml
       - run: pnpm build:site
       - uses: actions/upload-pages-artifact@v4
         with:

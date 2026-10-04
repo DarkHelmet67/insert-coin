@@ -1,0 +1,29 @@
+# Checks every push to a feature branch and every pull request, without deploying anything:
+# a contributor knows whether the change is green before it reaches main.
+# main has its own workflow, deploy.yml, which runs the same checks and then publishes the site.
+name: CI
+
+on:
+  push:
+    branches-ignore: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+# A newer push to the same branch makes the older run useless: cancel it.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    # A pull request from a branch of this repository is already checked by its push; only
+    # pull requests from forks need their own run.
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/checks
+      # The production build too: a game that does not build would break the next deploy.
+      - run: pnpm build
