@@ -71,7 +71,8 @@ jobs:
         with:
           site: ${{ steps.request.outputs.action == 'publish' && 'preview/site' || '' }}
           target: pr-${{ steps.request.outputs.number }}
-          message: ${{ steps.request.outputs.action == 'publish' && 'Publish' || 'Remove' }} the preview of PR #${{ steps.request.outputs.number }} at ${{ github.event.workflow_run.head_sha }}
+          # Quoted: an unquoted " #" would start a YAML comment and cut the message.
+          message: "${{ steps.request.outputs.action == 'publish' && 'Publish' || 'Remove' }} the preview of PR #${{ steps.request.outputs.number }} at ${{ github.event.workflow_run.head_sha }}"
       - if: steps.request.outputs.number != ''
         uses: actions/upload-pages-artifact@v4
         with:
