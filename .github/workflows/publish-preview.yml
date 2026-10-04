@@ -1,0 +1,114 @@
+# Publishes (or removes) the preview built by pr-preview.yml at <site>/pr-<number>/, leaving the
+# main site as it is, and links it in a comment on the pull request.
+# It starts when "PR preview" ends and always runs this file as it is on main, with write
+# permissions: it never runs the code of the pull request, it only copies the built files.
+name: Publish PR preview
+
+on:
+  workflow_run:
+    workflows: [PR preview]
+    types: [completed]
+
+permissions:
+  contents: write # to save the published tree on the gh-pages branch
+  pages: write
+  id-token: write
+  actions: read # to download the preview built by the other workflow
+  pull-requests: write # to comment with the link
+
+# The same group as deploy.yml: one change to the published tree at a time.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_repository.full_name == github.repository
+    runs-on: ubuntu-latest
+    outputs:
+      number: ${{ steps.request.outputs.number }}
+      action: ${{ steps.request.outputs.action }}
+    env:
+      GH_TOKEN: ${{ github.token }}
+      RUN_ID: ${{ github.event.workflow_run.id }}
+      HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+    steps:
+      - uses: actions/checkout@v5 # main: the trusted action that writes the tree
+      - name: Look for a preview
+        id: artifact
+        run: |
+          names=$(gh api "repos/${{ github.repository }}/actions/runs/$RUN_ID/artifacts" --jq '.artifacts[].name')
+          # A draft pull request builds nothing: then there is nothing to publish.
+          if grep -qx pr-preview <<< "$names"; then echo "found=true" >> "$GITHUB_OUTPUT"; fi
+      - if: steps.artifact.outputs.found == 'true'
+        uses: actions/download-artifact@v5
+        with:
+          name: pr-preview
+          path: preview
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+      - name: Check the request
+        id: request
+        if: steps.artifact.outputs.found == 'true'
+        run: |
+          # The files come from a run of the pull request's code: trust nothing in them.
+          number=$(cat preview/pr-number)
+          action=$(cat preview/action)
+          [[ "$number" =~ ^[0-9]+$ ]] || { echo "Bad number: $number" >&2; exit 1; }
+          [[ "$action" =~ ^(publish|remove)$ ]] || { echo "Bad action: $action" >&2; exit 1; }
+          # The number must belong to the commit that was built; a newer push has its own run.
+          head=$(gh api "repos/${{ github.repository }}/pulls/$number" --jq .head.sha)
+          if [[ "$head" != "$HEAD_SHA" ]]; then
+            echo "PR #$number is now at $head, not $HEAD_SHA: skipped."
+            exit 0
+          fi
+          echo "number=$number" >> "$GITHUB_OUTPUT"
+          echo "action=$action" >> "$GITHUB_OUTPUT"
+      - if: steps.request.outputs.number != ''
+        uses: ./.github/actions/publish-pages
+        with:
+          site: ${{ steps.request.outputs.action == 'publish' && 'preview/site' || '' }}
+          target: pr-${{ steps.request.outputs.number }}
+          message: ${{ steps.request.outputs.action == 'publish' && 'Publish' || 'Remove' }} the preview of PR #${{ steps.request.outputs.number }} at ${{ github.event.workflow_run.head_sha }}
+      - if: steps.request.outputs.number != ''
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: _pages
+
+  deploy:
+    needs: publish
+    if: needs.publish.outputs.number != ''
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
+      - name: Link the preview in the pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NUMBER: ${{ needs.publish.outputs.number }}
+          ACTION: ${{ needs.publish.outputs.action }}
+          SITE_URL: ${{ steps.deployment.outputs.page_url }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          marker='<!-- pr-preview -->'
+          if [[ "$ACTION" == publish ]]; then
+            body="$marker
+          🔍 **Anteprima di questa PR:** ${SITE_URL}pr-${NUMBER}/
+
+          Aggiornata al commit ${HEAD_SHA:0:7}. Il sito principale non cambia finché la PR non viene unita."
+          else
+            body="$marker
+          L'anteprima di questa PR è stata rimossa: la PR è chiusa."
+          fi
+          comments="repos/${{ github.repository }}/issues/$NUMBER/comments"
+          id=$(gh api --paginate "$comments" --jq ".[] | select(.body | startswith(\"$marker\")) | .id" | head -n 1)
+          if [[ -n "$id" ]]; then
+            gh api -X PATCH "repos/${{ github.repository }}/issues/comments/$id" -f body="$body" > /dev/null
+          else
+            gh api -X POST "$comments" -f body="$body" > /dev/null
+          fi

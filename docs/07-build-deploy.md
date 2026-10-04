@@ -123,7 +123,7 @@ deploy:
       uses: actions/deploy-pages@v4
 ```
 
-I permessi del workflow sono i minimi necessari: `contents: read` per leggere il codice, `pages: write` e `id-token: write` per pubblicare. Il blocco `concurrency` evita due deploy contemporanei.
+I permessi del workflow sono i minimi necessari: `pages: write` e `id-token: write` per pubblicare, `contents: write` per salvare il sito pubblicato nel branch `gh-pages`, che dalla [guida 14](14-pull-request.md) tiene insieme il sito di `main` e le anteprime delle pull request (lo fa l'azione `publish-pages`, che carica poi su Pages la cartella `_pages`). Il blocco `concurrency` evita due deploy contemporanei.
 
 ## 3 bis. Feature branch e pull request
 

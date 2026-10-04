@@ -1,0 +1,58 @@
+# Builds the preview of a pull request that is ready for review, again at every new push, and
+# asks for its removal when the pull request is closed. Draft pull requests get no preview.
+# This workflow runs the code of the pull request, so it can only read the repository: the
+# publishing happens in publish-preview.yml, which starts when this one ends and runs the
+# workflow of main, never the code of the pull request.
+# Pull requests from forks are skipped: their previews would publish code nobody has reviewed.
+name: PR preview
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review, closed]
+
+permissions:
+  contents: read
+
+# A newer push to the same pull request makes the older preview useless: cancel it.
+concurrency:
+  group: pr-preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    if: >-
+      github.event.action != 'closed' && !github.event.pull_request.draft &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5 # the pull request merged into main: the site after the merge
+      - uses: ./.github/actions/checks # a red pull request gets no preview
+      - run: pnpm build:site
+      - name: Pack the preview
+        run: |
+          mkdir preview
+          echo "${{ github.event.pull_request.number }}" > preview/pr-number
+          echo publish > preview/action
+          mv _site preview/site
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pr-preview
+          path: preview
+          retention-days: 1
+
+  remove:
+    if: >-
+      github.event.action == 'closed' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ask for the removal of the preview
+        run: |
+          mkdir preview
+          echo "${{ github.event.pull_request.number }}" > preview/pr-number
+          echo remove > preview/action
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pr-preview
+          path: preview
+          retention-days: 1

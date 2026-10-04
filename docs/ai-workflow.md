@@ -627,3 +627,18 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 - **Versioni:** Lunar Lander 1.0.0, root 1.3.0. Il tag e la release li crea Luca dopo aver unito la PR, perché l'ambiente dell'AI non può pubblicare tag.
 
 **Verifica:** controlli completi, build del sito con la nuova scheda, link della documentazione controllati con uno script.
+
+## 2026-10-04 · Pull request: anteprime su Pages e revisione con l'AI
+
+**Richiesta (Luca):** direttamente su `main`, tre funzionalità da provare sulla PR di Lunar Lander: un'anteprima su GitHub Pages per ogni PR pronta per la revisione, all'indirizzo `/pr-<numero>/`, senza toccare il sito principale; una skill `/pr-review [numero]` che faccia il revisore come Copilot nella pagina della PR; una skill `/pr-resolve [numero]` che applichi i commenti pertinenti e sicuri e chiuda le conversazioni con una risposta. Senza numero, le skill usano l'unica PR aperta, altrimenti segnalano l'errore.
+
+**Decisioni dell'AI:**
+
+- **Il branch `gh-pages` come archivio** del sito pubblicato: con la sorgente GitHub Actions ogni deploy sostituisce l'intero sito, quindi ogni deploy parte da quello già pubblicato e cambia solo la sua parte (la radice per `main`, `pr-<numero>` per una PR). Così le impostazioni di Pages restano come sono.
+- **Due workflow per le anteprime:** uno esegue il codice della PR con soli permessi di lettura, l'altro (`workflow_run`, sempre nella versione di `main`) copia i file costruiti, pubblica e commenta. Il secondo controlla numero, azione e commit ricevuti, perché vengono dal codice della PR. Le PR dai fork sono escluse.
+- **L'anteprima si aggiorna a ogni push** mentre la PR è pronta e sparisce alla chiusura; le bozze non ne hanno.
+- **Le skill stanno nel repository** (`.claude/skills/`), in italiano, e usano solo le API REST con `gh api`, perché GraphQL non è disponibile in Claude Code sul web. Il resto di `.claude/` resta privato.
+- **`/pr-review` non approva mai:** pubblica una revisione di tipo `COMMENT` con gravità dichiarata e blocchi `suggestion`. **`/pr-resolve` chiude una conversazione solo dopo il push** della correzione, e lascia aperte, con il motivo, quelle che non applica.
+- **CI su `main`:** `ci.yml` e l'azione dei controlli, nati sul branch di Lunar Lander, arrivano anche su `main`, perché i nuovi workflow li usano.
+
+**Verifica:** i workflow passano `actionlint`; la logica dell'archivio è stata provata in locale su un repository finto (sito di `main`, anteprima, nuovo `main`, rimozione dell'anteprima); poi tutto è stato provato sulla PR #1.

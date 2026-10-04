@@ -32,7 +32,7 @@ Il progetto ha due obiettivi:
 
 ## Giochi
 
-**▶ [Gioca online](https://darkhelmet67.github.io/insert-coin/)**: i giochi sono pubblicati su GitHub Pages a ogni push su `main`.
+**▶ [Gioca online](https://darkhelmet67.github.io/insert-coin/)**: i giochi sono pubblicati su GitHub Pages a ogni push su `main`. Ogni pull request pronta per la revisione si può provare prima dell'unione su `/insert-coin/pr-<numero>/` ([guida 14](docs/14-pull-request.md)).
 
 ![Space Invaders in gioco](docs/images/space-invaders-gameplay.png)
 ![Breakout in gioco](docs/images/breakout-gameplay.png)
@@ -89,7 +89,8 @@ insert-coin/
 │   └── lunar-lander/     il quarto gioco: dal sorgente originale Atari, su branch e pull request
 ├── site/                 pagina iniziale del sito pubblicato
 ├── scripts/              script di build del sito
-└── .github/            controlli (CI su branch e PR) e deploy su GitHub Pages
+├── .claude/skills/       skill di Claude Code: /pr-review e /pr-resolve
+└── .github/            controlli, deploy su GitHub Pages e anteprime delle pull request
 ```
 
 Ogni pacchetto ha una sola responsabilità e non conosce i giochi: i giochi dipendono dai pacchetti, mai il contrario.
@@ -124,6 +125,7 @@ Il codice è scritto per essere letto da persone (_code for humans, not for AI_)
 | [11 · Grafica vettoriale](docs/11-grafica-vettoriale.md)                         | Monitor vettoriali, disegni a passi del fascio, linee luminose nitide         |
 | [12 · Un terzo gioco: Asteroids](docs/12-terzo-gioco.md)                         | Aritmetica del 6502, caso nello stato, tipi con casi, gamepad touch           |
 | [13 · Un quarto gioco: Lunar Lander](docs/13-quarto-gioco.md)                    | Branch e PR, sorgente originale, telecamera, dati generati, leva della spinta |
+| [14 · Pull request](docs/14-pull-request.md)                                     | Anteprima di ogni PR su Pages, skill /pr-review e /pr-resolve                 |
 | [Space Invaders · meccaniche](games/space-invaders/docs/meccaniche-originali.md) | Marcia, bombe, bunker, UFO: come funzionava l'originale                       |
 | [Breakout · meccaniche](games/breakout/docs/meccaniche-originali.md)             | Mattoni, pallina, suoni: il circuito senza processore                         |
 | [Asteroids · meccaniche](games/asteroids/docs/meccaniche-originali.md)           | Nave, asteroidi, dischi volanti: il programma 6502 letto riga per riga        |

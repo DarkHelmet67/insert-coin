@@ -5,7 +5,7 @@ name: CI
 
 on:
   push:
-    branches-ignore: [main]
+    branches-ignore: [main, gh-pages] # gh-pages holds the published site, not code
   pull_request:
 
 permissions:

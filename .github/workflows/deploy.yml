@@ -1,6 +1,9 @@
 # Checks every push to main and publishes the games on GitHub Pages (feature branches and pull
-# requests are checked by ci.yml, without publishing).
+# requests are checked by ci.yml; pull requests ready for review get their own preview, see
+# pr-preview.yml).
 # One job verifies and builds, the next one deploys: a red check never reaches the site.
+# The main site is the root of the published tree; the pr-<number> folders of the previews stay
+# where they are.
 name: Deploy to GitHub Pages
 
 on:
@@ -9,11 +12,12 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write # to save the published tree on the gh-pages branch
   pages: write
   id-token: write
 
-# Only one deployment at a time; a newer push waits instead of cancelling a deploy halfway.
+# Only one deployment at a time, previews included; a newer push waits instead of cancelling a
+# deploy halfway.
 concurrency:
   group: pages
   cancel-in-progress: false
@@ -25,9 +29,14 @@ jobs:
       - uses: actions/checkout@v5
       - uses: ./.github/actions/checks # the same checks as ci.yml
       - run: pnpm build:site
+      - uses: ./.github/actions/publish-pages
+        with:
+          site: _site
+          target: .
+          message: Publish main at ${{ github.sha }}
       - uses: actions/upload-pages-artifact@v4
         with:
-          path: _site
+          path: _pages
 
   deploy:
     needs: build
