@@ -15,6 +15,10 @@ body {
   grid-template-rows: auto var(--cabinet-height);
   place-content: center;
   justify-items: center;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 
 /* The vector monitor shows 1044 x 800 units of the DVG: as large as the window allows. */
@@ -23,25 +27,33 @@ body {
   aspect-ratio: 1044 / 800;
 }
 
-/* The lit buttons of the cabinet: the mission lamps, START, and the record. */
+/* The lit buttons of the cabinet: the mission lamps, START, the coin slot and the record. */
 .cabinet {
   display: flex;
-  gap: 1.5rem;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
   align-items: center;
+  justify-content: center;
   color: #8a93a8;
   font: bold 0.75rem/1 monospace;
 }
 
 .lamps {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
+  justify-content: center;
 }
 
 .lamp {
   padding: 0.35rem 0.6rem;
   border: 2px solid #3a4050;
   border-radius: 0.3rem;
+  background: #000;
   color: #5a6070;
+  font: inherit;
+  cursor: pointer;
+  touch-action: none;
 }
 
 .lamp[data-lamp='on'] {
@@ -63,7 +75,200 @@ body {
   box-shadow: 0 0 0.6rem #20ff60;
 }
 
+.lamp-coin {
+  border-style: dashed;
+}
+
 .record {
   margin: 0;
   letter-spacing: 0.1em;
+}
+
+/* With mouse and keyboard the touch panel is not needed. */
+.panel {
+  display: none;
+}
+
+/*
+ * Touch screens (phones, tablets): the primary pointer is a finger, so show the control panel.
+ * The media query asks how the page is used, not which browser it is: no user-agent sniffing.
+ */
+@media (pointer: coarse) {
+  :root {
+    --side-width: 9rem;
+  }
+
+  html,
+  body {
+    height: 100dvh;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
+  body {
+    box-sizing: border-box;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right)
+      max(env(safe-area-inset-bottom), 0.5rem) env(safe-area-inset-left);
+    /* Phone held upright: screen and lamps at the top, the controls below, within thumb reach. */
+    grid-template:
+      'screen screen' auto
+      'cabinet cabinet' auto
+      'hint hint' auto
+      'system view' auto
+      'move lever' 1fr
+      'abort lever' auto
+      / 1fr 1fr;
+    gap: 0.5rem;
+    place-content: stretch;
+  }
+
+  #screen {
+    grid-area: screen;
+    width: min(100%, (100dvh - 22rem) * 1044 / 800);
+    justify-self: center;
+  }
+
+  .cabinet {
+    grid-area: cabinet;
+  }
+
+  .panel {
+    display: contents;
+  }
+
+  .pad {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .pad-move {
+    grid-area: move;
+  }
+
+  .pad-abort {
+    grid-area: abort;
+  }
+
+  .pad-lever {
+    grid-area: lever;
+  }
+
+  .pad-view {
+    grid-area: view;
+  }
+
+  .pad-system {
+    grid-area: system;
+  }
+
+  .rotate-hint {
+    grid-area: hint;
+    margin: 0;
+    color: #8a93a8;
+    font:
+      0.8rem/1.2 system-ui,
+      sans-serif;
+    text-align: center;
+  }
+
+  /* Styled after the cabinet's buttons: round, chunky, with a pressed state. */
+  .key {
+    border: 3px solid #f4f7ff;
+    border-radius: 50%;
+    background: #1a1d24;
+    color: #f4f7ff;
+    font: bold 0.8rem/1 monospace;
+    touch-action: none;
+  }
+
+  .key:active {
+    background: #4a5060;
+    transform: scale(0.95);
+  }
+
+  .key-arrow {
+    width: 4.5rem;
+    height: 4.5rem;
+    font-size: 2rem;
+  }
+
+  .key-abort {
+    width: 5rem;
+    height: 5rem;
+    border-color: #ff3030;
+    background: #601010;
+  }
+
+  .key-abort:active {
+    background: #ff3030;
+  }
+
+  .key-small {
+    border-width: 2px;
+    border-radius: 1rem;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.7rem;
+  }
+
+  /* The thrust lever: a tall slot with a handle, its position in --lever (0 to 1). */
+  .lever {
+    position: relative;
+    box-sizing: border-box;
+    width: 4.5rem;
+    height: 100%;
+    min-height: 8rem;
+    max-height: 18rem;
+    border: 3px solid #f4f7ff;
+    border-radius: 1rem;
+    background: linear-gradient(to top, #1a1d24, #3a2a10);
+    touch-action: none;
+  }
+
+  .lever-knob {
+    position: absolute;
+    right: -0.6rem;
+    bottom: calc(var(--lever, 0) * (100% - 2.2rem));
+    left: -0.6rem;
+    height: 2.2rem;
+    border-radius: 0.5rem;
+    background: #ffd36b;
+    box-shadow: 0 0 0.6rem #ffb020;
+    pointer-events: none;
+  }
+}
+
+/* Phone held sideways: screen in the middle, rotation and ABORT on the left, lever on the right. */
+@media (pointer: coarse) and (orientation: landscape) {
+  :root {
+    --cabinet-height: 2.2rem;
+  }
+
+  body {
+    padding: env(safe-area-inset-top) max(env(safe-area-inset-right), 0.5rem)
+      max(env(safe-area-inset-bottom), 0.25rem) max(env(safe-area-inset-left), 0.5rem);
+    grid-template:
+      'system screen view' auto
+      'move screen lever' 1fr
+      'abort cabinet lever' auto
+      / var(--side-width) 1fr var(--side-width);
+    gap: 0.25rem 0.5rem;
+  }
+
+  #screen {
+    width: min(100%, (100dvh - var(--cabinet-height) - 1rem) * 1044 / 800);
+  }
+
+  .cabinet {
+    font-size: 0.65rem;
+  }
+
+  .lamp {
+    padding: 0.25rem 0.4rem;
+  }
+
+  .rotate-hint {
+    display: none;
+  }
 }

@@ -604,3 +604,14 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 - **Il record** [N]: il cabinato non salvava punteggi; il remake tiene il migliore nel browser con `@arcade/storage`, come gli altri giochi, e lo mostra accanto alle lampade.
 
 **Verifica:** 9 nuovi test su suoni e pannello; schermata della scelta della missione con TAB.
+
+## 2026-10-04 · Lunar Lander, step 8: comandi touch e schermo intero
+
+**Decisioni dell'AI:**
+
+- **La leva della spinta diventa un cursore verticale** ([`lever-touch.ts`](../games/lunar-lander/src/lever-touch.ts)): sul cabinato era una leva che resta dove la si lascia, e un cursore trascinato col pollice destro è la cosa più vicina su un telefono. La posizione del dito si traduce nei 256 livelli della leva; la tastiera continua a muoverla a scatti.
+- **Rotazione e ABORT a sinistra, spinta a destra**, come i comandi del cabinato: i pulsanti riusano `createTouchButtons` di `@arcade/input`, lo stesso adattatore di Asteroids.
+- **Telefono in orizzontale e schermo intero al primo tocco** (richiesta di Luca): in verticale compare l'invito a girare il telefono, il primo tocco chiede lo schermo intero con `enterFullscreenOnTouch` e un pulsante lo ripropone se si esce. Il manifest dichiara l'orientamento orizzontale per chi installa la pagina.
+- **Le lampade del cabinato sono anche pulsanti:** toccare una missione la sceglie, toccare START inizia, toccare MONETA inserisce un gettone.
+
+**Verifica:** test sulla conversione dito → leva; schermate su telefono in verticale e in orizzontale.

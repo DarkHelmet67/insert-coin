@@ -43,6 +43,12 @@ describe('the cabinet', () => {
     expect(started.mode.kind).toBe('flying');
   });
 
+  it('keeps the lever where it is left, even between missions', () => {
+    const up = run(createGame(0, 0), 3, { ...noControls, leverMove: 1 });
+    expect(up.lever).toBe(24);
+    expect(run(up, 5).lever).toBe(24);
+  });
+
   it('takes the START key in attract as a coin', () => {
     expect(updateGame(createGame(0, 0), { ...noControls, start: true }).mode.kind).toBe('ready');
   });

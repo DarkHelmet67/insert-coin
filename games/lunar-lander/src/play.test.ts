@@ -21,25 +21,21 @@ const hovering = (x: number, y: number, vy = 0): FlightState => {
 
 describe('a frame of flight', () => {
   it('keeps flying high above the surface', () => {
-    const { state, event } = updateFlight(startFlight('cadet', tankWith(750), 0), noControls, 0);
+    const { state, event } = updateFlight(startFlight('cadet', tankWith(750), 0), noControls, 0, 0);
     expect(event).toBe('flying');
     expect(state.frames).toBe(1);
   });
 
-  it('pushes the lever up with the key', () => {
-    const { state } = updateFlight(
-      startFlight('cadet', tankWith(750), 0),
-      { ...noControls, leverMove: 1 },
-      0,
-    );
-    expect(state.lever).toBe(8);
+  it('fires the engine with the lever up', () => {
+    const { state } = updateFlight(startFlight('cadet', tankWith(750), 0), noControls, 0, 255);
+    expect(state.thrust).toBe(15);
   });
 
   it('touches down on a flat stretch', () => {
-    expect(updateFlight(hovering(2600, 64 + 19), noControls, 0).event).toBe('touchdown');
+    expect(updateFlight(hovering(2600, 64 + 19), noControls, 0, 0).event).toBe('touchdown');
   });
 
   it('crashes into the surface', () => {
-    expect(updateFlight(hovering(2600, 64 + 19, -0x4000), noControls, 0).event).toBe('crash');
+    expect(updateFlight(hovering(2600, 64 + 19, -0x4000), noControls, 0, 0).event).toBe('crash');
   });
 });

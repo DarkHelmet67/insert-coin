@@ -1,7 +1,7 @@
 import { abortFrame, ABORT_FRAMES, type AbortCount } from './abort';
 import { followLander, startingCamera, type Camera } from './camera';
 import { altitudeOf, hitsSurface, isTouchingDown, probesAt, type Probes } from './collision';
-import { moveLever, type Controls } from './controls';
+import type { Controls } from './controls';
 import { flyFrame, type Flight } from './flight';
 import { isEmpty, type Tank } from './fuel';
 import { landerOrientation, landerPosition, startingLander, type Lander } from './lander';
@@ -9,7 +9,6 @@ import { MISSIONS, type Mission } from './missions';
 import { rotationAt } from './rotation';
 import { chooseSites } from './sites';
 import { leverThrust, type ThrustLevel } from './thrust';
-import { tuning } from './tuning.config';
 
 /**
  * A mission in flight: the module, its tank, the camera and the chosen sites, one frame at a
@@ -21,8 +20,6 @@ export interface FlightState {
   readonly mission: Mission;
   readonly flight: Flight;
   readonly camera: Camera;
-  /** The thrust lever, 0 to 255: it stays where the player leaves it. */
-  readonly lever: number;
   /** Thrust applied in the last frame, for the flame and the sound. */
   readonly thrust: ThrustLevel;
   /** Frames of ABORT left, 0 when the player is in control [P INDEX]. */
@@ -44,7 +41,6 @@ export const startFlight = (mission: Mission, tank: Tank, random: number): Fligh
   mission,
   flight: { lander: startingLander(), tank: { ...tank, used: 0 } },
   camera: startingCamera,
-  lever: 0,
   thrust: 0,
   abort: 0,
   sites: chooseSites(random),
@@ -95,13 +91,13 @@ const handleAbort = (state: FlightState, abortPressed: boolean, frame: number): 
   };
 };
 
-/** One frame of a mission. */
+/** One frame of a mission, with the thrust lever at `lever` (0 to 255). */
 export const updateFlight = (
   state: FlightState,
   controls: Controls,
   frame: number,
+  lever: number,
 ): { readonly state: FlightState; readonly event: FlightEvent } => {
-  const lever = moveLever(state.lever, controls, tuning.leverStep);
   const aborting = state.abort > 0;
   // During an abort the program keeps the thrust it set and ignores the lever [P THRLVL].
   const flown = flyFrame(
@@ -126,7 +122,6 @@ export const updateFlight = (
     ...state,
     flight: flown.flight,
     camera: followed.camera,
-    lever,
     thrust: flown.thrust,
     frames: state.frames + 1,
   };

@@ -1,6 +1,6 @@
 import { followLander, toScreen } from './camera';
 import { altitudeOf, hitsSurface, isTouchingDown } from './collision';
-import { noControls, type Controls } from './controls';
+import { moveLever, noControls, type Controls } from './controls';
 import { explosionFor, type Explosion } from './explosion';
 import { addFuel, burnFuel, HUNDREDTHS, isEmpty, tankWith, type Tank } from './fuel';
 import {
@@ -62,6 +62,8 @@ export interface GameState {
   /** The fuel bought and not yet burned, between missions. */
   readonly tank: Tank;
   readonly mission: Mission;
+  /** The thrust lever, 0 to 255: a physical lever, it stays where it is between missions. */
+  readonly lever: number;
   readonly score: number;
   /** Best score in this browser [N: the cabinet kept no record]. */
   readonly hiScore: number;
@@ -106,6 +108,7 @@ export const createGame = (seed: number, hiScore: number): GameState => ({
   frame: 0,
   tank: tankWith(0),
   mission: 'training',
+  lever: 0,
   score: 0,
   hiScore,
   fuelLoss: null,
@@ -223,7 +226,7 @@ const updateFlying = (
   emptyFrames: number,
   controls: Controls,
 ): GameState => {
-  const { state: next, event } = updateFlight(flight, controls, state.frame);
+  const { state: next, event } = updateFlight(flight, controls, state.frame, state.lever);
   if (event === 'flewOff') return flewOff(state, next);
   if (event === 'crash') return touchDown(state, next, 'crash');
   if (event === 'touchdown') {
@@ -270,7 +273,7 @@ const updateLanded = (state: GameState, landed: Landed): GameState => {
 
 /** One frame of attract: the module falls and starts again on contact [P ATRINIT]. */
 const updateAttract = (state: GameState, flight: FlightState): GameState => {
-  const { state: next, event } = updateFlight(flight, noControls, state.frame);
+  const { state: next, event } = updateFlight(flight, noControls, state.frame, 0);
   return {
     ...state,
     mode: {
@@ -309,7 +312,8 @@ export const updateGame = (state: GameState, controls: Controls): GameState => {
   const selected = controls.select ? selectMission(paid) : paid;
   const startIgnored =
     coin && state.mode.kind === 'attract' ? { ...controls, start: false } : controls;
-  const next = updateMode(selected, startIgnored);
+  const lever = moveLever(state.lever, controls, tuning.leverStep);
+  const next = updateMode({ ...selected, lever }, startIgnored);
   return { ...next, frame: next.frame + 1, fuelLoss: tickFuelLoss(next.fuelLoss) };
 };
 
