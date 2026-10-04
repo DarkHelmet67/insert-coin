@@ -1,0 +1,22 @@
+# The checks every change must pass: install, typecheck, lint, tests.
+# Shared by ci.yml (feature branches and pull requests) and deploy.yml (main), so the two
+# workflows can never check different things. Run it after actions/checkout.
+name: Checks
+description: Installs the dependencies, then runs typecheck, lint and tests.
+
+runs:
+  using: composite
+  steps:
+    - uses: pnpm/action-setup@v4 # reads the pnpm version from "packageManager"
+    - uses: actions/setup-node@v5
+      with:
+        node-version-file: .nvmrc
+        cache: pnpm
+    - run: pnpm install --frozen-lockfile
+      shell: bash
+    - run: pnpm typecheck
+      shell: bash
+    - run: pnpm lint
+      shell: bash
+    - run: pnpm test
+      shell: bash

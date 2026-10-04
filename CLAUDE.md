@@ -39,6 +39,11 @@ Se una regola diventa un ostacolo reale, si discute e si aggiorna questo file, i
 - Ogni decisione significativa presa con l'AI va nel [diario AI](docs/ai-workflow.md).
 - Ogni modifica significativa (regole, strumenti, pacchetti, meccaniche, giochi) va riportata anche nel [prompt unico](docs/prompt-unico.md), che deve sempre poter ricreare il progetto com'è.
 
+## Pull request
+
+- Ogni PR pronta per la revisione ha un'anteprima su `https://darkhelmet67.github.io/insert-coin/pr-<numero>/`, linkata in un commento: il sito di `main` non cambia finché la PR non viene unita.
+- `/pr-review [numero]` rivede la PR e pubblica i commenti; `/pr-resolve [numero]` applica quelli pertinenti e sicuri e chiude le conversazioni. Le istruzioni sono in `.claude/skills/`, la spiegazione nella [guida 14](docs/14-pull-request.md).
+
 ## Prima di ogni commit
 
 ```bash

@@ -1,0 +1,70 @@
+# Updates the published tree kept on the gh-pages branch, then leaves it in _pages for
+# actions/upload-pages-artifact.
+# GitHub Pages publishes one whole folder at a time: to keep the main site and the previews of
+# the pull requests side by side, every deploy starts from what is already published and changes
+# only its own part. The main site owns the root, each pull request its own pr-<number> folder.
+# Run it after actions/checkout (which leaves the credentials needed to push).
+name: Publish on the gh-pages branch
+description: Puts a built site at the root or in a pr-<number> folder of the gh-pages branch.
+
+inputs:
+  site:
+    description: Folder with the built site; empty to remove the target folder.
+    default: ''
+  target:
+    description: "'.' for the main site, 'pr-<number>' for the preview of a pull request."
+    required: true
+  message:
+    description: Commit message on the gh-pages branch.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Check out the published tree
+      shell: bash
+      run: |
+        if git fetch origin gh-pages; then
+          git worktree add -B gh-pages _pages FETCH_HEAD
+        else
+          # The very first deploy: the branch does not exist yet.
+          git worktree add --orphan -b gh-pages _pages
+        fi
+
+    - name: Update its part of the tree
+      shell: bash
+      env:
+        SITE: ${{ inputs.site }}
+        TARGET: ${{ inputs.target }}
+      run: |
+        if [[ ! "$TARGET" =~ ^(\.|pr-[0-9]+)$ ]]; then
+          echo "Unexpected target: $TARGET" >&2
+          exit 1
+        fi
+        if [[ "$TARGET" == "." ]]; then
+          # The main site replaces everything except the previews.
+          find _pages -mindepth 1 -maxdepth 1 ! -name .git ! -name 'pr-*' -exec rm -rf {} +
+          cp -R "$SITE/." _pages/
+        else
+          rm -rf "_pages/$TARGET"
+          if [[ -n "$SITE" ]]; then
+            mkdir -p "_pages/$TARGET"
+            cp -R "$SITE/." "_pages/$TARGET/"
+          fi
+        fi
+
+    - name: Save it on the gh-pages branch
+      shell: bash
+      env:
+        MESSAGE: ${{ inputs.message }}
+      working-directory: _pages
+      run: |
+        git add -A
+        if git diff --cached --quiet; then
+          echo "Nothing changed."
+          exit 0
+        fi
+        git -c user.name='github-actions[bot]' \
+            -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
+            commit -q -m "$MESSAGE"
+        git push origin gh-pages
