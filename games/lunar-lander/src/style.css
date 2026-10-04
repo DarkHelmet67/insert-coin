@@ -1,0 +1,17 @@
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: #000;
+}
+
+body {
+  display: grid;
+  place-items: center;
+}
+
+/* The vector monitor shows 1044 x 800 units of the DVG: as large as the window allows. */
+#screen {
+  width: min(100vw, calc(100vh * 1044 / 800));
+  aspect-ratio: 1044 / 800;
+}

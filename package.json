@@ -16,6 +16,7 @@
     "dev": "pnpm --filter @arcade/space-invaders dev",
     "dev:breakout": "pnpm --filter @arcade/breakout dev",
     "dev:asteroids": "pnpm --filter @arcade/asteroids dev",
+    "dev:lunar-lander": "pnpm --filter @arcade/lunar-lander dev",
     "format": "prettier --write .",
     "lint": "eslint .",
     "test": "vitest run",

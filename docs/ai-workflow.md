@@ -516,3 +516,17 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 - **Versioni:** Asteroids 1.0.0, root 1.2.0. Il tag e la release su GitHub li crea Luca, perché l'ambiente dell'AI non può pubblicare tag.
 
 **Verifica:** typecheck, lint, test e build; il sito con le tre schede in Chromium.
+
+## 2026-10-04 · Lunar Lander, step 1: ricerca e pagina vuota
+
+**Richiesta:** Luca ha chiesto un quarto gioco, _Lunar Lander_ (Atari, 1979), riusando il più possibile il codice vettoriale di Asteroids e ricavando formule e valori (gravità, spinta, consumo) dalle fonti originali. Questa volta il lavoro va su un branch con una pull request, come farebbe un contributor esterno: approvata la checklist dei 9 step, l'AI li esegue di fila senza fermarsi per le verifiche. Su smartphone il gioco inviterà a ruotare il telefono e passerà a schermo intero al primo tocco, come Asteroids.
+
+**Decisioni dell'AI:**
+
+- **La fonte migliore possibile:** il **codice sorgente originale** di Atari, pubblicato nel 2021 su GitHub (historicalsource/lunar-lander), con i nomi delle routine e i commenti di Rich Moore. Per Asteroids c'era solo un disassemblato; qui ogni regola si legge nelle righe del 1978. Le marcature [P] e [R] citano quindi le etichette del sorgente (`ACCEL`, `SHIP08`) invece degli indirizzi.
+- **41,67 passi al secondo:** il programma avanza ogni 24 ms, e il remake lo rispetta invece di passare a 60 come Asteroids (61,5 → 60 era una differenza impercettibile, 41,67 → 60 no). Ogni velocità resta quella del sorgente.
+- **Un mondo, due viste:** il terreno è una sola linea di 4096 unità che si richiude su se stessa; la vista lontana lo divide per 4. Il remake terrà la posizione del modulo nelle coordinate del mondo e una telecamera con le regole di scorrimento e di zoom del programma.
+- **Curiosità trovate leggendo il sorgente:** la tabella dei seni non contiene seni veri; la gravità di PRIME è doppia; la regola del "consumo minimo" toglie carburante a chi si lascia cadere senza spinta. Tutto nella guida [Le meccaniche dell'originale](../games/lunar-lander/docs/meccaniche-originali.md).
+- **La pagina vuota** ha lo schermo nelle proporzioni di MAME (1044 × 800 unità) e il titolo scritto con il font vettoriale di `@arcade/vector`.
+
+**Verifica:** typecheck, lint, test e build; il terreno ricostruito dai vettori della ROM parte da (0, 896) e torna esattamente a (4096, 896), passando per le altezze della tabella `MINTBL`.
