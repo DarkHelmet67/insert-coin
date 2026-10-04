@@ -588,7 +588,7 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 
 - **Il verdetto è quello di `SCAPLND`:** entrambi i piedi a meno di 2 unità dal suolo, modulo dritto o inclinato di uno scatto, velocità orizzontale sotto 16 sullo strumento; sotto 16 in verticale è un buon atterraggio, sotto 32 un atterraggio duro (con il rimbalzo del programma, gravità 65), oltre è uno schianto. Punti 50, 15 o 5, moltiplicati per la piazzola.
 - **La penale sul carburante** (`DEDCTA`): chi si schianta o vola via nello spazio paga la differenza tra 8 unità al secondo di missione e il carburante bruciato davvero. Senza questa regola schiantarsi subito sarebbe il modo più economico di fare punti; il gioco originale l'aveva previsto.
-- **L'esplosione** è quella di `BOOM`, con i 12 pezzi di detriti della ROM e la cabina che gira: ogni pezzo parte da dove il fascio ha lasciato il precedente, come nella lista di vettori del cabinato, per cui anche le piccole derive dei disegni originali sono conservate.
+- **L'esplosione** è quella di `BOOM`, con i 12 disegni di detriti della ROM e la cabina che gira: ogni pezzo parte da dove il fascio ha lasciato il precedente, come nella lista di vettori del cabinato, per cui anche le piccole derive dei disegni originali sono conservate.
 - **Il caso nel gioco viene dal tempo** [P `INTCNT`]: il programma usa il contatore dell'interruzione da 4 ms (6 scatti per fotogramma) per scegliere le piazzole, la frase finale e i detriti. Il remake fa lo stesso: è il momento in cui il giocatore preme START o tocca il suolo a decidere.
 - **Una macchina a stati pura** ([`game.ts`](../games/lunar-lander/src/game.ts)): attract, schermata dopo la moneta, volo, sequenza di atterraggio; il disegno sta tutto in [`render.ts`](../games/lunar-lander/src/render.ts). In attract il tasto START vale anche come moneta [N], perché la tastiera non ha una gettoniera.
 
@@ -612,6 +612,18 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 - **La leva della spinta diventa un cursore verticale** ([`lever-touch.ts`](../games/lunar-lander/src/lever-touch.ts)): sul cabinato era una leva che resta dove la si lascia, e un cursore trascinato col pollice destro è la cosa più vicina su un telefono. La posizione del dito si traduce nei 256 livelli della leva; la tastiera continua a muoverla a scatti.
 - **Rotazione e ABORT a sinistra, spinta a destra**, come i comandi del cabinato: i pulsanti riusano `createTouchButtons` di `@arcade/input`, lo stesso adattatore di Asteroids.
 - **Telefono in orizzontale e schermo intero al primo tocco** (richiesta di Luca): in verticale compare l'invito a girare il telefono, il primo tocco chiede lo schermo intero con `enterFullscreenOnTouch` e un pulsante lo ripropone se si esce. Il manifest dichiara l'orientamento orizzontale per chi installa la pagina.
-- **Le lampade del cabinato sono anche pulsanti:** toccare una missione la sceglie, toccare START inizia, toccare MONETA inserisce un gettone.
+- **Le lampade del cabinato sono anche pulsanti:** toccare una lampada delle missioni fa da SELECT (passa alla missione successiva), toccare START inizia, toccare MONETA inserisce un gettone.
 
 **Verifica:** test sulla conversione dito → leva; schermate su telefono in verticale e in orizzontale.
+
+## 2026-10-04 · Lunar Lander, step 9: guida, README, sito e versione 1.0.0
+
+**Decisioni dell'AI:**
+
+- **La guida 13** ([Un quarto gioco: Lunar Lander](13-quarto-gioco.md)) racconta quello che è nuovo rispetto ad Asteroids: il lavoro su branch e pull request, il sorgente originale come fonte, il tempo del cabinato a 41,67 passi, la fisica in interi, il mondo con la telecamera, i dati generati dalla ROM e verificati con due tabelle indipendenti, il caso preso dal tempo, la leva della spinta.
+- **Le guide già scritte seguono il codice:** la 08 dice che il pulsante SCHERMO INTERO ora sta in `@arcade/render`, la 11 elenca `clipLines`, la 12 rimanda alla 13. La guida delle meccaniche ha ora il link al codice in ogni sezione.
+- **README, icona e scheda del sito** come per gli altri giochi: l'icona è il modulo grande della ROM posato su una piazzola, l'anteprima è una schermata della vista lontana con i moltiplicatori accesi.
+- **Il prompt unico** ha una sezione per Lunar Lander e una fase 12 con il nuovo modo di lavorare (branch, PR, passi senza fermarsi dopo l'approvazione).
+- **Versioni:** Lunar Lander 1.0.0, root 1.3.0. Il tag e la release li crea Luca dopo aver unito la PR, perché l'ambiente dell'AI non può pubblicare tag.
+
+**Verifica:** controlli completi, build del sito con la nuova scheda, link della documentazione controllati con uno script.

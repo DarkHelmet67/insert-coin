@@ -4,6 +4,7 @@
   <a href="https://darkhelmet67.github.io/insert-coin/space-invaders/"><img src="docs/images/games/space-invaders.svg" alt="Space Invaders" title="Space Invaders (Taito, 1978): gioca online" width="120"></a>
   <a href="https://darkhelmet67.github.io/insert-coin/breakout/"><img src="docs/images/games/breakout.svg" alt="Breakout" title="Breakout (Atari, 1976): gioca online" width="120"></a>
   <a href="https://darkhelmet67.github.io/insert-coin/asteroids/"><img src="docs/images/games/asteroids.svg" alt="Asteroids" title="Asteroids (Atari, 1979): gioca online" width="120"></a>
+  <a href="https://darkhelmet67.github.io/insert-coin/lunar-lander/"><img src="docs/images/games/lunar-lander.svg" alt="Lunar Lander" title="Lunar Lander (Atari, 1979): gioca online" width="120"></a>
 </p>
 
 <p align="center">
@@ -36,12 +37,14 @@ Il progetto ha due obiettivi:
 ![Space Invaders in gioco](docs/images/space-invaders-gameplay.png)
 ![Breakout in gioco](docs/images/breakout-gameplay.png)
 ![Asteroids in gioco](docs/images/asteroids-gameplay.png)
+![Lunar Lander in gioco](docs/images/lunar-lander-gameplay.png)
 
 | Gioco                                   | Anno originale | Stato    |
 | --------------------------------------- | -------------- | -------- |
 | [Space Invaders](games/space-invaders/) | 1978, Taito    | Completo |
 | [Breakout](games/breakout/)             | 1976, Atari    | Completo |
 | [Asteroids](games/asteroids/)           | 1979, Atari    | Completo |
+| [Lunar Lander](games/lunar-lander/)     | 1979, Atari    | Completo |
 
 ## Avvio rapido
 
@@ -52,6 +55,7 @@ pnpm install
 pnpm dev      # avvia Space Invaders con hot reload su http://localhost:5173
 pnpm dev:breakout  # avvia Breakout
 pnpm dev:asteroids # avvia Asteroids
+pnpm dev:lunar-lander # avvia Lunar Lander
 pnpm build    # build di produzione di tutti i giochi (games/*/dist)
 pnpm build:site  # build + sito completo in _site/, come su GitHub Pages
 ```
@@ -73,7 +77,7 @@ insert-coin/
 │   ├── engine-core/      game loop a timestep fisso, scene/stati
 │   ├── input/            tastiera, pulsanti touch, posizione di mouse e dito
 │   ├── render/           canvas, schermo intero, sprite bitmap, font pixel, cifre a 7 segmenti
-│   ├── vector/           grafica vettoriale: linee luminose, disegni delle ROM, font Atari
+│   ├── vector/           grafica vettoriale: linee luminose, disegni delle ROM, font Atari, ritaglio
 │   ├── audio/            effetti sonori con Web Audio API
 │   ├── collision/        AABB e collisione pixel-perfect
 │   ├── storage/          record salvato nel browser
@@ -81,7 +85,8 @@ insert-coin/
 ├── games/
 │   ├── space-invaders/   un gioco = un'app Vite che usa i pacchetti @arcade/*
 │   ├── breakout/         il secondo gioco, costruito sugli stessi pacchetti
-│   └── asteroids/        il terzo gioco: grafica vettoriale e programma 6502 riprodotto
+│   ├── asteroids/        il terzo gioco: grafica vettoriale e programma 6502 riprodotto
+│   └── lunar-lander/     il quarto gioco: dal sorgente originale Atari, su branch e pull request
 ├── site/                 pagina iniziale del sito pubblicato
 ├── scripts/              script di build del sito
 └── .github/            controlli (CI su branch e PR) e deploy su GitHub Pages
@@ -103,26 +108,28 @@ Il codice è scritto per essere letto da persone (_code for humans, not for AI_)
 
 ## Documentazione
 
-| Guida                                                                            | Argomento                                                              |
-| -------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| [00 · Introduzione](docs/00-introduzione.md)                                     | Obiettivi e metodo di lavoro con l'AI                                  |
-| [01 · Setup del monorepo](docs/01-setup-monorepo.md)                             | Creare il monorepo da zero, passo per passo                            |
-| [02 · Game loop](docs/02-game-loop.md)                                           | Loop a timestep fisso, testabile senza timer reali                     |
-| [03 · Input da tastiera](docs/03-input-tastiera.md)                              | Stato della tastiera, azioni, un poll per passo                        |
-| [04 · Rendering e sprite](docs/04-rendering-sprite.md)                           | Sprite come testo, font bitmap, test senza browser                     |
-| [05 · Collisioni](docs/05-collisioni.md)                                         | Rettangoli, pixel per pixel, tunneling                                 |
-| [06 · Audio](docs/06-audio.md)                                                   | Suoni sintetizzati con Web Audio, autoplay, suoni dedotti dallo stato  |
-| [07 · Build e deploy](docs/07-build-deploy.md)                                   | Build di produzione, sito multi-gioco, GitHub Actions e Pages          |
-| [08 · Comandi touch](docs/08-comandi-touch.md)                                   | Pannello di comandi per smartphone, tasti virtuali, multitouch         |
-| [09 · Record salvato](docs/09-record-salvato.md)                                 | Record in localStorage senza errori, fanfara del nuovo record          |
-| [10 · Un secondo gioco: Breakout](docs/10-secondo-gioco.md)                      | Cosa si riusa, cosa si aggiunge, pixel non quadrati, valori incerti    |
-| [11 · Grafica vettoriale](docs/11-grafica-vettoriale.md)                         | Monitor vettoriali, disegni a passi del fascio, linee luminose nitide  |
-| [12 · Un terzo gioco: Asteroids](docs/12-terzo-gioco.md)                         | Aritmetica del 6502, caso nello stato, tipi con casi, gamepad touch    |
-| [Space Invaders · meccaniche](games/space-invaders/docs/meccaniche-originali.md) | Marcia, bombe, bunker, UFO: come funzionava l'originale                |
-| [Breakout · meccaniche](games/breakout/docs/meccaniche-originali.md)             | Mattoni, pallina, suoni: il circuito senza processore                  |
-| [Asteroids · meccaniche](games/asteroids/docs/meccaniche-originali.md)           | Nave, asteroidi, dischi volanti: il programma 6502 letto riga per riga |
-| [Prompt unico](docs/prompt-unico.md)                                             | Un solo prompt per ricreare l'intero progetto con un assistente AI     |
-| [Diario AI](docs/ai-workflow.md)                                                 | Prompt, decisioni e correzioni durante lo sviluppo                     |
+| Guida                                                                            | Argomento                                                                     |
+| -------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| [00 · Introduzione](docs/00-introduzione.md)                                     | Obiettivi e metodo di lavoro con l'AI                                         |
+| [01 · Setup del monorepo](docs/01-setup-monorepo.md)                             | Creare il monorepo da zero, passo per passo                                   |
+| [02 · Game loop](docs/02-game-loop.md)                                           | Loop a timestep fisso, testabile senza timer reali                            |
+| [03 · Input da tastiera](docs/03-input-tastiera.md)                              | Stato della tastiera, azioni, un poll per passo                               |
+| [04 · Rendering e sprite](docs/04-rendering-sprite.md)                           | Sprite come testo, font bitmap, test senza browser                            |
+| [05 · Collisioni](docs/05-collisioni.md)                                         | Rettangoli, pixel per pixel, tunneling                                        |
+| [06 · Audio](docs/06-audio.md)                                                   | Suoni sintetizzati con Web Audio, autoplay, suoni dedotti dallo stato         |
+| [07 · Build e deploy](docs/07-build-deploy.md)                                   | Build di produzione, sito multi-gioco, GitHub Actions e Pages                 |
+| [08 · Comandi touch](docs/08-comandi-touch.md)                                   | Pannello di comandi per smartphone, tasti virtuali, multitouch                |
+| [09 · Record salvato](docs/09-record-salvato.md)                                 | Record in localStorage senza errori, fanfara del nuovo record                 |
+| [10 · Un secondo gioco: Breakout](docs/10-secondo-gioco.md)                      | Cosa si riusa, cosa si aggiunge, pixel non quadrati, valori incerti           |
+| [11 · Grafica vettoriale](docs/11-grafica-vettoriale.md)                         | Monitor vettoriali, disegni a passi del fascio, linee luminose nitide         |
+| [12 · Un terzo gioco: Asteroids](docs/12-terzo-gioco.md)                         | Aritmetica del 6502, caso nello stato, tipi con casi, gamepad touch           |
+| [13 · Un quarto gioco: Lunar Lander](docs/13-quarto-gioco.md)                    | Branch e PR, sorgente originale, telecamera, dati generati, leva della spinta |
+| [Space Invaders · meccaniche](games/space-invaders/docs/meccaniche-originali.md) | Marcia, bombe, bunker, UFO: come funzionava l'originale                       |
+| [Breakout · meccaniche](games/breakout/docs/meccaniche-originali.md)             | Mattoni, pallina, suoni: il circuito senza processore                         |
+| [Asteroids · meccaniche](games/asteroids/docs/meccaniche-originali.md)           | Nave, asteroidi, dischi volanti: il programma 6502 letto riga per riga        |
+| [Lunar Lander · meccaniche](games/lunar-lander/docs/meccaniche-originali.md)     | Modulo, missioni, terreno e zoom, atterraggio: dal sorgente Atari             |
+| [Prompt unico](docs/prompt-unico.md)                                             | Un solo prompt per ricreare l'intero progetto con un assistente AI            |
+| [Diario AI](docs/ai-workflow.md)                                                 | Prompt, decisioni e correzioni durante lo sviluppo                            |
 
 ## Licenza e diritti
 

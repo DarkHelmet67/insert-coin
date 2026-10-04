@@ -109,9 +109,13 @@ Codice: [`landing.ts`](../src/landing.ts), [`collision.ts`](../src/collision.ts)
 - **Ogni missione ne sceglie 4** [P `PLYINIT`]: due vicine tra le prime quattro (sempre × 2) e due tra le altre undici. Lampeggiano ogni 16 passi con il loro moltiplicatore scritto sotto, per esempio "4X" [P `SITES`].
 - **Punti** [P `POINTS`, `LNDADR`]: atterraggio perfetto **50**, duro **15**, schianto **5**, moltiplicati per il valore della piazzola quando il centro del modulo è sopra una delle quattro. Lo schianto su una piazzola vale quindi più di zero. Il punteggio ha 4 cifre.
 
+Codice: [`sites.ts`](../src/sites.ts), [`landing.ts`](../src/landing.ts).
+
 ## 8. ABORT
 
 Il pulsante rosso del cabinato salva il modulo all'ultimo momento [P `ABORT`, `ABTCNT`]: il programma raddrizza il modulo di uno scatto ogni due passi, frena la corsa orizzontale e accende il motore **al massimo assoluto** (un livello 16 che la leva non raggiunge) per circa 100 passi, smettendo prima se la salita è già abbastanza veloce. Costa caro: circa 90 unità di carburante al secondo. Durante l'ABORT il modulo non ruota.
+
+Codice: [`abort.ts`](../src/abort.ts).
 
 ## 9. Schermate e scritte
 
@@ -122,6 +126,8 @@ Il pulsante rosso del cabinato salva il modulo all'ultimo momento [P `ABORT`, `A
 - **Dopo la moneta** [P `DSPRTP`]: schermo nero con SELECT OPTION, PUSH START e il carburante caricato.
 - **Il record** [N]: il cabinato non ha una classifica. Il remake salva comunque il punteggio migliore nel browser, come gli altri giochi, e lo mostra fuori dallo schermo vettoriale, sul pannello del cabinato.
 
+Codice: [`hud.ts`](../src/hud.ts), [`messages.ts`](../src/messages.ts); le schermate in sequenza in [`game.ts`](../src/game.ts).
+
 ## 10. I suoni
 
 Come in Asteroids non c'è un chip sonoro: sono circuiti analogici accesi e spenti dal programma [P `S.SND`; H].
@@ -130,6 +136,8 @@ Come in Asteroids non c'è un chip sonoro: sono circuiti analogici accesi e spen
 - **L'esplosione** [P `BOOM`, H]: lo stesso rumore meno filtrato, che si spegne in circa 3 secondi.
 - **Allarme carburante** [P `STATUS`, H]: un fischio a 3 kHz che lampeggia con la scritta LOW ON FUEL.
 - Nient'altro: vecfever lo riassume in "solo rumore, un'esplosione e un bip quando il carburante è basso" [W].
+
+Codice: [`sounds.ts`](../src/sounds.ts).
 
 ## 11. Curiosità
 

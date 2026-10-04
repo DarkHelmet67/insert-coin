@@ -1,6 +1,6 @@
 {
   "name": "@arcade/lunar-lander",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "description": "Lunar Lander (Atari, 1979) rebuilt on HTML5 Canvas.",
