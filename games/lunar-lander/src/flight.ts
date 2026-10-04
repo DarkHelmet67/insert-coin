@@ -28,6 +28,8 @@ export interface Commands {
   readonly turn: Turn;
   /** Thrust level, from the lever (0-15) or ABORT (16). */
   readonly thrust: ThrustLevel;
+  /** False during an abort: the program skips the rotation altogether [P ROTSHP]. */
+  readonly steering: boolean;
 }
 
 /** What the frame did, for the flame and the sound. */
@@ -53,7 +55,9 @@ export const flyFrame = (
   const thrust = hasFuel ? commands.thrust : 0;
   // The push uses the orientation before this frame's turn, as the program does.
   const push = enginePush(landerOrientation(slowed), thrust, rules);
-  const turned = turnModule(slowed.rotation, commands.turn, rules.rotation, hasFuel);
+  const turned = commands.steering
+    ? turnModule(slowed.rotation, commands.turn, rules.rotation, hasFuel)
+    : { rotation: slowed.rotation, fuel: 0 };
   const afterTurn = turned.fuel > 0 ? burnFuel(flight.tank, turned.fuel) : flight.tank;
   const burn = engineBurn(thrust, rules);
   const tank = burn > 0 ? burnFuel(afterTurn, burn) : afterTurn;

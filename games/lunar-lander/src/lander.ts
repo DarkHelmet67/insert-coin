@@ -2,7 +2,7 @@ import type { MissionRules } from './missions';
 import type { Orientation } from './module-view';
 import { rotationAt, rotationOrientation, type Rotation } from './rotation';
 import type { Push } from './thrust';
-import { addSpeed, applyFriction } from './velocity';
+import { addSpeed, applyFriction, withSignOf } from './velocity';
 
 /**
  * The module in flight: where it is, how fast it goes, how it is turned [P ACCEL, FRICTN].
@@ -70,8 +70,7 @@ export const startingLander = (): Lander => ({
  */
 export const stepOf = (speed: number, view: View): number => {
   const mask = view === 'major' ? 0xff : 0x3f;
-  const magnitude = Math.abs(speed) & ~mask;
-  return speed < 0 && magnitude > 0 ? -magnitude : magnitude;
+  return withSignOf(speed, Math.abs(speed) & ~mask);
 };
 
 /**

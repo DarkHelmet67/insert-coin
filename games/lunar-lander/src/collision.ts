@@ -57,6 +57,15 @@ export const hitsSurface = (probes: Probes): boolean =>
 /** Closer than this to the surface, both lower points count as touching it [P SCAPLND]. */
 export const TOUCH_DISTANCE = 2;
 
-/** Whether both lower points touch the surface: the moment a landing is judged [P SCAPLND]. */
+/** Whether a point is on the surface or just above it, not inside. */
+const touches = (point: Point): boolean => {
+  const distance = clearance(point);
+  return distance >= 0 && distance < TOUCH_DISTANCE;
+};
+
+/**
+ * Whether both lower points touch the surface: the moment a landing is judged [P SCAPLND]. A
+ * point already inside the surface does not count: that is a crash.
+ */
 export const isTouchingDown = (probes: Probes): boolean =>
-  clearance(probes.lowerLeft) < TOUCH_DISTANCE && clearance(probes.lowerRight) < TOUCH_DISTANCE;
+  touches(probes.lowerLeft) && touches(probes.lowerRight);

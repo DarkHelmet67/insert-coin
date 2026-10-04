@@ -7,6 +7,10 @@
 /** The largest magnitude of a speed [P SUMSUM]. */
 export const MAX_SPEED = 0xffff;
 
+/** `magnitude` with the sign of `speed`; never -0, so a speed that stops is a plain 0. */
+export const withSignOf = (speed: number, magnitude: number): number =>
+  speed < 0 && magnitude > 0 ? -magnitude : magnitude;
+
 /** `speed + change`, with the magnitude saturated at {@link MAX_SPEED}. */
 export const addSpeed = (speed: number, change: number): number =>
   Math.max(-MAX_SPEED, Math.min(MAX_SPEED, speed + change));
@@ -23,5 +27,5 @@ export const shownSpeed = (speed: number): number => Math.abs(speed) >> 6;
  */
 export const applyFriction = (speed: number): number => {
   const magnitude = Math.abs(speed) - (Math.abs(speed) >> 5);
-  return speed < 0 ? -magnitude : magnitude;
+  return withSignOf(speed, magnitude);
 };

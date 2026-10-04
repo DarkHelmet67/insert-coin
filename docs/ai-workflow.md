@@ -581,3 +581,15 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 - **Contatto semplificato** [N]: il programma misura metà dei punti del modulo nei passi pari e metà nei dispari, e la distanza dalle pareti in orizzontale; il remake controlla tutti e quattro i punti a ogni passo e dichiara lo schianto quando uno finisce sotto la superficie.
 
 **Verifica:** 30 nuovi test su terreno, piazzole, telecamera, contatto e stelle; schermate della vista lontana (identica a quella del cabinato) e del passaggio alla vista vicina durante una caduta libera.
+
+## 2026-10-04 · Lunar Lander, step 6: atterraggio, punteggio, ABORT e fine partita
+
+**Decisioni dell'AI:**
+
+- **Il verdetto è quello di `SCAPLND`:** entrambi i piedi a meno di 2 unità dal suolo, modulo dritto o inclinato di uno scatto, velocità orizzontale sotto 16 sullo strumento; sotto 16 in verticale è un buon atterraggio, sotto 32 un atterraggio duro (con il rimbalzo del programma, gravità 65), oltre è uno schianto. Punti 50, 15 o 5, moltiplicati per la piazzola.
+- **La penale sul carburante** (`DEDCTA`): chi si schianta o vola via nello spazio paga la differenza tra 8 unità al secondo di missione e il carburante bruciato davvero. Senza questa regola schiantarsi subito sarebbe il modo più economico di fare punti; il gioco originale l'aveva previsto.
+- **L'esplosione** è quella di `BOOM`, con i 12 pezzi di detriti della ROM e la cabina che gira: ogni pezzo parte da dove il fascio ha lasciato il precedente, come nella lista di vettori del cabinato, per cui anche le piccole derive dei disegni originali sono conservate.
+- **Il caso nel gioco viene dal tempo** [P `INTCNT`]: il programma usa il contatore dell'interruzione da 4 ms (6 scatti per fotogramma) per scegliere le piazzole, la frase finale e i detriti. Il remake fa lo stesso: è il momento in cui il giocatore preme START o tocca il suolo a decidere.
+- **Una macchina a stati pura** ([`game.ts`](../games/lunar-lander/src/game.ts)): attract, schermata dopo la moneta, volo, sequenza di atterraggio; il disegno sta tutto in [`render.ts`](../games/lunar-lander/src/render.ts). In attract il tasto START vale anche come moneta [N], perché la tastiera non ha una gettoniera.
+
+**Verifica:** 36 nuovi test su verdetto, punti, penale, ABORT, esplosione, messaggi e partita completa (moneta, START, atterraggio, schianto, fine del carburante); schermate dell'ABORT e di uno schianto con la sua sequenza.

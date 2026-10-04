@@ -31,9 +31,8 @@ export interface Controls {
   readonly leverMove: -1 | 0 | 1;
   /** Where a touch slider puts the lever, 0 to 255, or null when nobody touches it. */
   readonly leverAt: number | null;
-  /** The ABORT button is held. */
+  /** Buttons that act once per press: holding ABORT does not start it again [P RSTDEB]. */
   readonly abort: boolean;
-  /** Buttons that act once per press. */
   readonly start: boolean;
   readonly select: boolean;
   readonly coin: boolean;
@@ -64,7 +63,7 @@ export const readControls = (keys: KeyState, leverAt: number | null = null): Con
     isActionDown(keys, bindings, 'leverDown'),
   ),
   leverAt,
-  abort: isActionDown(keys, bindings, 'abort') || wasActionPressed(keys, bindings, 'abort'),
+  abort: wasActionPressed(keys, bindings, 'abort'),
   start: wasActionPressed(keys, bindings, 'start'),
   select: wasActionPressed(keys, bindings, 'select'),
   coin: wasActionPressed(keys, bindings, 'coin'),

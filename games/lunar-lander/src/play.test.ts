@@ -1,13 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { closeUpOn } from './camera';
 import { noControls } from './controls';
+import { tankWith } from './fuel';
 import { POSITION_SCALE } from './lander';
 import { startFlight, updateFlight, type FlightState } from './play';
 import { rotationAt } from './rotation';
 
 /** A CADET mission with the module at world (`x`, `y`), upright and still, in the close-up. */
 const hovering = (x: number, y: number, vy = 0): FlightState => {
-  const state = startFlight('cadet', 750, 0);
+  const state = startFlight('cadet', tankWith(750), 0);
   return {
     ...state,
     camera: closeUpOn(x, y),
@@ -20,14 +21,14 @@ const hovering = (x: number, y: number, vy = 0): FlightState => {
 
 describe('a frame of flight', () => {
   it('keeps flying high above the surface', () => {
-    const { state, event } = updateFlight(startFlight('cadet', 750, 0), noControls, 0);
+    const { state, event } = updateFlight(startFlight('cadet', tankWith(750), 0), noControls, 0);
     expect(event).toBe('flying');
     expect(state.frames).toBe(1);
   });
 
   it('pushes the lever up with the key', () => {
     const { state } = updateFlight(
-      startFlight('cadet', 750, 0),
+      startFlight('cadet', tankWith(750), 0),
       { ...noControls, leverMove: 1 },
       0,
     );
