@@ -107,6 +107,7 @@ Tutta la parte geometrica (passi, trasformazioni, font, conversione in pixel) è
 | `transformOffset(dx, dy, place)`   | specchi, scala e rotazione di un passo                  |
 | `shapeEnd(shape)`                  | dove finisce il fascio (per lettere e icone in fila)    |
 | `atariVectorFont`, `textToLines`   | il font delle ROM Atari e la scrittura di un testo      |
+| `clipLines(lines, DVG_CLIP)`       | taglia le linee ai bordi dello schermo, come il DVG     |
 | `vectorTextWidth(font, text)`      | larghezza di un testo, per centrarlo                    |
 | `fitViewport`, `toPixel`           | dal mondo con y verso l'alto ai pixel del canvas        |
 | `syncScreen(ctx, viewport, ratio)` | canvas grande quanto lo schermo, nitido anche su Retina |

@@ -25,6 +25,12 @@ export interface TextPlacement {
   readonly x: number;
   readonly y: number;
   readonly scale?: number;
+  /**
+   * Brightness of the strokes, 1 to 15. Without it each glyph keeps the brightness stored in the
+   * font. The ROMs share one alphabet but not one brightness: Asteroids writes at 7, Lunar Lander
+   * at 12.
+   */
+  readonly brightness?: number;
 }
 
 /** The shape of one character; unknown characters become a blank move of one advance. */
@@ -43,7 +49,11 @@ export const textToLines = (
   font: VectorFont,
   text: string,
   placement: TextPlacement,
-): readonly BeamLine[] => shapeToLines(textShape(font, text), placement);
+): readonly BeamLine[] => {
+  const lines = shapeToLines(textShape(font, text), placement);
+  const { brightness } = placement;
+  return brightness === undefined ? lines : lines.map((line) => ({ ...line, brightness }));
+};
 
 /** Width of `text` at scale 1, from the left edge of the first glyph to the right of the last. */
 export const vectorTextWidth = (font: VectorFont, text: string): number =>

@@ -81,6 +81,27 @@ importers:
         specifier: workspace:*
         version: link:../../packages/storage
 
+  games/lunar-lander:
+    dependencies:
+      '@arcade/audio':
+        specifier: workspace:*
+        version: link:../../packages/audio
+      '@arcade/engine-core':
+        specifier: workspace:*
+        version: link:../../packages/engine-core
+      '@arcade/input':
+        specifier: workspace:*
+        version: link:../../packages/input
+      '@arcade/render':
+        specifier: workspace:*
+        version: link:../../packages/render
+      '@arcade/storage':
+        specifier: workspace:*
+        version: link:../../packages/storage
+      '@arcade/vector':
+        specifier: workspace:*
+        version: link:../../packages/vector
+
   games/space-invaders:
     dependencies:
       '@arcade/audio':

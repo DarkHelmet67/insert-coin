@@ -123,3 +123,5 @@ pnpm dev:asteroids
 All'apertura il gioco è nella schermata di attesa: asteroidi e dischi si muovono da soli, senza suoni. **Invio** (o **1**) avvia la partita; frecce per ruotare e spingere, **Spazio** per sparare, **↓** per l'iperspazio, **M** per l'audio. Prova a lasciare la nave ferma in un angolo senza sparare: il disco volante arriverà sempre più spesso, come voleva Atari.
 
 Il percorso completo, con le decisioni e gli errori, è nel [diario AI](ai-workflow.md); le regole dell'originale, con le fonti, nella [guida delle meccaniche](../games/asteroids/docs/meccaniche-originali.md).
+
+Prossima guida: [13 · Un quarto gioco: Lunar Lander](13-quarto-gioco.md).

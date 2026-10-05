@@ -517,6 +517,117 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 
 **Verifica:** typecheck, lint, test e build; il sito con le tre schede in Chromium.
 
+## 2026-10-04 · Lunar Lander, step 1: ricerca e pagina vuota
+
+**Richiesta:** Luca ha chiesto un quarto gioco, _Lunar Lander_ (Atari, 1979), riusando il più possibile il codice vettoriale di Asteroids e ricavando formule e valori (gravità, spinta, consumo) dalle fonti originali. Questa volta il lavoro va su un branch con una pull request, come farebbe un contributor esterno: approvata la checklist dei 9 step, l'AI li esegue di fila senza fermarsi per le verifiche. Su smartphone il gioco inviterà a ruotare il telefono e passerà a schermo intero al primo tocco, come Asteroids.
+
+**Decisioni dell'AI:**
+
+- **La fonte migliore possibile:** il **codice sorgente originale** di Atari, pubblicato nel 2021 su GitHub (historicalsource/lunar-lander), con i nomi delle routine e i commenti di Rich Moore. Per Asteroids c'era solo un disassemblato; qui ogni regola si legge nelle righe del 1978. Le marcature [P] e [R] citano quindi le etichette del sorgente (`ACCEL`, `SHIP08`) invece degli indirizzi.
+- **41,67 passi al secondo:** il programma avanza ogni 24 ms, e il remake lo rispetta invece di passare a 60 come Asteroids (61,5 → 60 era una differenza impercettibile, 41,67 → 60 no). Ogni velocità resta quella del sorgente.
+- **Un mondo, due viste:** il terreno è una sola linea di 4096 unità che si richiude su se stessa; la vista lontana lo divide per 4. Il remake terrà la posizione del modulo nelle coordinate del mondo e una telecamera con le regole di scorrimento e di zoom del programma.
+- **Curiosità trovate leggendo il sorgente:** la tabella dei seni non contiene seni veri; la gravità di PRIME è doppia; la regola del "consumo minimo" toglie carburante a chi si lascia cadere senza spinta. Tutto nella guida [Le meccaniche dell'originale](../games/lunar-lander/docs/meccaniche-originali.md).
+- **La pagina vuota** ha lo schermo nelle proporzioni di MAME (1044 × 800 unità) e il titolo scritto con il font vettoriale di `@arcade/vector`.
+
+**Verifica:** typecheck, lint, test e build; il terreno ricostruito dai vettori della ROM parte da (0, 896) e torna esattamente a (4096, 896), passando per le altezze della tabella `MINTBL`.
+
+## 2026-10-04 · Lunar Lander, step 2: la CI anche sui branch e sulle PR
+
+**Richiesta:** aperta la pull request, Luca ha chiesto che la CI giri anche da un feature branch, non solo da `main`.
+
+**Decisioni dell'AI:**
+
+- **Un secondo workflow, `ci.yml`,** per i push su ogni branch tranne `main` e per le pull request: controlla e costruisce, non pubblica. Il deploy su Pages resta solo su `main`, in `deploy.yml`.
+- **I controlli in un posto solo:** installazione, typecheck, lint e test passano in un'azione composta (`.github/actions/checks`) usata da entrambi i workflow, così non possono divergere.
+- **Niente run doppi:** una PR da un branch dello stesso repository è già controllata dal push; l'evento `pull_request` serve solo per le PR dai fork, cioè per i contributor esterni che non possono fare push sul repository.
+- **Anche `pnpm build`:** un gioco che passa i test ma non la build di produzione romperebbe il deploy successivo.
+- Documentato nella [guida 07](07-build-deploy.md), nel prompt unico e con un secondo badge nel README.
+
+**Verifica:** il primo run di `ci.yml` sul branch `feature/lunar-lander`, visibile nei controlli della PR.
+
+## 2026-10-04 · Lunar Lander, step 3: i disegni della ROM
+
+**Decisioni dell'AI:**
+
+- **I disegni copiati dal sorgente, non ridisegnati:** uno script ha letto le macro `VCTR dx, dy, luminosità` dei file della ROM vettoriale e le ha trascritte in [`module-shapes.ts`](../games/lunar-lander/src/module-shapes.ts), con il nome dell'etichetta originale accanto a ogni disegno: 8 cabine ottagonali, 9 moduli grandi, 9 moduli piccoli.
+- **32 orientamenti da 9 disegni,** rovesciando i segni come la routine `MODULE` del programma ([`module-view.ts`](../games/lunar-lander/src/module-view.ts)). Una pagina di prova (non pubblicata) li ha disegnati tutti e 32 in fila, per vedere che la rotazione fosse continua.
+- **La fiamma** nasce dove il disegno lascia il fascio, l'angolo sinistro dell'ugello: lo conferma il test, che per il modulo dritto trova (-6, -16) e, con la tabella `FLAMEA`, l'altro angolo in (8, -16).
+- **Nei pacchetti condivisi:** `@arcade/vector` ora scrive il testo a una luminosità scelta (Asteroids scrive a 7, Lunar Lander a 12) e sa ritagliare le linee su un rettangolo, come fa il DVG ai bordi dello schermo (`clipLines`): servirà al terreno che scorre. Il pulsante SCHERMO INTERO di Asteroids passa in `@arcade/render` (`showFullscreenButton`), con i suoi test.
+- **Il font è lo stesso:** l'alfabeto della ROM di Lunar Lander (`VECAN`, di Ed Logg) coincide con quello di Asteroids già nel pacchetto.
+
+**Verifica:** test dei disegni, degli orientamenti e della fiamma; la pagina mostra il modulo grande e quello piccolo che girano con la fiamma a tutti i livelli di spinta.
+
+## 2026-10-04 · Lunar Lander, step 4: la fisica del modulo e gli strumenti
+
+**Decisioni dell'AI:**
+
+- **La fisica è quella del programma, numero per numero:** tabella della spinta (`TRSTAB`), "seni" (`SINES`), gravità per missione (`GRAVT`), moltiplicazione frazionaria (`MULTPA`), velocità a 16 bit con saturazione (`SUMSUM`), attrito di TRAINING ogni 16 passi (`FRICTN`). Anche l'ordine è lo stesso del ciclo principale: prima la spinta con l'orientamento attuale, poi la rotazione, poi il carburante, infine il movimento con la velocità del passo precedente.
+- **Una correzione alla ricerca:** rileggendo `ROT.NI` si vede che la rotazione costa 0,06 unità a ogni passo con il tasto premuto, non a ogni scatto: la guida delle meccaniche è stata corretta.
+- **Il modulo vive nel mondo, non sullo schermo** [N]: il programma tiene la posizione sullo schermo e fa scorrere il paesaggio; il remake la tiene in unità del mondo (1/4096) e conserva l'arrotondamento del programma, che nella vista lontana ignora gli 8 bit bassi della velocità (`stepOf`).
+- **La leva da tastiera** [N]: frecce su e giù spostano una leva virtuale da 0 a 255 che resta dove la si lascia; il valore passa per la stessa formula del potenziometro (`THRLVL`), quindi la spinta salta da 0 a 4 e da 13 a 15 come sul cabinato. Il passo della leva è in `tuning.config.ts`.
+- **COMMAND con inerzia** è una piccola macchina a stati (`settleSpin`): un tocco avvia la rotazione minima, un tocco opposto la ferma. I test la percorrono passo per passo.
+- **Strumenti** alle coordinate della ROM (`MESSVG`, `DATAVG`), compresi i due punti dell'orologio e le frecce della velocità, che spariscono quando lo strumento segna 0.
+
+**Verifica:** 45 nuovi test su missioni, leva, spinta, rotazione, carburante, movimento e strumenti; la pagina mostra il modulo che vola sopra un suolo piatto, con leva, rotazione e strumenti funzionanti.
+
+## 2026-10-04 · Lunar Lander, step 5: terreno, piazzole, scorrimento e zoom
+
+**Decisioni dell'AI:**
+
+- **Il terreno generato da uno script** a partire dalle 16 sezioni della ROM (`SECT01`–`SECT16`, fatte di 25 segmenti riusati): 159 punti in [`surface-data.ts`](../games/lunar-lander/src/surface-data.ts), con le due stelle di campo e i punti di contatto del modulo. I test controllano che ogni sezione parta all'altezza della tabella `MINTBL` e che tutte e 15 le piazzole della ROM cadano su tratti piatti: due conferme indipendenti che la trascrizione è giusta.
+- **Una sorpresa nella tabella delle piazzole:** `TBMNA` scrive prima la y e poi la x. Lo si è capito confrontandola con le posizioni della vista lontana (`TBLABS`), che coincidono solo leggendola così.
+- **Una telecamera al posto dello scorrimento** [N]: il programma muove il modulo sullo schermo e fa scorrere il paesaggio vicino ai bordi; il remake tiene il modulo nel mondo e sposta una telecamera con le stesse soglie (x 128 e 896, y 660 e 256, cambio di vista a 384 e 520 unità di altitudine, fuga nello spazio dopo 512 unità di cielo). Il risultato sullo schermo è lo stesso, il codice è molto più semplice.
+- **Il ritaglio del DVG**: il terreno della vista vicina esce dallo schermo, e il generatore di vettori del cabinato lo tagliava sui bordi del suo quadrato 1024 × 1024. Il remake fa lo stesso con `clipLines`, aggiunto a `@arcade/vector` nello step 3.
+- **Contatto semplificato** [N]: il programma misura metà dei punti del modulo nei passi pari e metà nei dispari, e la distanza dalle pareti in orizzontale; il remake controlla tutti e quattro i punti a ogni passo e dichiara lo schianto quando uno finisce sotto la superficie.
+
+**Verifica:** 30 nuovi test su terreno, piazzole, telecamera, contatto e stelle; schermate della vista lontana (identica a quella del cabinato) e del passaggio alla vista vicina durante una caduta libera.
+
+## 2026-10-04 · Lunar Lander, step 6: atterraggio, punteggio, ABORT e fine partita
+
+**Decisioni dell'AI:**
+
+- **Il verdetto è quello di `SCAPLND`:** entrambi i piedi a meno di 2 unità dal suolo, modulo dritto o inclinato di uno scatto, velocità orizzontale sotto 16 sullo strumento; sotto 16 in verticale è un buon atterraggio, sotto 32 un atterraggio duro (con il rimbalzo del programma, gravità 65), oltre è uno schianto. Punti 50, 15 o 5, moltiplicati per la piazzola.
+- **La penale sul carburante** (`DEDCTA`): chi si schianta o vola via nello spazio paga la differenza tra 8 unità al secondo di missione e il carburante bruciato davvero. Senza questa regola schiantarsi subito sarebbe il modo più economico di fare punti; il gioco originale l'aveva previsto.
+- **L'esplosione** è quella di `BOOM`, con i 12 disegni di detriti della ROM e la cabina che gira: ogni pezzo parte da dove il fascio ha lasciato il precedente, come nella lista di vettori del cabinato, per cui anche le piccole derive dei disegni originali sono conservate.
+- **Il caso nel gioco viene dal tempo** [P `INTCNT`]: il programma usa il contatore dell'interruzione da 4 ms (6 scatti per fotogramma) per scegliere le piazzole, la frase finale e i detriti. Il remake fa lo stesso: è il momento in cui il giocatore preme START o tocca il suolo a decidere.
+- **Una macchina a stati pura** ([`game.ts`](../games/lunar-lander/src/game.ts)): attract, schermata dopo la moneta, volo, sequenza di atterraggio; il disegno sta tutto in [`render.ts`](../games/lunar-lander/src/render.ts). In attract il tasto START vale anche come moneta [N], perché la tastiera non ha una gettoniera.
+
+**Verifica:** 36 nuovi test su verdetto, punti, penale, ABORT, esplosione, messaggi e partita completa (moneta, START, atterraggio, schianto, fine del carburante); schermate dell'ABORT e di uno schianto con la sua sequenza.
+
+## 2026-10-04 · Lunar Lander, step 7: suoni, missioni e record
+
+**Decisioni dell'AI:**
+
+- **Tre suoni, come il cabinato:** il rombo del motore, l'esplosione e il bip di carburante basso. Il volume del rombo segue la formula del programma (spinta / 2 + 1: livelli 1, 3, 5, 7), quindi il motore si sente anche con la leva giù, come nell'originale. I filtri del circuito (71 Hz e un passa-banda a 89,5 Hz, letti nel modello di MAME) darebbero un rombo inudibile sugli altoparlanti di un telefono: il taglio è alzato a 180 Hz [N] e annotato in `tuning.config.ts`.
+- **Suoni calcolati dallo stato, non dagli eventi:** `soundsFor` guarda solo lo stato prodotto dal fotogramma, come in Asteroids; i suoni continui sono pezzi di rumore da 6 fotogrammi che si susseguono.
+- **Le lampade del cabinato in HTML:** i quattro pulsanti illuminati delle missioni e START stanno sotto lo schermo, accesi da `cabinet-panel.ts` (che tocca la pagina solo quando qualcosa cambia). In attract le quattro lampade restano a mezza luce, come faceva l'interruzione del cabinato con un ciclo del 50%.
+- **Il record** [N]: il cabinato non salvava punteggi; il remake tiene il migliore nel browser con `@arcade/storage`, come gli altri giochi, e lo mostra accanto alle lampade.
+
+**Verifica:** 9 nuovi test su suoni e pannello; schermata della scelta della missione con TAB.
+
+## 2026-10-04 · Lunar Lander, step 8: comandi touch e schermo intero
+
+**Decisioni dell'AI:**
+
+- **La leva della spinta diventa un cursore verticale** ([`lever-touch.ts`](../games/lunar-lander/src/lever-touch.ts)): sul cabinato era una leva che resta dove la si lascia, e un cursore trascinato col pollice destro è la cosa più vicina su un telefono. La posizione del dito si traduce nei 256 livelli della leva; la tastiera continua a muoverla a scatti.
+- **Rotazione e ABORT a sinistra, spinta a destra**, come i comandi del cabinato: i pulsanti riusano `createTouchButtons` di `@arcade/input`, lo stesso adattatore di Asteroids.
+- **Telefono in orizzontale e schermo intero al primo tocco** (richiesta di Luca): in verticale compare l'invito a girare il telefono, il primo tocco chiede lo schermo intero con `enterFullscreenOnTouch` e un pulsante lo ripropone se si esce. Il manifest dichiara l'orientamento orizzontale per chi installa la pagina.
+- **Le lampade del cabinato sono anche pulsanti:** toccare una lampada delle missioni fa da SELECT (passa alla missione successiva), toccare START inizia, toccare MONETA inserisce un gettone.
+
+**Verifica:** test sulla conversione dito → leva; schermate su telefono in verticale e in orizzontale.
+
+## 2026-10-04 · Lunar Lander, step 9: guida, README, sito e versione 1.0.0
+
+**Decisioni dell'AI:**
+
+- **La guida 13** ([Un quarto gioco: Lunar Lander](13-quarto-gioco.md)) racconta quello che è nuovo rispetto ad Asteroids: il lavoro su branch e pull request, il sorgente originale come fonte, il tempo del cabinato a 41,67 passi, la fisica in interi, il mondo con la telecamera, i dati generati dalla ROM e verificati con due tabelle indipendenti, il caso preso dal tempo, la leva della spinta.
+- **Le guide già scritte seguono il codice:** la 08 dice che il pulsante SCHERMO INTERO ora sta in `@arcade/render`, la 11 elenca `clipLines`, la 12 rimanda alla 13. La guida delle meccaniche ha ora il link al codice in ogni sezione.
+- **README, icona e scheda del sito** come per gli altri giochi: l'icona è il modulo grande della ROM posato su una piazzola, l'anteprima è una schermata della vista lontana con i moltiplicatori accesi.
+- **Il prompt unico** ha una sezione per Lunar Lander e una fase 12 con il nuovo modo di lavorare (branch, PR, passi senza fermarsi dopo l'approvazione).
+- **Versioni:** Lunar Lander 1.0.0, root 1.3.0. Il tag e la release li crea Luca dopo aver unito la PR, perché l'ambiente dell'AI non può pubblicare tag.
+
+**Verifica:** controlli completi, build del sito con la nuova scheda, link della documentazione controllati con uno script.
+
 ## 2026-10-04 · Pull request: anteprime su Pages e revisione con l'AI
 
 **Richiesta (Luca):** direttamente su `main`, tre funzionalità da provare sulla PR di Lunar Lander: un'anteprima su GitHub Pages per ogni PR pronta per la revisione, all'indirizzo `/pr-<numero>/`, senza toccare il sito principale; una skill `/pr-review [numero]` che faccia il revisore come Copilot nella pagina della PR; una skill `/pr-resolve [numero]` che applichi i commenti pertinenti e sicuri e chiuda le conversazioni con una risposta. Senza numero, le skill usano l'unica PR aperta, altrimenti segnalano l'errore.
@@ -531,3 +642,11 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 - **CI su `main`:** `ci.yml` e l'azione dei controlli, nati sul branch di Lunar Lander, arrivano anche su `main`, perché i nuovi workflow li usano.
 
 **Verifica:** i workflow passano `actionlint`; la logica dell'archivio è stata provata in locale su un repository finto (sito di `main`, anteprima, nuovo `main`, rimozione dell'anteprima); poi tutto è stato provato sulla PR #1.
+
+## 2026-10-05 · Lunar Lander: spinta e gravità
+
+**Problema segnalato dall'autore:** provando l'anteprima, atterrare senza finire il carburante sembrava quasi impossibile: la caduta libera ricordava l'originale, ma il motore al massimo non riusciva a contrastarla.
+
+**Verifica dell'AI:** riletti nel sorgente originale `GRAVT`, `TRSTAB`, `SINES`, `FRCMLT`, `MULTPA`, `ACCEL`, `SUMSUM`, `FRMECNT` e `INVELX`, controllando anche che il file sia in esadecimale (`.RADIX 16`). Il remake li riproduce esattamente: gravità 17 per passo, spinta piena verso il basso 27, quindi solo 10 di margine. Una simulazione con il codice del gioco conferma che 3 secondi di caduta libera chiedono 5 secondi di spinta piena e circa 50 unità di carburante. La difficoltà è quella del cabinato, non un errore di trascrizione.
+
+**Correzione:** due moltiplicatori in `tuning.config.ts`, `physics.gravityScale` e `physics.thrustScale`, arrotondati a unità intere con `scaleSpeed`, perché il programma non ha frazioni. Provati i valori, l'autore ha scelto la gravità originale e `thrustScale` 1,5: "sempre difficile ma fattibile".
