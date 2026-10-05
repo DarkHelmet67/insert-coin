@@ -642,3 +642,11 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 - **CI su `main`:** `ci.yml` e l'azione dei controlli, nati sul branch di Lunar Lander, arrivano anche su `main`, perché i nuovi workflow li usano.
 
 **Verifica:** i workflow passano `actionlint`; la logica dell'archivio è stata provata in locale su un repository finto (sito di `main`, anteprima, nuovo `main`, rimozione dell'anteprima); poi tutto è stato provato sulla PR #1.
+
+## 2026-10-05 · Lunar Lander: spinta e gravità
+
+**Problema segnalato dall'autore:** provando l'anteprima, atterrare senza finire il carburante sembrava quasi impossibile: la caduta libera ricordava l'originale, ma il motore al massimo non riusciva a contrastarla.
+
+**Verifica dell'AI:** riletti nel sorgente originale `GRAVT`, `TRSTAB`, `SINES`, `FRCMLT`, `MULTPA`, `ACCEL`, `SUMSUM`, `FRMECNT` e `INVELX`, controllando anche che il file sia in esadecimale (`.RADIX 16`). Il remake li riproduce esattamente: gravità 17 per passo, spinta piena verso il basso 27, quindi solo 10 di margine. Una simulazione con il codice del gioco conferma che 3 secondi di caduta libera chiedono 5 secondi di spinta piena e circa 50 unità di carburante. La difficoltà è quella del cabinato, non un errore di trascrizione.
+
+**Correzione:** due moltiplicatori in `tuning.config.ts`, `physics.gravityScale` e `physics.thrustScale`, arrotondati a unità intere con `scaleSpeed`, perché il programma non ha frazioni. Provati i valori, l'autore ha scelto la gravità originale e `thrustScale` 1,5: "sempre difficile ma fattibile".

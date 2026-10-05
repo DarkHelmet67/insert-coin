@@ -1,5 +1,7 @@
 import type { Orientation } from './module-view';
 import type { MissionRules } from './missions';
+import { tuning } from './tuning.config';
+import { scaleSpeed } from './velocity';
 
 /**
  * The engine: from the thrust lever to the push on the module [P THRLVL, FRCMLT, ACCEL].
@@ -83,10 +85,11 @@ export const enginePush = (
   const power = THRUST_TABLE[thrust] ?? 0;
   const vertical = verticalSineIndex(orientation);
   const signs = QUADRANT_SIGNS[orientation >> 3] ?? { x: 1, y: 1 };
-  /** One axis, with the extra power of PRIME. */
+  /** One axis, with the extra power of PRIME and the multiplier of `tuning.config.ts` [N]. */
   const axis = (sine: number): number => {
     const push = multiplyFraction(SINES[sine] ?? 0, power);
-    return rules.strongEngine ? push + (push >> 1) : push;
+    const programPush = rules.strongEngine ? push + (push >> 1) : push;
+    return scaleSpeed(programPush, tuning.physics.thrustScale);
   };
   /** A magnitude with the sign of its quadrant, without producing -0. */
   const signed = (sign: number, magnitude: number): number =>

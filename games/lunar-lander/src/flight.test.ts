@@ -3,6 +3,8 @@ import { flyFrame, type Flight } from './flight';
 import { tankWith } from './fuel';
 import { landerOrientation, startingLander } from './lander';
 import { MISSIONS } from './missions';
+import { tuning } from './tuning.config';
+import { scaleSpeed } from './velocity';
 
 /** A module at the start of a mission with a coin's worth of fuel. */
 const flight = (units = 750): Flight => ({ lander: startingLander(), tank: tankWith(units) });
@@ -28,7 +30,7 @@ describe('one frame of flight', () => {
       'major',
       0,
     );
-    expect(next.flight.lander.vx).toBe(0x3200 - 27);
+    expect(next.flight.lander.vx).toBe(0x3200 - scaleSpeed(27, tuning.physics.thrustScale));
   });
 
   it('stops the engine and the rotation when the tank is empty', () => {

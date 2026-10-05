@@ -23,6 +23,20 @@ export const tuning = {
   leverStep: 8,
 
   /**
+   * Multipliers of the module's physics [N]: 1 keeps the program's values. Gravity is 17 speed
+   * units a frame (34 in PRIME) [P GRAVT], the engine at full thrust pushes 27 [P TRSTAB, SINES]:
+   * it beats gravity by only 10, so stopping a fall takes longer than the fall itself. Raise
+   * `thrustScale` (or lower `gravityScale`) for an easier game; the results are rounded to whole
+   * speed units, as the program has no fractions. The remake keeps the program's gravity, which
+   * feels right, and a 1.5 times stronger engine (41 at full thrust): still hard, but a landing
+   * no longer costs most of the fuel.
+   */
+  physics: {
+    gravityScale: 1,
+    thrustScale: 1.5,
+  },
+
+  /**
    * Fuel units given by one coin [P CRDTBL]: the DIP switches choose 450, 600, 750 or 900;
    * 750 is the factory setting and the one the attract screen announces.
    */

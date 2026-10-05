@@ -5,8 +5,15 @@ import {
   enginePush,
   leverThrust,
   multiplyFraction,
+  SINES,
+  THRUST_TABLE,
   verticalSineIndex,
 } from './thrust';
+import { tuning } from './tuning.config';
+import { scaleSpeed } from './velocity';
+
+/** A push of the program as the remake applies it, with the engine multiplier [N]. */
+const remake = (programPush: number): number => scaleSpeed(programPush, tuning.physics.thrustScale);
 
 describe('the thrust lever', () => {
   it('is off in the lowest quarter and full in the top eighth', () => {
@@ -37,10 +44,10 @@ describe('the push of the engine', () => {
   });
 
   it('pushes straight up when upright, and sideways when lying', () => {
-    expect(enginePush(8, 15, MISSIONS.cadet)).toEqual({ x: 0, y: 27 });
-    expect(enginePush(0, 15, MISSIONS.cadet)).toEqual({ x: 27, y: 0 });
-    expect(enginePush(16, 15, MISSIONS.cadet)).toEqual({ x: -27, y: 0 });
-    expect(enginePush(24, 15, MISSIONS.cadet)).toEqual({ x: 0, y: -27 });
+    expect(enginePush(8, 15, MISSIONS.cadet)).toEqual({ x: 0, y: remake(27) });
+    expect(enginePush(0, 15, MISSIONS.cadet)).toEqual({ x: remake(27), y: 0 });
+    expect(enginePush(16, 15, MISSIONS.cadet)).toEqual({ x: -remake(27), y: 0 });
+    expect(enginePush(24, 15, MISSIONS.cadet)).toEqual({ x: 0, y: -remake(27) });
   });
 
   it('pushes left and up when turned to the left', () => {
@@ -49,14 +56,16 @@ describe('the push of the engine', () => {
     expect(push.y).toBeGreaterThan(0);
   });
 
-  it('beats gravity only above a certain level', () => {
-    const gravity = MISSIONS.cadet.gravity;
-    expect(enginePush(8, 8, MISSIONS.cadet).y).toBeLessThan(gravity);
-    expect(enginePush(8, 10, MISSIONS.cadet).y).toBeGreaterThan(gravity);
+  it('in the program, beats gravity only above a certain level', () => {
+    /** The program's upward push at a thrust level, without the remake's multiplier. */
+    const programPush = (level: number): number =>
+      multiplyFraction(SINES[8] ?? 0, THRUST_TABLE[level] ?? 0);
+    expect(programPush(8)).toBeLessThan(0x11);
+    expect(programPush(10)).toBeGreaterThan(0x11);
   });
 
   it('is half again as strong in PRIME, and huge in ABORT', () => {
-    expect(enginePush(8, 15, MISSIONS.prime).y).toBe(27 + 13);
-    expect(enginePush(8, ABORT_THRUST, MISSIONS.cadet).y).toBe(0xfe);
+    expect(enginePush(8, 15, MISSIONS.prime).y).toBe(remake(27 + 13));
+    expect(enginePush(8, ABORT_THRUST, MISSIONS.cadet).y).toBe(remake(0xfe));
   });
 });

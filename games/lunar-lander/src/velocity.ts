@@ -29,3 +29,9 @@ export const applyFriction = (speed: number): number => {
   const magnitude = Math.abs(speed) - (Math.abs(speed) >> 5);
   return withSignOf(speed, magnitude);
 };
+
+/**
+ * A speed change of the program times a multiplier of `tuning.config.ts` [N], rounded to whole
+ * speed units because the program has no fractions. A multiplier of 1 gives the value back.
+ */
+export const scaleSpeed = (change: number, scale: number): number => Math.round(change * scale);

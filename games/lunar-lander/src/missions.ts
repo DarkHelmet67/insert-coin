@@ -1,3 +1,6 @@
+import { tuning } from './tuning.config';
+import { scaleSpeed } from './velocity';
+
 /**
  * The four missions of the cabinet, chosen with the SELECT button. They differ in gravity,
  * engine power, fuel use and rotation [P GRAVT, ACCEL, BURN, ROTSHP, FRICTN]. See
@@ -26,6 +29,10 @@ export interface MissionRules {
   readonly friction: boolean;
 }
 
+/** A gravity of the program [P GRAVT], times the multiplier of `tuning.config.ts` [N]. */
+const gravityOf = (programGravity: number): number =>
+  scaleSpeed(programGravity, tuning.physics.gravityScale);
+
 /** Fuel factor of every mission but PRIME [P FUELFAC]. */
 export const FUEL_FACTOR = 0xda;
 
@@ -33,7 +40,7 @@ export const FUEL_FACTOR = 0xda;
 export const MISSIONS: Readonly<Record<Mission, MissionRules>> = {
   training: {
     label: 'TRAINING',
-    gravity: 0x11,
+    gravity: gravityOf(0x11),
     strongEngine: false,
     fuelFactor: FUEL_FACTOR,
     rotation: 'limited',
@@ -41,7 +48,7 @@ export const MISSIONS: Readonly<Record<Mission, MissionRules>> = {
   },
   cadet: {
     label: 'CADET',
-    gravity: 0x11,
+    gravity: gravityOf(0x11),
     strongEngine: false,
     fuelFactor: FUEL_FACTOR,
     rotation: 'free',
@@ -49,7 +56,7 @@ export const MISSIONS: Readonly<Record<Mission, MissionRules>> = {
   },
   prime: {
     label: 'PRIME',
-    gravity: 0x22,
+    gravity: gravityOf(0x22),
     strongEngine: true,
     fuelFactor: 0x90,
     rotation: 'free',
@@ -57,7 +64,7 @@ export const MISSIONS: Readonly<Record<Mission, MissionRules>> = {
   },
   command: {
     label: 'COMMAND',
-    gravity: 0x11,
+    gravity: gravityOf(0x11),
     strongEngine: false,
     fuelFactor: FUEL_FACTOR,
     rotation: 'inertia',
