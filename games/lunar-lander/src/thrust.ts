@@ -85,11 +85,17 @@ export const enginePush = (
   const power = THRUST_TABLE[thrust] ?? 0;
   const vertical = verticalSineIndex(orientation);
   const signs = QUADRANT_SIGNS[orientation >> 3] ?? { x: 1, y: 1 };
-  /** One axis, with the extra power of PRIME and the multiplier of `tuning.config.ts` [N]. */
+  /**
+   * One axis, with the extra power of PRIME and the multiplier of `tuning.config.ts` [N]. ABORT
+   * keeps the program's power: it already beats gravity by far, and the multiplier is there for
+   * the lever.
+   */
   const axis = (sine: number): number => {
     const push = multiplyFraction(SINES[sine] ?? 0, power);
     const programPush = rules.strongEngine ? push + (push >> 1) : push;
-    return scaleSpeed(programPush, tuning.physics.thrustScale);
+    return thrust === ABORT_THRUST
+      ? programPush
+      : scaleSpeed(programPush, tuning.physics.thrustScale);
   };
   /** A magnitude with the sign of its quadrant, without producing -0. */
   const signed = (sign: number, magnitude: number): number =>

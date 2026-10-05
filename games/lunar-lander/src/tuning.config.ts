@@ -29,7 +29,8 @@ export const tuning = {
    * `thrustScale` (or lower `gravityScale`) for an easier game; the results are rounded to whole
    * speed units, as the program has no fractions. The remake keeps the program's gravity, which
    * feels right, and a 1.5 times stronger engine (41 at full thrust): still hard, but a landing
-   * no longer costs most of the fuel.
+   * no longer costs most of the fuel. `thrustScale` moves only the lever's push: ABORT keeps the
+   * program's 254, which already beats gravity by far.
    */
   physics: {
     gravityScale: 1,

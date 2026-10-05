@@ -66,6 +66,6 @@ describe('the push of the engine', () => {
 
   it('is half again as strong in PRIME, and huge in ABORT', () => {
     expect(enginePush(8, 15, MISSIONS.prime).y).toBe(remake(27 + 13));
-    expect(enginePush(8, ABORT_THRUST, MISSIONS.cadet).y).toBe(remake(0xfe));
+    expect(enginePush(8, ABORT_THRUST, MISSIONS.cadet).y).toBe(0xfe);
   });
 });
