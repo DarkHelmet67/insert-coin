@@ -20,7 +20,7 @@ const simulate = (frames: number): readonly PlayingState[] =>
   );
 
 describe('a simulated game', () => {
-  const states = simulate(3000);
+  const states = simulate(6000);
   const last = states.at(-1) ?? newGame;
 
   it('scores points by shooting aliens', () => {
@@ -34,7 +34,10 @@ describe('a simulated game', () => {
   });
 
   it('loses the fighter, which then explodes', () => {
-    const lost = states.findIndex((s) => s.sounds.includes('fighterExplosion'));
+    // A double fighter that loses one of its two ships keeps flying: look for a single one.
+    const lost = states.findIndex(
+      (s, i) => s.sounds.includes('fighterExplosion') && states[i - 1]?.dual === false,
+    );
     expect(lost).toBeGreaterThan(0);
     expect(objectAt(states[lost]?.objects ?? [], FIGHTER).code).toBe(0x20);
   });

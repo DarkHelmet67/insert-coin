@@ -3,7 +3,7 @@
  * computed when they were dropped: a fixed-point rate of 32 steps per pixel, with the remainder
  * carried from frame to frame.
  */
-import type { BombDrift } from './flight';
+import type { BombDrift } from './flight-world';
 import { BOMB_COUNT, FIRST_BOMB, objectAt, updateObject, type Objects } from './objects';
 
 /** Sprite code and palette of a bomb (`c_game_or_demo_init`). */

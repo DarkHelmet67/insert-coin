@@ -2,7 +2,7 @@ import { newAttacks, type Attacks } from './attacks';
 import { NO_CAPTURE, type Capture } from './capture-state';
 import type { AlienLook, Rank, StageParameters } from './stage-setup';
 import { NO_TIMERS, type GameTimers } from './clock';
-import { SLOT_COUNT, type BombDrift } from './flight';
+import { SLOT_COUNT, type BombDrift } from './flight-world';
 import type { FlightSlot } from './flight-slot';
 import { initialFormation, type Formation } from './formation';
 import type { Message } from './messages';

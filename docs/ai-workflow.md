@@ -663,7 +663,7 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 - **Tre processori, uno stato:** nessuna emulazione delle CPU; i compiti del _main_ e del _sub_ diventano moduli puri che leggono e scrivono un solo `PlayingState` immutabile, come la RAM condivisa del cabinato.
 - **Il suono emulato:** le melodie sono a tre voci e la ROM ha le note, quindi niente suoni descritti a mano: un nuovo pacchetto, `@arcade/wsg`, emula il chip a forme d'onda Namco, il programma del suono è portato dalla ROM (120 tick al secondo, priorità fissa degli effetti) e `@arcade/audio` ha un nuovo `stream` che accoda i campioni senza buchi ([guida 15](15-chip-sonoro-namco.md)). Solo l'esplosione del caccia (chip 54XX, analogico) resta un rumore filtrato.
 - **Un solo file da regolare:** `tuning.config.ts` con difficoltà (livello A di fabbrica), vite, soglie delle vite extra, volume ed esplosione, ognuno con la sua fonte.
-- **Cosa manca, dichiarato:** un solo giocatore, niente crediti (la moneta avvia la partita), l'attract senza allenamento e partita dimostrativa, niente logo "namco" (nella ROM dei caratteri Midway quelle tessere disegnano il raggio).
+- **Cosa manca, dichiarato:** un solo giocatore, niente crediti (la moneta avvia la partita), l'attract senza allenamento e partita dimostrativa, niente logo "namco" (le tessere da \$66 a \$6C provate non lo disegnano).
 
 **Errori corretti lungo la strada:** un test che faceva calare l'inviluppo un tick troppo presto (al tick del "hold" il volume è ancora 10); il minimo del tremolo del raggio traente (3, non 4); la durata della musica d'inizio, misurata nei test invece che stimata; il logo "namco" disegnato con tessere sbagliate, poi tolto.
 
@@ -683,3 +683,17 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 
 - **La coda dei campioni** (`stream.ts`): `nextChunkStart` ripartiva con 60 ms di anticipo quando in coda restavano meno di 15 ms di suono, aggiungendo un silenzio mentre la coda suonava ancora. Applicato: finché c'è suono in coda il pezzo nuovo parte subito dopo; si riparte con l'anticipo solo a coda esaurita.
 - **La colonna della tabella delle bombe** (`bomber-timers.ts`): con 40 alieni vivi la colonna vale 4 e si legge il primo byte della riga dopo. Non applicato: lo fa anche il programma originale (`c_08BE`, e il sorgente commentato nota che le due tabelle devono essere contigue per questo), e il remake copia anche i byte che seguono la tabella. Aggiunti un commento e un test che fissano il comportamento della ROM; la decisione resta a Luca.
+
+## 2026-10-15 · Galaga: la revisione con /pr-review
+
+**Dieci commenti** della revisione con la skill del progetto, ognuno verificato sul sorgente originale prima di applicarlo con `/pr-resolve`:
+
+- **L'alieno a testa in giù** (`object-states.ts`): tornato in formazione restava capovolto, perché il bit 0 del controllo dello sprite, che l'originale prova e azzera (`case_245F`), è il capovolgimento in verticale (`flipY`) e non quello orizzontale. Corretto, con un test.
+- **La pausa fra le ondate** (`wave-launcher.ts`): negli stage normali l'ondata dopo parte appena nessun alieno vola; solo gli stage bonus aspettano il timer di gioco (`f_2916`). Corretto, con tre test.
+- **`flight.ts` troppo lungo** (493 righe): diviso in `flight-world.ts` (il mondo condiviso), `flight-commands.ts` (i comandi da \$EF a \$FF) e `flight-bombs.ts` (le bombe in volo), come chiede CLAUDE.md.
+- **L'arrivo a casa** cambiava anche il disegno: l'originale (`l_0D03`) aggiorna solo la posizione.
+- **Il test del suono del caccia extra** non provava ciò che diceva il nome: riscritto.
+- **Il test della perdita del caccia** guardava la prima esplosione, che poteva essere quella di metà caccia doppio: ora cerca un caccia singolo.
+- **Documenti**: il caccia catturato vale 500 in formazione e 1000 in volo; la schermata attract è [P], non [S]; il set MAME è `galagamw`; tolto il link alle note di ricerca, che non sono nel repository; il logo "namco" manca perché le tessere provate non lo disegnano (la ROM dei caratteri è la stessa del set Namco); i punti del bonus sono in centinaia.
+
+**Una segnalazione scartata:** un agente sosteneva che il suono a impulsi restasse acceso nella schermata attract; due simulazioni realistiche (600 fotogrammi ciascuna) l'hanno smentito.

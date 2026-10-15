@@ -109,9 +109,13 @@ describe('tickSound', () => {
     expect(voices(ticks.at(-1))).toBe(3);
   });
 
-  it('clears the other sounds at the end of "shot your ship!", but not the coins', () => {
-    const sound = triggered(EFFECT.capturedFighterHit, triggered(EFFECT.rescue));
-    const ticks = run(sound, 600);
-    expect(ticks.at(-1)?.sound.triggers.every((v) => v === 0)).toBe(true);
+  it('clears the other sounds at the end of "shot your ship!", but not the extra fighter', () => {
+    const sound = triggered(
+      EFFECT.extraLife,
+      triggered(EFFECT.capturedFighterHit, triggered(EFFECT.rescue)),
+    );
+    const end = run(sound, 600).find((t) => t.sound.triggers[EFFECT.capturedFighterHit] === 0);
+    expect(end?.sound.triggers[EFFECT.rescue]).toBe(0);
+    expect(end?.sound.triggers[EFFECT.extraLife]).toBe(1);
   });
 });

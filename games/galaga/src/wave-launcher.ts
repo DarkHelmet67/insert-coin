@@ -109,12 +109,15 @@ const launch = (world: LauncherWorld, entry: WaveEntry, inputs: LauncherInputs):
   };
 };
 
-/** `l_2944`: a start mark. The next wave waits until nothing flies and the pause is over. */
+/**
+ * `l_2944`: a start mark. The next wave waits until nothing flies; in a challenging stage it
+ * also waits for the pause of game timer 0 (`f_2916`).
+ */
 const startWave = (world: LauncherWorld, inputs: LauncherInputs): LauncherWorld => {
   if (!inputs.enabled) return world;
   if (inputs.flying !== 0) return { ...world, timer: 2 };
   if (inputs.challenge && inputs.timer === 1) return { ...world, groupCountReset: true };
-  if (inputs.timer !== 0) return world;
+  if (inputs.challenge && inputs.timer !== 0) return world;
   const { launcher } = world;
   return {
     ...world,

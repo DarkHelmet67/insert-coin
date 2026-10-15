@@ -10,7 +10,7 @@ import process from 'node:process';
 //   games/galaga/src/art/color-proms.ts  the three color PROMs, byte by byte
 // Every pixel is one of four values, written ".", "1", "2", "3": "." is transparent.
 // The ROMs are not part of the repository (they are Namco's): pass the folder holding them,
-// named as in the MAME "galaga" set (2600j.bin, 2700k.bin, 2800l.bin, prom-*.*).
+// named as in the MAME "galagamw" set (2600j.bin, 2700k.bin, 2800l.bin, prom-*.*).
 //   node scripts/galaga/extract-rom-art.js path/to/roms
 
 const romDir = process.argv[2];

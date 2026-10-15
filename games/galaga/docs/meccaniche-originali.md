@@ -21,7 +21,6 @@ Tutti i valori incerti o da regolare stanno in un solo file, [`tuning.config.ts`
 - [Computer Archeology · Galaga](https://computerarcheology.com/Arcade/Galaga/): il disassemblato delle tre CPU, la decodifica delle **ROM grafiche** (caratteri e sprite) e delle **PROM dei colori**, con le immagini delle ROM.
 - [MAME · driver di Galaga](https://github.com/mamedev/mame/blob/master/src/mame/namco/galaga.cpp), il [video](https://github.com/mamedev/mame/blob/master/src/mame/namco/galaga_v.cpp), il [suono Namco WSG](https://github.com/mamedev/mame/blob/master/src/devices/sound/namco.cpp) e il [generatore di stelle 05xx](https://github.com/mamedev/mame/blob/master/src/mame/namco/starfield_05xx.cpp). La copia del vecchio driver MAME inclusa nel progetto di Neidermeier mostra in modo diretto come lo schermo usa le coordinate degli sprite.
 - [StrategyWiki · Galaga](https://strategywiki.org/wiki/Galaga/Gameplay) e il manuale Midway: regole viste dal giocatore, punteggi, stemmi degli stage.
-- Le note di ricerca complete, in inglese e con tutte le tabelle, sono nella cartella del progetto (`galaga/note-rom-originale.md`).
 
 ## 1. Lo schermo e il tempo
 
@@ -65,7 +64,7 @@ Il cuore di _Galaga_ è la routine che fa volare gli alieni [P `f_08D3`]. Non co
 - **Simmetria** [P `l_0BF7`]: ogni programma vale per il lato sinistro; per il lato destro basta cambiare segno alla rotazione.
 - **Il ritorno a casa** [P `case_0AA0`, `l_0C05_flite_pth_cont`]: quando l'alieno deve tornare in formazione, il programma calcola l'angolo verso il posto di destinazione (con una divisione e un arcotangente a 8 bit, `c_0E5B`) e corregge la rotta finché non arriva entro un pixel. Il posto si muove con il dondolio e il respiro: l'alieno lo insegue.
 
-Il remake **esegue gli stessi byte** con un interprete che ricalca la routine originale. Codice: [`flight.ts`](../src/flight.ts), [`flight-slot.ts`](../src/flight-slot.ts), [`flight-memory.ts`](../src/flight-memory.ts), [`z80-math.ts`](../src/z80-math.ts), [`rom/flight-rom.ts`](../src/rom/flight-rom.ts).
+Il remake **esegue gli stessi byte** con un interprete che ricalca la routine originale. Codice: [`flight.ts`](../src/flight.ts), [`flight-commands.ts`](../src/flight-commands.ts), [`flight-bombs.ts`](../src/flight-bombs.ts), [`flight-world.ts`](../src/flight-world.ts), [`flight-slot.ts`](../src/flight-slot.ts), [`flight-memory.ts`](../src/flight-memory.ts), [`z80-math.ts`](../src/z80-math.ts), [`rom/flight-rom.ts`](../src/rom/flight-rom.ts).
 
 ## 5. Le ondate di ingresso
 
@@ -73,7 +72,7 @@ Il remake **esegue gli stessi byte** con un interprete che ricalca la routine or
 - **Coppie e file** [P `f_2916`]: ogni ondata è fatta di coppie (un alieno per lato, o due della stessa fila). Un alieno parte ogni 8 fotogrammi, salvo quelli segnati per partire insieme al compagno.
 - **La partenza** [P `db_2A6C`]: dall'alto, poco fuori dallo schermo, puntando in basso; o dai lati in basso, puntando verso destra o sinistra.
 - **Le tabelle per stage** [P `d_combat_stg_dat`, `d_combat_stg_dat_idx`]: 13 configurazioni per gli stage normali, scelte secondo lo stage e la difficoltà. Dopo il 23° stage il programma ripete in ciclo gli ultimi quattro.
-- **Le prossime ondate aspettano** [P `f_2916`]: un'ondata non parte finché la precedente non è tutta al suo posto, più una pausa di 2 "tic" dei timer di gioco (un tic ogni 32 fotogrammi, [P `f_1DD2`]).
+- **Le prossime ondate aspettano** [P `f_2916`]: negli stage normali un'ondata parte appena la precedente è tutta al suo posto; negli stage bonus c'è in più una pausa di 2 "tic" dei timer di gioco (un tic ogni 32 fotogrammi, [P `f_1DD2`]).
 - **Gli alieni di passaggio** [P `l_2612`, `l_29B3`]: dal quarto stage alcune ondate portano 2 o 4 alieni in più, inseriti in posizioni casuali: entrano con gli altri ed escono dallo schermo senza prendere posto. Il programma originale ricava il caso dal registro di refresh dello Z80, che nessuna emulazione della sola logica può riprodurre: il remake usa un generatore di byte casuali [N].
 - **La sequenza dello stage** [P `stg_init_splash`, `c_new_level_tokens`, `c_player_respawn`]: "PLAYER 1" con la musica di inizio, poi "STAGE 1" e le bandierine dello stage in basso a destra, una ogni 8 fotogrammi con il suo "clic"; poi compare il caccia, le stelle partono e accelerano fino alla velocità dello stage [P `f_1D76`].
 
@@ -94,7 +93,7 @@ Codice: [`attacks.ts`](../src/attacks.ts), [`bomber-timers.ts`](../src/bomber-ti
 - **Il raggio** [P `f_2222`, `d_23A1`]: il raggio è fatto di **caratteri**, non di sprite: 10 righe di 6 caratteri che si aprono dall'alto verso il basso, una riga ogni 12 fotogrammi nel primo stage. Resta aperto per 64 fotogrammi, poi si richiude. I colori ruotano ogni 4 fotogrammi.
 - **La cattura** [P `l_233D`, `f_20F2`, `f_19B2`]: se in quei 64 fotogrammi il caccia si trova a meno di 27 pixel dal centro del raggio, viene preso: diventa rosso, gira su se stesso e sale fino al Boss, che torna in formazione portandolo sopra di sé. Per il giocatore è una vita persa.
 - **Colpire il Boss** [P `l_0849`, `f_2000`]: se il Boss con il caccia catturato viene abbattuto **mentre picchia**, il caccia si libera, scende girando e si aggancia a quello del giocatore: è il **caccia doppio**, che spara il doppio dei missili ma offre un bersaglio largo il doppio. Se invece il Boss viene colpito in formazione, il caccia catturato diventa nemico e prende il volo [P `db_fltv_rogefgter`].
-- **Colpire il caccia catturato** costa caro: vale 1000 punti, ma il caccia è perso per sempre.
+- **Colpire il caccia catturato** costa caro: vale 500 punti in formazione e 1000 in volo, ma il caccia è perso per sempre.
 
 Codice: [`capture-state.ts`](../src/capture-state.ts) (i byte di stato condivisi dai cinque task della cattura), [`tractor-beam.ts`](../src/tractor-beam.ts), [`capture-fighter.ts`](../src/capture-fighter.ts) (anche la rotazione del caccia, `c_2188`), [`rescue.ts`](../src/rescue.ts), [`draw-beam.ts`](../src/draw-beam.ts). La scelta del Boss che cattura (uno ogni due lanci di Boss, se nessuna cattura è in corso e nessun caccia è prigioniero) è in [`attacks.ts`](../src/attacks.ts).
 
@@ -119,7 +118,7 @@ Codice: [`stage-setup.ts`](../src/stage-setup.ts), [`attack-waves.ts`](../src/at
 
 ## 10. I colori e i disegni
 
-- **Gli sprite** [R `2800l`, `2700k`, nel set MAME `galaga`]: 128 sprite da 16 × 16 pixel, con 4 valori per pixel. Ogni alieno ne usa 8: sei orientamenti, il disegno verticale e quello con le ali chiuse; gli altri due quadranti si ottengono specchiando. Le esplosioni grandi sono sprite "doppi" di 2 × 2 tessere.
+- **Gli sprite** [R `2800l`, `2700k`, nel set MAME `galagamw`]: 128 sprite da 16 × 16 pixel, con 4 valori per pixel. Ogni alieno ne usa 8: sei orientamenti, il disegno verticale e quello con le ali chiuse; gli altri due quadranti si ottengono specchiando. Le esplosioni grandi sono sprite "doppi" di 2 × 2 tessere.
 - **I caratteri** [R `2600j`]: 128 caratteri da 8 × 8, per le scritte (cifre da 0, lettere da 0x0A: il programma scrive in ASCII e sottrae 0x30 o 0x37), gli stemmi degli stage e il raggio traente.
 - **I colori** [R `prom-5.5n`, `prom-3.1c`, `prom-4.2n`]: una tavolozza di 32 colori (tre bit di rosso e di verde, due di blu, pesati dalle resistenze del circuito) e due tabelle che ne scelgono quattro per ogni tavolozza di sprite o di caratteri. Il colore 15, nero, è "trasparente": i pixel che ci finiscono sopra non si disegnano.
 - **Le stelle** [H `starfield_05xx`]: un chip fa girare un registro a scorrimento di 16 bit, un passo per pixel, e accende una stella quando 8 dei suoi bit hanno un valore fisso: 256 stelle possibili, in 4 gruppi da 64. Il registro si ripete ogni 65.535 passi ma un fotogramma ne dura 65.536: per questo le stelle si spostano da sole di un pixel a fotogramma; qualche passo in più o in meno le fa correre, rallentare o fermare. Il programma mostra due gruppi alla volta e li cambia ogni 4 fotogrammi [P `jp_Task_man`]: è lo scintillio. Si fermano quando il caccia è stato distrutto e accelerano stage dopo stage [P `f_1D76`, `ds_99B9_star_ctrl`].
@@ -144,6 +143,6 @@ Codice: [`pixel-art.ts`](../src/pixel-art.ts), [`sprite-rom.ts`](../src/sprite-r
 
 - **Un solo giocatore** [N]: la modalità a due giocatori alternati non c'è.
 - **Il livello di difficoltà** [N] è il livello A di fabbrica; gli altri tre sono nelle tabelle e si possono scegliere in `tuning.config.ts`.
-- **La schermata attract** [S `f_17B2`, `d_attrmode_sptiles`]: come sul cabinato, "GALAGA", "-- SCORE --" e la tabella dei punti compaiono una riga al secondo, con gli alieni dritti accanto ai loro punti, poi il copyright. Il cabinato prosegue con un allenamento e una partita dimostrativa guidati dal programma (`d_1928`, `d_1887`): il remake non li ha e ripete la schermata delle informazioni [N]. Manca anche il logo "namco" sotto il copyright: nella ROM dei caratteri usata (`2600j.bin`, del set Midway) le tessere da \$66 a \$6C non lo disegnano [N].
+- **La schermata attract** [P `f_17B2`, `d_attrmode_sptiles`]: come sul cabinato, "GALAGA", "-- SCORE --" e la tabella dei punti compaiono una riga al secondo, con gli alieni dritti accanto ai loro punti, poi il copyright. Il cabinato prosegue con un allenamento e una partita dimostrativa guidati dal programma (`d_1928`, `d_1887`): il remake non li ha e ripete la schermata delle informazioni [N]. Manca anche il logo "namco" sotto il copyright: le tessere da \$66 a \$6C provate non lo disegnano [N].
 - **La moneta avvia la partita** [N]: il remake non conta i crediti, quindi niente "PUSH START BUTTON" e niente suono della moneta.
 - **Il caccia doppio, le catture e i transitori** seguono le tabelle della ROM; dove il programma passa i dati da un processore all'altro con tempi che dipendono dall'hardware (per esempio la rotazione del caccia catturato), i tempi sono ricavati dal codice e segnati [N] se approssimati.

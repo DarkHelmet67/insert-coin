@@ -50,7 +50,7 @@ Nel cabinato tre Z80 lavorano insieme e si parlano scrivendo nella stessa RAM: i
 | ------------------------------------------- | ------------------------------------------------------------------- |
 | _main_: stage, ondate, picchiate, punteggio | `program.ts`, `attack-waves.ts`, `attacks.ts`, `score.ts`           |
 | _main_: i "task" della cattura              | `tractor-beam.ts`, `capture-fighter.ts`, `rescue.ts`                |
-| _sub_: il volo degli alieni                 | `flight.ts`, `flight-slot.ts`, `z80-math.ts`                        |
+| _sub_: il volo degli alieni                 | `flight*.ts`, `z80-math.ts`                                         |
 | _sub_: missili, bombe e colpi               | `rockets.ts`, `bombs.ts`, `hits.ts`                                 |
 | RAM condivisa                               | `PlayingState`: un solo oggetto immutabile, aggiornato a ogni passo |
 | _sound_: registri dei comandi               | `sound-commands.ts`, che legge lo stato e accende gli effetti       |
@@ -136,7 +136,7 @@ Una PR onesta dice anche cosa non fa. Le scelte sono marcate [N] nella guida del
 - **un solo giocatore**: niente partita a due alternata;
 - **niente crediti**: la moneta avvia direttamente la partita;
 - **la schermata attract** ha la presentazione dei punti e il copyright, ma non l'allenamento e la partita dimostrativa, che sul cabinato sono programmi a parte;
-- **il logo "namco"** sotto il copyright non c'è: nella ROM dei caratteri del set Midway quelle tessere disegnano altro;
+- **il logo "namco"** sotto il copyright non c'è: le tessere provate (da \$66 a \$6C) non lo disegnano;
 - **l'esplosione del caccia** è un'imitazione (sezione 7).
 
 ## 10. Provalo

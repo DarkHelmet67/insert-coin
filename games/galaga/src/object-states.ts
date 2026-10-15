@@ -73,9 +73,10 @@ const resting = (object: GameObject, id: number, inputs: ObjectInputs): Step => 
 /** `case_245F`: back home, the alien turns one drawing at a time until it is upright. */
 const rotating = (object: GameObject, id: number, inputs: ObjectInputs): Step => {
   const tile = object.code & 7;
-  const turned = object.flipX
+  // Bit 0 of the sprite control, tested and cleared by the original, is the up/down flip.
+  const turned = object.flipY
     ? tile === 0
-      ? { ...object, flipX: false }
+      ? { ...object, flipY: false }
       : { ...object, code: object.code - 1 }
     : tile === 6
       ? { ...object, disposition: DISPOSITION.home }

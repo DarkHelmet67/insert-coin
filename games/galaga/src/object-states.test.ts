@@ -34,6 +34,17 @@ describe('object manager', () => {
     );
   });
 
+  it('turns an alien that came home upside down back upright (case_245F)', () => {
+    const down = world(0x08, { disposition: DISPOSITION.rotating, code: 0x1a, flipY: true });
+    const frames = [1, 5, 9, 13, 17, 21, 25, 29, 33, 37];
+    const after = frames.reduce((w, frame) => updateObjectStates(w, { ...inputs, frame }), down);
+    expect(objectAt(after.objects, 0x08)).toMatchObject({
+      disposition: DISPOSITION.home,
+      code: 0x1e,
+      flipY: false,
+    });
+  });
+
   it('turns a returning alien upright, then rests it', () => {
     const w = world(0x08, { disposition: DISPOSITION.rotating, code: 0x1d });
     const once = updateObjectStates(w, { ...inputs, frame: 1 });

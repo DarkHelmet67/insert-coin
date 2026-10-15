@@ -67,7 +67,7 @@ export const stageLooks = (stage: number): ReadonlyMap<number, AlienLook> => {
 
 /** The bonus of a challenging stage for each group of 8 aliens shot down. */
 export interface ChallengeBonus {
-  /** Points in tens (`ds_bug_collsn_hit_mult[$0F]`): 10 is 1000 points. */
+  /** Points in hundreds (`ds_bug_collsn_hit_mult[$0F]`): 10 is 1000 points. */
   readonly tens: number;
   /** The score sprite shown on the last alien of the group, with the hit flag. */
   readonly scoreCode: number;
