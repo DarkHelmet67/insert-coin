@@ -56,4 +56,26 @@ describe('object manager', () => {
     const gone = updateObjectStates(last, { ...inputs, frame: 9 });
     expect(objectAt(gone.objects, 0x08)).toMatchObject({ disposition: DISPOSITION.inactive, x: 0 });
   });
+
+  it('shows the score of a hit upright, whatever the pose of the alien', () => {
+    const w = world(0x08, {
+      disposition: DISPOSITION.exploding,
+      counter: 0x43,
+      hit: 0x35,
+      x: 100,
+      y: 100,
+      flipX: true,
+      flipY: true,
+    });
+    const big = updateObjectStates(w, { ...inputs, frame: 1 });
+    expect(objectAt(big.objects, 0x08)).toMatchObject({ flipX: false, flipY: false });
+    const last = updateObjectStates(big, { ...inputs, frame: 5 });
+    const score = updateObjectStates(last, { ...inputs, frame: 9 });
+    expect(objectAt(score.objects, 0x08)).toMatchObject({
+      disposition: DISPOSITION.showingScore,
+      code: 0x35,
+      flipX: false,
+      flipY: false,
+    });
+  });
 });

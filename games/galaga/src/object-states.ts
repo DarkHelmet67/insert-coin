@@ -123,6 +123,9 @@ const endExplosion = (object: GameObject): Step => {
       y: (object.y + 8) & 0x1ff,
       big: false,
       wide,
+      // l_2529 rewrites the sprite control with the size only: the score is never mirrored.
+      flipX: false,
+      flipY: false,
     },
     counts: false,
   };
@@ -141,6 +144,10 @@ const exploding = (object: GameObject): Step => {
       x: (object.x - 8) & 0xff,
       y: (object.y - 8) & 0x1ff,
       big: true,
+      // l_24DA writes $0C to the sprite control: double size and no flips, so the explosion
+      // and the score after it are drawn upright whatever the alien's pose.
+      flipX: false,
+      flipY: false,
     };
     return { object: big, counts: false };
   }

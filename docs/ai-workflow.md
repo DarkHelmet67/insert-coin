@@ -668,3 +668,11 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 **Errori corretti lungo la strada:** un test che faceva calare l'inviluppo un tick troppo presto (al tick del "hold" il volume è ancora 10); il minimo del tremolo del raggio traente (3, non 4); la durata della musica d'inizio, misurata nei test invece che stimata; il logo "namco" disegnato con tessere sbagliate, poi tolto.
 
 **Verifica:** 715 test (tra cui 14 sul programma del suono e i test del chip), typecheck, lint, build e Prettier; partite provate in un browser senza schermo, con schermate di formazione, cattura, stage bonus e attract; circa 60 blocchi di campioni al secondo senza errori; su un telefono simulato (390 × 844, touch) il pannello del cabinato funziona e MONETA avvia la partita. Guida [16 · Un quinto gioco: Galaga](16-quinto-gioco.md). Versioni: Galaga 1.0.0, root 1.4.0; i tag li crea Luca dopo l'unione.
+
+## 2026-10-15 · Galaga: il punteggio inclinato
+
+**Problema segnalato da Luca** provando l'anteprima: il punteggio di un Boss colpito compariva inclinato o capovolto come lo sprite dell'alieno.
+
+**Verifica dell'AI:** nel sorgente, all'ultimo passo dell'esplosione (`l_24DA`) il programma scrive \$0C nel registro di controllo dello sprite (dimensione doppia, nessuna specchiatura), e quando mostra il punteggio (`l_2529`) lo riscrive con la sola dimensione. Sul cabinato quindi esplosione grande e punteggio sono sempre dritti; il remake invece conservava le specchiature dell'ultimo orientamento dell'alieno. Era un errore del remake.
+
+**Correzione:** `object-states.ts` azzera le specchiature negli stessi due punti, con un test che parte da un alieno capovolto.

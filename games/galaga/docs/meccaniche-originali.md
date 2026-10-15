@@ -101,7 +101,7 @@ Codice: [`capture-state.ts`](../src/capture-state.ts) (i byte di stato condivisi
 ## 8. I punteggi
 
 - **La tabella** [P `d_scoreman_inc_lut`, `hitd_dspchr`]: il programma conta i colpi per colore e moltiplica alla fine. Un'ape vale **50** in formazione e il doppio, **100**, in volo; una farfalla **80** e **160**; un Boss **150** in formazione.
-- **Il Boss in picchiata** [P `d_1CFD`]: **400** da solo, **800** con una scorta, **1600** con due. Il punteggio compare sullo schermo dove è stato colpito.
+- **Il Boss in picchiata** [P `d_1CFD`]: **400** da solo, **800** con una scorta, **1600** con due. Il punteggio compare sullo schermo dove è stato colpito, sempre dritto: alla fine dell'esplosione il programma riscrive il registro di controllo dello sprite senza i bit di specchiatura [P `l_24DA`, `l_2529`].
 - **Il caccia catturato** colpito in volo vale **1000** [P `l_0849`].
 - **Vite extra** [P `gctl_supv_score`, W, H]: a **20 000** e **70 000** punti, poi ogni 70 000, con 3 vite di partenza: la configurazione di fabbrica. Il programma confronta le due cifre più alte del punteggio con la soglia successiva ogni volta che il punteggio cambia.
 - **Statistiche** [P `gctl_plyr_terminate`, `c_0A72_puts_hitmiss_ratio`]: a fine partita, dopo "GAME OVER", lo schermo si svuota e compaiono i colpi sparati, quelli andati a segno e la percentuale con un decimale, arrotondata; restano per circa 7 secondi.
