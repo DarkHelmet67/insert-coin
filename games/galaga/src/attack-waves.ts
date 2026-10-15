@@ -32,6 +32,8 @@ export type RandomByte = (n: number) => number;
 /** What `c_25A2` produces: the token list and the two header bytes of the stage. */
 export interface StageWaves {
   readonly tokens: readonly WaveToken[];
+  /** Header byte 0 (`b_92E2[0]`): frames between two bomb chances of a diving alien. */
+  readonly bombInterval: number;
   /** Header byte 1 (`b_92E2[1]`): bomb bits of the aliens that may drop bombs while entering. */
   readonly entryBombBits: number;
 }
@@ -128,6 +130,7 @@ export const buildAttackWaves = (
       : [];
   return {
     tokens: [...waves.flatMap((wave): readonly WaveToken[] => ['start', ...wave]), ...rogue, 'end'],
+    bombInterval: table[offset] ?? 0x14,
     entryBombBits: table[offset + 1] ?? 0,
   };
 };

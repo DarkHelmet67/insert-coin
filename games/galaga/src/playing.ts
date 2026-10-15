@@ -1,9 +1,11 @@
+import { newAttacks, type Attacks } from './attacks';
 import type { AlienLook, Rank, StageParameters } from './stage-setup';
 import { NO_TIMERS, type GameTimers } from './clock';
 import { SLOT_COUNT, type BombDrift } from './flight';
 import type { FlightSlot } from './flight-slot';
 import { initialFormation, type Formation } from './formation';
 import type { Message } from './messages';
+import { setUpBombs } from './bombs';
 import { emptyObjects, type Objects } from './objects';
 import { NO_PATHS, type RocketPath } from './rockets';
 import type { SoundName } from './sound-names';
@@ -70,6 +72,19 @@ export interface PlayingState {
   readonly looks: ReadonlyMap<number, AlienLook>;
   readonly launcher: Launcher;
   readonly entryBombBits: number;
+  /** Frames between two bomb chances of a diving alien (`b_92E2[0]`). */
+  readonly bombInterval: number;
+  readonly attacks: Attacks;
+  /** Aliens attacking at once: grows once after the first 30 seconds (`b_92C0[$09]`). */
+  readonly maxBombers: number;
+  /** Flying aliens hit in this stage, and those left of the current group of 8. */
+  readonly flyingHits: number;
+  readonly groupLeft: number;
+  /** The Boss chosen to capture the fighter, or 1 for none. */
+  readonly captureBoss: number;
+  /** Aliens left of a triple attack and the bonus for shooting them all. */
+  readonly tripleLeft: number;
+  readonly tripleBonus: { readonly hundreds: number; readonly code: number };
   /** Resting aliens follow the grid (`ds_9200_glbls[$0B]`). */
   readonly enemiesEnabled: boolean;
   /** New waves may start (`_b_atk_wv_enbl`). */
@@ -100,7 +115,7 @@ export const emptyPlayingState = (phase: Phase): PlayingState => ({
   timers: NO_TIMERS,
   phase,
   tasks: NO_TASKS,
-  objects: emptyObjects(),
+  objects: setUpBombs(emptyObjects()),
   slots: Array.from({ length: SLOT_COUNT }, () => undefined),
   bombDrift: Array.from({ length: 8 }, () => ({ rate: 0, accumulator: 0 })),
   rocketPaths: NO_PATHS,
@@ -115,6 +130,14 @@ export const emptyPlayingState = (phase: Phase): PlayingState => ({
   looks: new Map(),
   launcher: { ...startLauncher([]), running: false },
   entryBombBits: 0,
+  bombInterval: 0x14,
+  attacks: newAttacks(),
+  maxBombers: 0,
+  flyingHits: 0,
+  groupLeft: 0,
+  captureBoss: 1,
+  tripleLeft: 0,
+  tripleBonus: { hundreds: 0, code: 0 },
   enemiesEnabled: false,
   wavesEnabled: false,
   swayStops: false,

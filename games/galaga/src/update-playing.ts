@@ -3,6 +3,7 @@
  * processors run them. Each task is a small pure function of the state.
  */
 import { tickTimers } from './clock';
+import { attack, collide, currentSettings, explode, fallBombs, isContinuous } from './combat';
 import type { Controls } from './controls';
 import { moveFighter } from './fighter';
 import { runFlights, type FlightInputs } from './flight';
@@ -51,6 +52,7 @@ const runWaves = (state: PlayingState): PlayingState => {
     slots: result.slots,
     objects: result.objects,
     timers,
+    groupLeft: result.groupCountReset === true ? 8 : state.groupLeft,
   };
   return result.completed === true
     ? { ...updated, swayStops: true, tasks: { ...updated.tasks, attacks: true } }
@@ -78,13 +80,13 @@ const moveFormation = (state: PlayingState): PlayingState => {
 const flightInputs = (state: PlayingState): FlightInputs => ({
   frame: state.frame,
   fighterX: objectAt(state.objects, FIGHTER).x,
-  continuousBombing: false,
+  continuousBombing: isContinuous(state),
   rescueRunning: false,
   harderEntries: state.params.harderEntries,
   harderAttacks: state.params.harderAttacks,
-  bombEnableBits: 0,
-  bombInterval: 0x1e,
-  bombsAllowed: false,
+  bombEnableBits: currentSettings(state).bombBits,
+  bombInterval: state.bombInterval,
+  bombsAllowed: state.tasks.fire && state.timers[1] === 0,
   formation: state.formation,
   bonusBeeLook: 0x1b,
 });
@@ -95,7 +97,13 @@ const flyAliens = (state: PlayingState): PlayingState => {
     { slots: state.slots, objects: state.objects, bombDrift: state.bombDrift, events: [] },
     flightInputs(state),
   );
-  return { ...state, slots: world.slots, objects: world.objects, bombDrift: world.bombDrift };
+  const flown = {
+    ...state,
+    slots: world.slots,
+    objects: world.objects,
+    bombDrift: world.bombDrift,
+  };
+  return world.events.some((event) => event.kind === 'diveSound') ? play(flown, 'dive') : flown;
 };
 
 /** `f_23DD`: the object manager. */
@@ -139,11 +147,15 @@ export const updatePlaying = (state: PlayingState, controls: Controls): PlayingS
     updateStars,
     runWaves,
     moveFormation,
+    attack,
     flyAliens,
     manageObjects,
+    explode,
   ];
-  return updateFighter(
+  const fought: readonly ((s: PlayingState) => PlayingState)[] = [fallBombs, collide];
+  const moved = updateFighter(
     tasks.reduce((current, task) => task(current), started),
     controls,
   );
+  return fought.reduce((current, task) => task(current), moved);
 };

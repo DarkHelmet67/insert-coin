@@ -40,7 +40,7 @@ Codice: [`playfield.ts`](../src/playfield.ts).
 - **Il colpo** [P `hitd_det_rckt`]: un missile colpisce un alieno se le posizioni distano al massimo 5 pixel in orizzontale e 6 in verticale. Gli alieni già in esplosione non contano.
 - **Lo scontro** [P `hitd_det_fghtr`]: il caccia è distrutto da un alieno o da una bomba entro 6 pixel in orizzontale e 6 in verticale. Una curiosità del programma: **mentre le ondate entrano in scena, solo le bombe e i "transitori" (sezione 9) possono colpire il caccia**; gli alieni che volano verso la formazione lo attraversano.
 
-Codice: [`fighter.ts`](../src/fighter.ts), [`rockets.ts`](../src/rockets.ts), [`collisions.ts`](../src/collisions.ts).
+Codice: [`fighter.ts`](../src/fighter.ts), [`rockets.ts`](../src/rockets.ts), [`hits.ts`](../src/hits.ts) (i controlli dei colpi e il loro smistamento, `hitd_dspchr`).
 
 ## 3. La formazione
 
@@ -86,7 +86,7 @@ Codice: [`attack-waves.ts`](../src/attack-waves.ts), [`wave-launcher.ts`](../src
 - **I Boss con la scorta** [P `case_bmbr_boss`, `c_1D03`]: un Boss parte da solo, oppure con una o due farfalle della riga sotto. Uno ogni due (se nessuno sta già catturando) scende invece per **catturare il caccia** (sezione 7).
 - **Le bombe** [P `l_0D8D_got_a_bullet`, `f_1EA4`]: al massimo **8** in volo. Scendono di 2 e 3 pixel a fotogrammi alterni (2,5 in media) e puntano dove si trova il caccia al momento dello sgancio, con uno spostamento orizzontale massimo di 1,5 pixel per fotogramma. Un alieno può sganciare solo nella metà alta dello schermo, quando il suo timer scade e i bit di permesso lo consentono [P `0x0E(ix)`, `0x0F(ix)`].
 
-Codice: [`attacks.ts`](../src/attacks.ts), [`bombs.ts`](../src/bombs.ts), [`rom-difficulty.ts`](../src/rom-difficulty.ts).
+Codice: [`attacks.ts`](../src/attacks.ts), [`bomber-timers.ts`](../src/bomber-timers.ts), [`bombs.ts`](../src/bombs.ts), [`combat.ts`](../src/combat.ts) (che li collega al resto del fotogramma).
 
 ## 7. Il raggio traente e il caccia doppio
 
@@ -106,7 +106,7 @@ Codice: [`capture.ts`](../src/capture.ts), [`tractor-beam.ts`](../src/tractor-be
 - **Vite extra** [W, H]: a **20 000** e **70 000** punti, poi ogni 70 000, con 3 vite di partenza: la configurazione di fabbrica.
 - **Statistiche** [P `_top5_dlg_proc`]: a fine partita compaiono i colpi sparati, quelli andati a segno e la percentuale.
 
-Codice: [`scoring.ts`](../src/scoring.ts).
+Codice: [`score.ts`](../src/score.ts), [`hits.ts`](../src/hits.ts).
 
 ## 9. Gli stage
 

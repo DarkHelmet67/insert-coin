@@ -5,6 +5,7 @@
  * has reached (`Phase`) and checks each frame whether the wait is over.
  */
 import { buildAttackWaves } from './attack-waves';
+import { newAttacks } from './attacks';
 import { stageFlags } from './badges';
 import { setTimer } from './clock';
 import { placeFighter } from './fighter';
@@ -57,6 +58,12 @@ const setUpStage = (state: PlayingState): PlayingState => {
     looks: stageLooks(state.stage),
     launcher: startLauncher(waves.tokens),
     entryBombBits: waves.entryBombBits,
+    bombInterval: waves.bombInterval,
+    attacks: newAttacks(),
+    maxBombers: params.maxBombers,
+    flyingHits: 0,
+    groupLeft: isChallengeStage(state.stage) ? 8 : 0,
+    captureBoss: 1,
     formation: initialFormation(),
     objects: clearHits(state.objects),
     tasks: { ...state.tasks, sway: true, breathing: false, attacks: false },
