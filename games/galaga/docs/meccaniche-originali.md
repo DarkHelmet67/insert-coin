@@ -65,7 +65,7 @@ Il cuore di _Galaga_ è la routine che fa volare gli alieni [P `f_08D3`]. Non co
 - **Simmetria** [P `l_0BF7`]: ogni programma vale per il lato sinistro; per il lato destro basta cambiare segno alla rotazione.
 - **Il ritorno a casa** [P `case_0AA0`, `l_0C05_flite_pth_cont`]: quando l'alieno deve tornare in formazione, il programma calcola l'angolo verso il posto di destinazione (con una divisione e un arcotangente a 8 bit, `c_0E5B`) e corregge la rotta finché non arriva entro un pixel. Il posto si muove con il dondolio e il respiro: l'alieno lo insegue.
 
-Il remake **esegue gli stessi byte** con un interprete che ricalca la routine originale. Codice: [`flight.ts`](../src/flight.ts), [`flight-commands.ts`](../src/flight-commands.ts), [`rom-flight.ts`](../src/rom-flight.ts).
+Il remake **esegue gli stessi byte** con un interprete che ricalca la routine originale. Codice: [`flight.ts`](../src/flight.ts), [`flight-slot.ts`](../src/flight-slot.ts), [`flight-memory.ts`](../src/flight-memory.ts), [`z80-math.ts`](../src/z80-math.ts), [`rom/flight-rom.ts`](../src/rom/flight-rom.ts).
 
 ## 5. Le ondate di ingresso
 

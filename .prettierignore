@@ -1,4 +1,5 @@
 pnpm-lock.yaml
 _site
-# Generated from the Galaga ROMs as ASCII art: one row per line, as the generator writes them.
+# Generated from the Galaga ROMs (ASCII art and byte tables): kept as the generators write them.
 games/galaga/src/art
+games/galaga/src/rom
