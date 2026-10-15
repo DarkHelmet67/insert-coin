@@ -5,11 +5,13 @@
  * explosion (`f_1DB3`), and adds to the hit counters that the score routine converts to points.
  */
 import type { Attacks } from './attacks';
+import { withTasks, type Capture } from './capture-state';
 import type { FlightSlot } from './flight-slot';
 import {
   DISPOSITION,
   ENEMY_OBJECTS,
   FIGHTER,
+  FIGHTER_2,
   FIRST_BOMB,
   BOMB_COUNT,
   objectAt,
@@ -34,16 +36,15 @@ export interface HitWorld {
   /** Aliens left in the current group of 8 of a challenging stage (`w_bug_flying_hit_cnt`). */
   readonly groupLeft: number;
   readonly attacks: Attacks;
-  /** The Boss chosen to capture the fighter, or 1 for none (`_b_bmbr_boss_cobj`). */
-  readonly captureBoss: number;
+  readonly capture: Capture;
   /** Aliens left of a triple attack (`b8_99B0_X3attackcfg_ct`) and its bonus. */
   readonly tripleLeft: number;
   readonly tripleBonus: { readonly hundreds: number; readonly code: number };
   /** Game timer 1 to set: after a diving Boss is shot, no bombs for a while. */
   readonly quietTimer?: number;
   readonly sounds: readonly SoundName[];
-  /** The fighter was hit this frame. */
-  readonly fighterHit: boolean;
+  /** The fighters hit this frame: $60 (the second of a double fighter) and $62. */
+  readonly fightersHit: readonly number[];
 }
 
 /** What the hit checks read. */
@@ -73,13 +74,14 @@ const count = (world: HitWorld, color: number, amount: number): HitWorld => ({
 
 /** `l_07DF`: the common end of a hit on an alien: capture state, sound and counters. */
 const scoreHit = (world: HitWorld, id: number, color: number, flying: boolean): HitWorld => {
+  // The capturing Boss is shot: a new capture may start.
   const freed =
-    world.captureBoss === id
-      ? { ...world, captureBoss: 1, attacks: { ...world.attacks, captureBusy: false } }
+    world.capture.object === id
+      ? { ...world, capture: { ...world.capture, busy: false, object: 1 } }
       : world;
   const sound: SoundName = color === 7 ? 'fighterHit' : (HIT_SOUNDS[(color - 1) & 3] ?? 'beeHit');
-  const released =
-    color === 7 ? { ...freed, attacks: { ...freed.attacks, captureBusy: false } } : freed;
+  // A captured fighter is shot: it is lost for good, and a new capture may start.
+  const released = color === 7 ? { ...freed, capture: { ...freed.capture, busy: false } } : freed;
   return count({ ...released, sounds: [...released.sounds, sound] }, color, flying ? 2 : 1);
 };
 
@@ -108,7 +110,27 @@ const flyingSpecial = (world: HitWorld, id: number, color: number): HitWorld => 
   }
   if (color !== 1) return plainHit(world, id, color, true);
   const score = world.attacks.bossScores[(id & 7) >> 1] ?? { hundreds: 1, code: 0xb5 };
-  return bonusHit({ ...world, quietTimer: 6 }, id, color, score);
+  return bonusHit({ ...rescue(world, id & 7), quietTimer: 6 }, id, color, score);
+};
+
+/**
+ * `l_0849`: a diving Boss carrying a captured fighter is shot. The fighter leaves its flight
+ * slot, turns white and starts spinning down to join the player's (task `f_2000`).
+ */
+const rescue = (world: HitWorld, fighter: number): HitWorld => {
+  const captured = objectAt(world.objects, fighter);
+  if (captured.disposition !== DISPOSITION.flying) return world;
+  return {
+    ...change(world, fighter, { color: 9, disposition: 0 }),
+    slots: world.slots.map((s, i) =>
+      i === captured.counter && s?.object === fighter ? undefined : s,
+    ),
+    capture: withTasks(
+      { ...world.capture, object: fighter, step: 0, pulling: true },
+      { rescue: true },
+    ),
+    sounds: [...world.sounds, 'rescue'],
+  };
 };
 
 /** `l_081E`: a flying alien is hit: its flight slot is freed and the group count goes down. */
@@ -202,23 +224,22 @@ const touches = (fighter: GameObject, target: GameObject): boolean =>
 const firstTouching = (objects: Objects, fighter: GameObject, ids: readonly number[]) =>
   ids.find((id) => touches(fighter, objectAt(objects, id)));
 
-/** `f_05EE`: the fighter against aliens (only special enemies while waves enter) and bombs. */
-const fighterHits = (world: HitWorld, inputs: HitInputs): HitWorld => {
-  const fighter = objectAt(world.objects, FIGHTER);
+/**
+ * `f_05EE`: one fighter against aliens (only special enemies while waves enter) and bombs.
+ * An alien that touches the fighter is destroyed too.
+ */
+const fighterHits = (world: HitWorld, inputs: HitInputs, fighterId: number): HitWorld => {
+  const fighter = objectAt(world.objects, fighterId);
   if (fighter.x === 0 || fighter.disposition === DISPOSITION.fighterExploding) return world;
   const aliens = inputs.wavesEntering
     ? [0x38, 0x3a, 0x3c, 0x3e]
     : Array.from({ length: ENEMY_OBJECTS }, (_, i) => i * 2);
   const bombs = Array.from({ length: BOMB_COUNT }, (_, i) => FIRST_BOMB + i * 2);
+  const hit = { ...world, fightersHit: [...world.fightersHit, fighterId] };
   const alien = firstTouching(world.objects, fighter, aliens);
-  const afterAlien =
-    alien === undefined
-      ? world
-      : { ...dispatch(world, alien, true, inputs).world, fighterHit: true };
-  const bomb = firstTouching(afterAlien.objects, fighter, bombs);
-  return bomb === undefined
-    ? afterAlien
-    : { ...dispatch(afterAlien, bomb, true, inputs).world, fighterHit: true };
+  if (alien !== undefined) return dispatch(hit, alien, true, inputs).world;
+  const bomb = firstTouching(world.objects, fighter, bombs);
+  return bomb === undefined ? world : dispatch(hit, bomb, true, inputs).world;
 };
 
 /** One frame of collisions: both rockets, then the fighter. */
@@ -228,7 +249,9 @@ export const detectHits = (
   fighterChecked: boolean,
 ): HitWorld => {
   const afterRockets = ROCKETS.reduce((current, id) => rocketHits(current, id, inputs), world);
-  return fighterChecked ? fighterHits(afterRockets, inputs) : afterRockets;
+  if (!fighterChecked) return afterRockets;
+  const second = inputs.dual ? fighterHits(afterRockets, inputs, FIGHTER_2) : afterRockets;
+  return fighterHits(second, inputs, FIGHTER);
 };
 
 /**
@@ -252,8 +275,8 @@ export const startExplosions = (objects: Objects): Objects =>
  * `hitd_fghtr_hit`: the fighter explodes, a big sprite centered where it was, for 15 steps of
  * the object manager.
  */
-export const explodeFighter = (objects: Objects, x: number, y: number): Objects =>
-  updateObject(objects, FIGHTER, (o) => ({
+export const explodeFighter = (objects: Objects, id: number, x: number, y: number): Objects =>
+  updateObject(objects, id, (o) => ({
     ...o,
     x: (x - 8) & 0xff,
     y: (y - 8) & 0x1ff,

@@ -50,12 +50,16 @@ const clearHits = (objects: Objects): Objects =>
 
 /** `stg_init_env`: the new stage's aliens, waves, grid and parameters. */
 const setUpStage = (state: PlayingState): PlayingState => {
-  const waves = buildAttackWaves(state.stage, state.rank, randomBytes(state.frame), false);
+  // A fighter still held by the aliens comes back with the last wave (`l_2681`).
+  const rogue = state.capture.busy && !state.dual;
+  const waves = buildAttackWaves(state.stage, state.rank, randomBytes(state.frame), rogue);
   const params = stageParameters(state.stage, state.rank);
   return {
     ...state,
     timers: setTimer(setTimer(state.timers, 2, 120), 0, 2),
-    looks: stageLooks(state.stage),
+    looks: rogue
+      ? new Map([...stageLooks(state.stage), [0x04, { code: 0x00, color: 7, bombs: true }]])
+      : stageLooks(state.stage),
     launcher: startLauncher(waves.tokens),
     entryBombBits: waves.entryBombBits,
     bombInterval: waves.bombInterval,
@@ -63,7 +67,6 @@ const setUpStage = (state: PlayingState): PlayingState => {
     maxBombers: params.maxBombers,
     flyingHits: 0,
     groupLeft: isChallengeStage(state.stage) ? 8 : 0,
-    captureBoss: 1,
     formation: initialFormation(),
     objects: clearHits(state.objects),
     tasks: { ...state.tasks, sway: true, breathing: false, attacks: false },
@@ -131,6 +134,7 @@ const respawn = (state: PlayingState): PlayingState => {
     ...state,
     objects: placeFighter(state.objects),
     starControl: { ...state.starControl, shipOnScreen: true },
+    tasks: { ...state.tasks, fighterHits: true },
     restart: false,
     timers: setTimer(setTimer(state.timers, 2, timer2), 3, 3),
     phase: { step: 'respawnDelay' },
@@ -166,6 +170,11 @@ const startRestart = (state: PlayingState): PlayingState => ({
  * followed by the next one.
  */
 const restart = (state: PlayingState): PlayingState => {
+  // `l_04A4`: a rescued fighter still landing takes the place of the lost one.
+  if (state.capture.tasks.rescue) {
+    const resumed = { ...state, restart: false, tasks: { ...state.tasks, fighterHits: true } };
+    return state.alive > 0 ? { ...resumed, phase: { step: 'running' } } : resumed;
+  }
   if (state.timers[3] !== 0) return state;
   if (state.restart || state.alive > 0) {
     if (state.reserve === 0) {

@@ -96,7 +96,7 @@ Codice: [`attacks.ts`](../src/attacks.ts), [`bomber-timers.ts`](../src/bomber-ti
 - **Colpire il Boss** [P `l_0849`, `f_2000`]: se il Boss con il caccia catturato viene abbattuto **mentre picchia**, il caccia si libera, scende girando e si aggancia a quello del giocatore: è il **caccia doppio**, che spara il doppio dei missili ma offre un bersaglio largo il doppio. Se invece il Boss viene colpito in formazione, il caccia catturato diventa nemico e prende il volo [P `db_fltv_rogefgter`].
 - **Colpire il caccia catturato** costa caro: vale 1000 punti, ma il caccia è perso per sempre.
 
-Codice: [`capture.ts`](../src/capture.ts), [`tractor-beam.ts`](../src/tractor-beam.ts).
+Codice: [`capture-state.ts`](../src/capture-state.ts) (i byte di stato condivisi dai cinque task della cattura), [`tractor-beam.ts`](../src/tractor-beam.ts), [`capture-fighter.ts`](../src/capture-fighter.ts) (anche la rotazione del caccia, `c_2188`), [`rescue.ts`](../src/rescue.ts), [`draw-beam.ts`](../src/draw-beam.ts). La scelta del Boss che cattura (uno ogni due lanci di Boss, se nessuna cattura è in corso e nessun caccia è prigioniero) è in [`attacks.ts`](../src/attacks.ts).
 
 ## 8. I punteggi
 

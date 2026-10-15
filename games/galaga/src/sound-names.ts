@@ -14,4 +14,8 @@ export type SoundName =
   | 'startTheme'
   | 'challengeStart'
   | 'badge'
-  | 'pulse';
+  | 'pulse'
+  | 'tractorBeam'
+  | 'beamCapture'
+  | 'fighterCaptured'
+  | 'rescue';

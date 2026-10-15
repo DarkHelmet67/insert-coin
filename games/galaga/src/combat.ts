@@ -9,7 +9,7 @@ import { bomberSettings, continuousBombing, type BomberSettings } from './bomber
 import { moveBombs } from './bombs';
 import { setTimer } from './clock';
 import { detectHits, explodeFighter, startExplosions, type HitWorld } from './hits';
-import { FIGHTER, objectAt } from './objects';
+import { FIGHTER, FIGHTER_2, objectAt, updateObject } from './objects';
 import { flyingCount, play, type PlayingState } from './playing';
 import { hitPoints, NO_HITS } from './score';
 import { challengeBonus } from './stage-setup';
@@ -27,19 +27,26 @@ export const attack = (state: PlayingState): PlayingState => {
   if (!state.tasks.attacks) return state;
   const settings = currentSettings(state);
   const world = runAttacks(
-    { attacks: state.attacks, objects: state.objects, slots: state.slots, dived: false },
+    {
+      attacks: state.attacks,
+      objects: state.objects,
+      slots: state.slots,
+      capture: state.capture,
+      dived: false,
+    },
     {
       frame: state.frame,
       settings,
       flying: flyingCount(state),
       enemiesEnabled: state.enemiesEnabled,
       fireEnabled: state.tasks.fire,
-      rescueRunning: false,
+      rescueRunning: state.capture.tasks.rescue,
     },
   );
   const updated = {
     ...state,
     attacks: world.attacks,
+    capture: world.capture,
     objects: world.objects,
     slots: world.slots,
     maxBombers: settings.maxBombers,
@@ -68,11 +75,11 @@ const hitWorld = (state: PlayingState): HitWorld => ({
   flyingHits: state.flyingHits,
   groupLeft: state.groupLeft,
   attacks: state.attacks,
-  captureBoss: state.captureBoss,
+  capture: state.capture,
   tripleLeft: state.tripleLeft,
   tripleBonus: state.tripleBonus,
   sounds: state.sounds,
-  fighterHit: false,
+  fightersHit: [],
 });
 
 /**
@@ -81,18 +88,46 @@ const hitWorld = (state: PlayingState): HitWorld => ({
  */
 const loseFighter = (state: PlayingState): PlayingState => {
   const fighter = objectAt(state.objects, FIGHTER);
-  return play(
-    {
-      ...state,
-      objects: explodeFighter(state.objects, fighter.x, fighter.y),
-      tasks: { ...state.tasks, stick: false, fire: false },
-      starControl: { ...state.starControl, shipOnScreen: false },
-      dual: false,
-      restart: true,
-    },
-    'fighterHit',
-  );
+  return {
+    ...state,
+    objects: explodeFighter(state.objects, FIGHTER, fighter.x, fighter.y),
+    tasks: { ...state.tasks, stick: false, fire: false, fighterHits: false },
+    starControl: { ...state.starControl, shipOnScreen: false },
+    restart: true,
+  };
 };
+
+/**
+ * `l_0621`: one fighter of a double fighter is hit. The other flies on alone, always as the
+ * main fighter: when the main one is hit, the second takes its place and its own sprite shows
+ * the explosion. A new capture becomes possible.
+ */
+const loseOneOfTwo = (state: PlayingState, hit: number): PlayingState => {
+  const lost = objectAt(state.objects, hit);
+  const second = objectAt(state.objects, FIGHTER_2);
+  const kept =
+    hit === FIGHTER
+      ? updateObject(state.objects, FIGHTER, (o) => ({ ...o, x: second.x }))
+      : state.objects;
+  return {
+    ...state,
+    objects: explodeFighter(kept, FIGHTER_2, lost.x, lost.y),
+    dual: false,
+    capture: { ...state.capture, busy: false },
+  };
+};
+
+/** The fighters hit this frame are lost, the second of a double fighter first (`f_05EE`). */
+const loseFighters = (state: PlayingState, hits: readonly number[]): PlayingState =>
+  hits.length === 0
+    ? state
+    : play(
+        hits.reduce(
+          (current, hit) => (current.dual ? loseOneOfTwo(current, hit) : loseFighter(current)),
+          state,
+        ),
+        'fighterHit',
+      );
 
 /** One frame of collisions; the hits are turned into points at once. */
 export const collide = (state: PlayingState): PlayingState => {
@@ -100,11 +135,11 @@ export const collide = (state: PlayingState): PlayingState => {
     hitWorld(state),
     {
       dual: state.dual,
-      rescueRunning: false,
+      rescueRunning: state.capture.tasks.rescue,
       wavesEntering: state.launcher.running,
       challengeBonus: challengeBonus(state.stage),
     },
-    state.starControl.shipOnScreen,
+    state.tasks.stick && state.tasks.fighterHits,
   );
   const updated: PlayingState = {
     ...state,
@@ -114,12 +149,12 @@ export const collide = (state: PlayingState): PlayingState => {
     flyingHits: world.flyingHits,
     groupLeft: world.groupLeft,
     attacks: world.attacks,
-    captureBoss: world.captureBoss,
+    capture: world.capture,
     tripleLeft: world.tripleLeft,
     sounds: world.sounds,
     score: state.score + hitPoints(world.hitCounts),
     timers:
       world.quietTimer === undefined ? state.timers : setTimer(state.timers, 1, world.quietTimer),
   };
-  return world.fighterHit ? loseFighter(updated) : updated;
+  return loseFighters(updated, world.fightersHit);
 };

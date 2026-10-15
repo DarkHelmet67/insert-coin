@@ -1,4 +1,5 @@
 import { newAttacks, type Attacks } from './attacks';
+import { NO_CAPTURE, type Capture } from './capture-state';
 import type { AlienLook, Rank, StageParameters } from './stage-setup';
 import { NO_TIMERS, type GameTimers } from './clock';
 import { SLOT_COUNT, type BombDrift } from './flight';
@@ -35,6 +36,8 @@ export interface Tasks {
   /** `f_1F85` and `f_1F04`: the joystick and the fire button are read. */
   readonly stick: boolean;
   readonly fire: boolean;
+  /** `f_05EE` on the second processor: aliens and bombs can hit the fighter. */
+  readonly fighterHits: boolean;
 }
 
 /** All tasks off. */
@@ -44,6 +47,7 @@ const NO_TASKS: Tasks = {
   attacks: false,
   stick: false,
   fire: false,
+  fighterHits: false,
 };
 
 /** Everything about a game in progress. */
@@ -80,8 +84,8 @@ export interface PlayingState {
   /** Flying aliens hit in this stage, and those left of the current group of 8. */
   readonly flyingHits: number;
   readonly groupLeft: number;
-  /** The Boss chosen to capture the fighter, or 1 for none. */
-  readonly captureBoss: number;
+  /** The capturing Boss, its beam, the captured or rescued fighter. */
+  readonly capture: Capture;
   /** Aliens left of a triple attack and the bonus for shooting them all. */
   readonly tripleLeft: number;
   readonly tripleBonus: { readonly hundreds: number; readonly code: number };
@@ -135,7 +139,7 @@ export const emptyPlayingState = (phase: Phase): PlayingState => ({
   maxBombers: 0,
   flyingHits: 0,
   groupLeft: 0,
-  captureBoss: 1,
+  capture: NO_CAPTURE,
   tripleLeft: 0,
   tripleBonus: { hundreds: 0, code: 0 },
   enemiesEnabled: false,

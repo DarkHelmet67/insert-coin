@@ -5,6 +5,7 @@
  * of the row below as escorts; their launches wait in a small queue and leave one per frame.
  */
 import type { BomberSettings } from './bomber-timers';
+import type { Capture } from './capture-state';
 import { newSlot, type FlightSlot } from './flight-slot';
 import { DISPOSITION, objectAt, updateObject, type Objects } from './objects';
 import { BOSS_SCORES, ESCORTS } from './rom/main-rom';
@@ -19,6 +20,10 @@ export const ATTACK_PROGRAM = {
   bossTraining: 0x00f1,
   /** `db_fltv_rogefgter`: a captured fighter diving alone. */
   rogueFighter: 0x0444,
+  /** `db_0454`: a Boss diving to capture the fighter with its beam. */
+  capture: 0x0454,
+  /** `db_flv_cboss`: the Boss going home with the captured fighter. */
+  captureHome: 0x046b,
 } as const;
 
 /** A launch waiting in the queue (`bmbr_boss_pool`). */
@@ -41,10 +46,8 @@ export interface Attacks {
   /** Countdowns of Boss, red and yellow bombers (`b_92C0[0-2]`). */
   readonly countdown: readonly [number, number, number];
   readonly queue: readonly QueuedLaunch[];
-  /** Toggles at each Boss launch: one in two may try a capture (`_b_bmbr_boss_wingm`). */
+  /** Counts Boss launches while no capture is going on: one in two captures (`_b_bmbr_boss_wingm`). */
   readonly bossToggle: number;
-  /** A capture is going on, or the choice of a capturing Boss is suppressed. */
-  readonly captureBusy: boolean;
   /** Score of each Boss when shot diving, by its place ($30, $32, $34, $36). */
   readonly bossScores: readonly BossScore[];
   /** The alien chosen as bonus bee, which the manager does not launch (`_b_bbee_obj`). */
@@ -59,7 +62,6 @@ export const newAttacks = (): Attacks => ({
   countdown: [0x16, 2, 2],
   queue: [],
   bossToggle: 0,
-  captureBusy: false,
   bossScores: [BOSS_400, BOSS_400, BOSS_400, BOSS_400],
   bonusBee: 1,
 });
@@ -69,6 +71,8 @@ export interface AttackWorld {
   readonly attacks: Attacks;
   readonly objects: Objects;
   readonly slots: readonly (FlightSlot | undefined)[];
+  /** Only the choice of a capturing Boss reads and changes it. */
+  readonly capture: Capture;
   /** An alien left the formation: the dive sound. */
   readonly dived: boolean;
 }
@@ -154,10 +158,9 @@ const queueBoss = (
   world: AttackWorld,
   boss: number,
   escorts: readonly number[],
-  inputs: AttackInputs,
+  program: number,
 ): AttackWorld => {
   const mirrored = isRightSide(boss);
-  const program = inputs.enemiesEnabled ? ATTACK_PROGRAM.boss : ATTACK_PROGRAM.bossTraining;
   const scoreRow = 2 - escorts.length;
   const score = {
     hundreds: BOSS_SCORES[scoreRow * 2] ?? 1,
@@ -184,6 +187,7 @@ const queueBoss = (
  * Boss alone; with no Boss left, a captured fighter dives by itself.
  */
 const launchBoss = (world: AttackWorld, inputs: AttackInputs): AttackWorld => {
+  const program = inputs.enemiesEnabled ? ATTACK_PROGRAM.boss : ATTACK_PROGRAM.bossTraining;
   const available = ESCORTS.map(
     (id) => id !== world.attacks.bonusBee && atHome(world.objects, id),
   ).reverse();
@@ -200,14 +204,14 @@ const launchBoss = (world: AttackWorld, inputs: AttackInputs): AttackWorld => {
     );
     if (ordinal === undefined) return undefined;
     const boss = BOSS_BY_ORDINAL[ordinal - 1] ?? 0;
-    return queueBoss(world, boss, freeEscorts(ordinal).slice(0, wanted), inputs);
+    return queueBoss(world, boss, freeEscorts(ordinal).slice(0, wanted), program);
   };
   const lone = [0x30, 0x32, 0x34, 0x36].find((id) => atHome(world.objects, id));
   const rogue = [0x00, 0x02, 0x04, 0x06].find((id) => atHome(world.objects, id));
   return (
     pick(2) ??
     pick(1) ??
-    (lone !== undefined ? queueBoss(world, lone, [], inputs) : undefined) ??
+    (lone !== undefined ? queueBoss(world, lone, [], program) : undefined) ??
     (rogue !== undefined
       ? launchDiver(
           world,
@@ -215,6 +219,25 @@ const launchBoss = (world: AttackWorld, inputs: AttackInputs): AttackWorld => {
           inputs.enemiesEnabled ? inputs.settings.bombBits : 0,
         )
       : world)
+  );
+};
+
+/**
+ * `case_bmbr_boss`: when no capture is going on, one Boss launch in two is a capture: the first
+ * resting Boss dives alone along the capture program. With no Boss resting, nothing leaves.
+ */
+const launchBossOrCapture = (world: AttackWorld, inputs: AttackInputs): AttackWorld => {
+  if (world.capture.busy) return launchBoss(world, inputs);
+  const bossToggle = world.attacks.bossToggle + 1;
+  const counted = { ...world, attacks: { ...world.attacks, bossToggle } };
+  if ((bossToggle & 1) !== 0) return launchBoss(counted, inputs);
+  const boss = [0x30, 0x32, 0x34, 0x36].find((id) => atHome(world.objects, id));
+  if (boss === undefined) return counted;
+  return queueBoss(
+    { ...counted, capture: { ...counted.capture, busy: true, object: boss } },
+    boss,
+    [],
+    ATTACK_PROGRAM.capture,
   );
 };
 
@@ -247,13 +270,7 @@ const countDown = (world: AttackWorld, inputs: AttackInputs): AttackWorld => {
   );
   switch (expired) {
     case 0:
-      return launchBoss(
-        {
-          ...reloaded,
-          attacks: { ...reloaded.attacks, bossToggle: reloaded.attacks.bossToggle + 1 },
-        },
-        inputs,
-      );
+      return launchBossOrCapture(reloaded, inputs);
     case 1:
       return launchFirst(reloaded, 0x40, 16, ATTACK_PROGRAM.butterfly, inputs);
     default:

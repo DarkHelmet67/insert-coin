@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { ATTACK_PROGRAM, newAttacks, runAttacks, type AttackWorld } from './attacks';
 import type { BomberSettings } from './bomber-timers';
+import { NO_CAPTURE } from './capture-state';
 import { DISPOSITION, emptyObjects, objectAt, updateObject, type Objects } from './objects';
 
 /** Objects `ids` resting in the formation. */
@@ -35,6 +36,7 @@ const world = (
   attacks: { ...newAttacks(), countdown },
   objects: home(ids),
   slots: Array.from({ length: 12 }, () => undefined),
+  capture: NO_CAPTURE,
   dived: false,
 });
 
@@ -70,6 +72,15 @@ describe('attack manager', () => {
     const launched = runAttacks(after, { ...inputs, frame: 17 });
     expect(objectAt(launched.objects, boss).disposition).toBe(DISPOSITION.flying);
     expect(launched.attacks.queue).toHaveLength(2);
+  });
+
+  it('makes every second Boss launch a capture, with no escorts', () => {
+    const w = world([1, 5, 5], [0x30, 0x32, 0x48, 0x4a]);
+    const after = runAttacks({ ...w, attacks: { ...w.attacks, bossToggle: 1 } }, inputs);
+    expect(after.capture).toMatchObject({ busy: true, object: 0x30 });
+    expect(after.attacks.queue).toEqual([
+      { object: 0x30, mirrored: false, program: ATTACK_PROGRAM.capture },
+    ]);
   });
 
   it('does nothing while the fighter cannot fire', () => {

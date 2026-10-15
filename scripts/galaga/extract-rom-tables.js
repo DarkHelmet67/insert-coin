@@ -34,6 +34,7 @@ const TABLES = [
   { name: 'BOSS_SCORES', label: 'd_1CFD', address: 0x1d03, length: 6 },
   { name: 'ESCORTS', label: 'd_1D2C_wingmen', address: 0x1d32, length: 6 },
   { name: 'BREATHING_BITMAPS', label: 'd_1E64_bitmap_tables', address: 0x1e6a, length: 64 },
+  { name: 'BEAM_TILES', label: 'd_23A1', address: 0x23af, length: 60 },
   { name: 'COMBAT_STAGE_INDEX', label: 'd_combat_stg_dat_idx', address: 0x26b6, length: 68 },
   { name: 'CHALLENGE_STAGE_INDEX', label: 'd_challg_stg_data_idx', address: 0x26fa, length: 8 },
   { name: 'COMBAT_STAGES', label: 'd_combat_stg_dat', address: 0x2702, length: 234 },

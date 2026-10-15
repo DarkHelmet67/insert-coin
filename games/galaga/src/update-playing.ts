@@ -6,7 +6,11 @@ import { tickTimers } from './clock';
 import { attack, collide, currentSettings, explode, fallBombs, isContinuous } from './combat';
 import type { Controls } from './controls';
 import { moveFighter } from './fighter';
-import { runFlights, type FlightInputs } from './flight';
+import { carryFighter, pullFighter } from './capture-fighter';
+import { withTasks } from './capture-state';
+import { runFlights, type FlightEvent, type FlightInputs } from './flight';
+import { runRescue } from './rescue';
+import { approach, runBeam } from './tractor-beam';
 import { breatheFormation, swayFormation } from './formation';
 import { FIGHTER, objectAt } from './objects';
 import { updateObjectStates } from './object-states';
@@ -81,7 +85,7 @@ const flightInputs = (state: PlayingState): FlightInputs => ({
   frame: state.frame,
   fighterX: objectAt(state.objects, FIGHTER).x,
   continuousBombing: isContinuous(state),
-  rescueRunning: false,
+  rescueRunning: state.capture.tasks.rescue,
   harderEntries: state.params.harderEntries,
   harderAttacks: state.params.harderAttacks,
   bombEnableBits: currentSettings(state).bombBits,
@@ -91,18 +95,30 @@ const flightInputs = (state: PlayingState): FlightInputs => ({
   bonusBeeLook: 0x1b,
 });
 
+/** `case_0A53`: the capturing Boss starts its dive: the beam will open above the fighter. */
+const startCaptureDive = (state: PlayingState, event: FlightEvent): PlayingState =>
+  event.kind === 'captureDive'
+    ? {
+        ...state,
+        capture: withTasks(
+          { ...state.capture, slot: event.slot, beamX: event.targetX, step: 0 },
+          { approach: true },
+        ),
+      }
+    : state;
+
 /** `f_08D3` on the second processor: every flying alien follows its program. */
 const flyAliens = (state: PlayingState): PlayingState => {
   const world = runFlights(
     { slots: state.slots, objects: state.objects, bombDrift: state.bombDrift, events: [] },
     flightInputs(state),
   );
-  const flown = {
+  const flown = world.events.reduce(startCaptureDive, {
     ...state,
     slots: world.slots,
     objects: world.objects,
     bombDrift: world.bombDrift,
-  };
+  });
   return world.events.some((event) => event.kind === 'diveSound') ? play(flown, 'dive') : flown;
 };
 
@@ -148,6 +164,11 @@ export const updatePlaying = (state: PlayingState, controls: Controls): PlayingS
     runWaves,
     moveFormation,
     attack,
+    carryFighter,
+    runBeam,
+    approach,
+    pullFighter,
+    runRescue,
     flyAliens,
     manageObjects,
     explode,

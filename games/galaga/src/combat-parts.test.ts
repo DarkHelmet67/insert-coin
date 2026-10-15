@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { bomberSettings, continuousBombing } from './bomber-timers';
 import { BOMB_CODE, moveBombs, setUpBombs } from './bombs';
 import { newAttacks } from './attacks';
+import { NO_CAPTURE } from './capture-state';
 import { detectHits, startExplosions, type HitWorld } from './hits';
 import { DISPOSITION, emptyObjects, FIGHTER, FIRST_BOMB, objectAt, updateObject } from './objects';
 import { hitPoints, NO_HITS, pointsOf } from './score';
@@ -57,11 +58,11 @@ const shotAt = (x: number, disposition: number): HitWorld => ({
   flyingHits: 0,
   groupLeft: 0,
   attacks: newAttacks(),
-  captureBoss: 1,
+  capture: NO_CAPTURE,
   tripleLeft: 0,
   tripleBonus: { hundreds: 0, code: 0 },
   sounds: [],
-  fighterHit: false,
+  fightersHit: [],
 });
 
 const hitInputs = {
@@ -98,7 +99,7 @@ describe('hits', () => {
       (o) => ({ ...o, disposition: DISPOSITION.shot, x: 124, y: 302, color: 0x0b }),
     );
     const after = detectHits({ ...shotAt(0, 0), objects }, hitInputs, true);
-    expect(after.fighterHit).toBe(true);
+    expect(after.fightersHit).toEqual([FIGHTER]);
     expect(objectAt(after.objects, FIRST_BOMB).x).toBe(0);
   });
 });
