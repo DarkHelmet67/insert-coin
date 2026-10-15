@@ -1,5 +1,6 @@
 import type { SoundEffect } from './sound';
-import { playEffect, type SynthContext } from './synth';
+import { nextChunkStart } from './stream';
+import { playEffect, playSamples, type SynthContext } from './synth';
 
 /** An audio context that may start suspended, as browsers do until the user interacts with the page. */
 export type UnlockableContext = SynthContext & Pick<AudioContext, 'state' | 'resume'>;
@@ -18,6 +19,11 @@ export interface AudioOptions {
 export interface AudioPlayer {
   /** Plays a sound effect; does nothing while muted or before the first user gesture. */
   readonly play: (effect: SoundEffect) => void;
+  /**
+   * Queues a chunk of samples (one channel at `rate` hertz) right after the previous one, for
+   * sounds the game makes itself; does nothing while muted or before the first user gesture.
+   */
+  readonly stream: (samples: Float32Array<ArrayBuffer>, rate: number) => void;
   /** Switches the sound off or back on. */
   readonly toggleMute: () => void;
   readonly isMuted: () => boolean;
@@ -43,6 +49,8 @@ export const createAudio = ({
 }: AudioOptions = {}): AudioPlayer => {
   let ctx: UnlockableContext | undefined;
   let muted = false;
+  // Where the last queued chunk ends, on the audio clock.
+  let cursor = 0;
 
   /** Creates the audio context on the first gesture and resumes it if the browser suspended it. */
   const unlock = (): void => {
@@ -57,6 +65,13 @@ export const createAudio = ({
   return {
     play: (effect) => {
       if (ctx && !muted) playEffect(ctx, effect);
+    },
+    stream: (samples, rate) => {
+      if (!ctx || muted) return;
+      const start = nextChunkStart(cursor, ctx.currentTime);
+      if (start === undefined) return;
+      playSamples(ctx, samples, rate, start);
+      cursor = start + samples.length / rate;
     },
     toggleMute: () => {
       muted = !muted;

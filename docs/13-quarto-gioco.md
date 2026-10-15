@@ -151,3 +151,5 @@ pnpm dev:lunar-lander
 All'apertura un modulo cade da solo e lampeggia INSERT COINS. **C** (o **5**) inserisce una moneta, **Tab** sceglie la missione, **Invio** parte. ← → ruotano il modulo, ↑ ↓ muovono la leva della spinta, **Spazio** è ABORT, **M** l'audio. Per un buon atterraggio serve il modulo dritto e meno di 16 sullo strumento della velocità verticale: provalo prima su TRAINING, dove l'attrito aiuta.
 
 Il percorso completo, con le decisioni e gli errori, è nel [diario AI](ai-workflow.md); le regole dell'originale, con le fonti, nella [guida delle meccaniche](../games/lunar-lander/docs/meccaniche-originali.md).
+
+Prossima guida: [14 · Pull request](14-pull-request.md).

@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { createAudio } from './audio';
+import { STREAM_LEAD } from './stream';
 import type { Sound } from './sound';
 import { createRecordingAudioContext } from './test-audio-context';
 
@@ -59,5 +60,17 @@ describe('createAudio', () => {
     audio.play(beep);
     expect(audio.isMuted()).toBe(true);
     expect(ctx.calls).toEqual([]);
+  });
+
+  it('streams chunks of samples back to back', () => {
+    const target = new EventTarget();
+    const ctx = createRecordingAudioContext();
+    const audio = createAudio({ target, createContext: () => ctx });
+
+    target.dispatchEvent(new Event('keydown'));
+    audio.stream(new Float32Array(100), 1000);
+    audio.stream(new Float32Array(100), 1000);
+    const starts = ctx.calls.filter(([name]) => name === 'source.start').map(([, t]) => t);
+    expect(starts).toEqual([STREAM_LEAD, STREAM_LEAD + 0.1]);
   });
 });

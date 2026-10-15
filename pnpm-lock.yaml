@@ -81,6 +81,27 @@ importers:
         specifier: workspace:*
         version: link:../../packages/storage
 
+  games/galaga:
+    dependencies:
+      '@arcade/audio':
+        specifier: workspace:*
+        version: link:../../packages/audio
+      '@arcade/engine-core':
+        specifier: workspace:*
+        version: link:../../packages/engine-core
+      '@arcade/input':
+        specifier: workspace:*
+        version: link:../../packages/input
+      '@arcade/render':
+        specifier: workspace:*
+        version: link:../../packages/render
+      '@arcade/storage':
+        specifier: workspace:*
+        version: link:../../packages/storage
+      '@arcade/wsg':
+        specifier: workspace:*
+        version: link:../../packages/wsg
+
   games/lunar-lander:
     dependencies:
       '@arcade/audio':
@@ -141,6 +162,8 @@ importers:
   packages/storage: {}
 
   packages/vector: {}
+
+  packages/wsg: {}
 
 packages:
 

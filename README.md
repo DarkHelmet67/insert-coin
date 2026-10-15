@@ -5,6 +5,7 @@
   <a href="https://darkhelmet67.github.io/insert-coin/breakout/"><img src="docs/images/games/breakout.svg" alt="Breakout" title="Breakout (Atari, 1976): gioca online" width="120"></a>
   <a href="https://darkhelmet67.github.io/insert-coin/asteroids/"><img src="docs/images/games/asteroids.svg" alt="Asteroids" title="Asteroids (Atari, 1979): gioca online" width="120"></a>
   <a href="https://darkhelmet67.github.io/insert-coin/lunar-lander/"><img src="docs/images/games/lunar-lander.svg" alt="Lunar Lander" title="Lunar Lander (Atari, 1979): gioca online" width="120"></a>
+  <a href="https://darkhelmet67.github.io/insert-coin/galaga/"><img src="docs/images/games/galaga.svg" alt="Galaga" title="Galaga (Namco, 1981): gioca online" width="120"></a>
 </p>
 
 <p align="center">
@@ -38,6 +39,7 @@ Il progetto ha due obiettivi:
 ![Breakout in gioco](docs/images/breakout-gameplay.png)
 ![Asteroids in gioco](docs/images/asteroids-gameplay.png)
 ![Lunar Lander in gioco](docs/images/lunar-lander-gameplay.png)
+![Galaga in gioco](docs/images/galaga-gameplay.png)
 
 | Gioco                                   | Anno originale | Stato    |
 | --------------------------------------- | -------------- | -------- |
@@ -45,6 +47,7 @@ Il progetto ha due obiettivi:
 | [Breakout](games/breakout/)             | 1976, Atari    | Completo |
 | [Asteroids](games/asteroids/)           | 1979, Atari    | Completo |
 | [Lunar Lander](games/lunar-lander/)     | 1979, Atari    | Completo |
+| [Galaga](games/galaga/)                 | 1981, Namco    | Completo |
 
 ## Avvio rapido
 
@@ -56,6 +59,7 @@ pnpm dev      # avvia Space Invaders con hot reload su http://localhost:5173
 pnpm dev:breakout  # avvia Breakout
 pnpm dev:asteroids # avvia Asteroids
 pnpm dev:lunar-lander # avvia Lunar Lander
+pnpm dev:galaga  # avvia Galaga
 pnpm build    # build di produzione di tutti i giochi (games/*/dist)
 pnpm build:site  # build + sito completo in _site/, come su GitHub Pages
 ```
@@ -78,7 +82,8 @@ insert-coin/
 │   ├── input/            tastiera, pulsanti touch, posizione di mouse e dito
 │   ├── render/           canvas, schermo intero, sprite bitmap, font pixel, cifre a 7 segmenti
 │   ├── vector/           grafica vettoriale: linee luminose, disegni delle ROM, font Atari, ritaglio
-│   ├── audio/            effetti sonori con Web Audio API
+│   ├── audio/            effetti sonori con Web Audio API, campioni in coda
+│   ├── wsg/              il chip sonoro Namco a tre voci con forme d'onda
 │   ├── collision/        AABB e collisione pixel-perfect
 │   ├── storage/          record salvato nel browser
 │   └── math/             vettori, clamp, random con seed
@@ -86,7 +91,8 @@ insert-coin/
 │   ├── space-invaders/   un gioco = un'app Vite che usa i pacchetti @arcade/*
 │   ├── breakout/         il secondo gioco, costruito sugli stessi pacchetti
 │   ├── asteroids/        il terzo gioco: grafica vettoriale e programma 6502 riprodotto
-│   └── lunar-lander/     il quarto gioco: dal sorgente originale Atari, su branch e pull request
+│   ├── lunar-lander/     il quarto gioco: dal sorgente originale Atari, su branch e pull request
+│   └── galaga/           il quinto gioco: tre processori Z80, voli e suoni eseguiti dalla ROM
 ├── site/                 pagina iniziale del sito pubblicato
 ├── scripts/              script di build del sito
 ├── .claude/skills/       skill di Claude Code: /pr-review e /pr-resolve
@@ -126,10 +132,13 @@ Il codice è scritto per essere letto da persone (_code for humans, not for AI_)
 | [12 · Un terzo gioco: Asteroids](docs/12-terzo-gioco.md)                         | Aritmetica del 6502, caso nello stato, tipi con casi, gamepad touch           |
 | [13 · Un quarto gioco: Lunar Lander](docs/13-quarto-gioco.md)                    | Branch e PR, sorgente originale, telecamera, dati generati, leva della spinta |
 | [14 · Pull request](docs/14-pull-request.md)                                     | Anteprima di ogni PR su Pages, skill /pr-review e /pr-resolve                 |
+| [15 · Il chip sonoro Namco](docs/15-chip-sonoro-namco.md)                        | Forme d'onda, programma del suono dalla ROM, campioni in coda                 |
+| [16 · Un quinto gioco: Galaga](docs/16-quinto-gioco.md)                          | Tre processori, interprete dei voli, dati generati, suono emulato             |
 | [Space Invaders · meccaniche](games/space-invaders/docs/meccaniche-originali.md) | Marcia, bombe, bunker, UFO: come funzionava l'originale                       |
 | [Breakout · meccaniche](games/breakout/docs/meccaniche-originali.md)             | Mattoni, pallina, suoni: il circuito senza processore                         |
 | [Asteroids · meccaniche](games/asteroids/docs/meccaniche-originali.md)           | Nave, asteroidi, dischi volanti: il programma 6502 letto riga per riga        |
 | [Lunar Lander · meccaniche](games/lunar-lander/docs/meccaniche-originali.md)     | Modulo, missioni, terreno e zoom, atterraggio: dal sorgente Atari             |
+| [Galaga · meccaniche](games/galaga/docs/meccaniche-originali.md)                 | Voli, formazione, raggio traente, stage bonus, suoni: dal sorgente Z80        |
 | [Prompt unico](docs/prompt-unico.md)                                             | Un solo prompt per ricreare l'intero progetto con un assistente AI            |
 | [Diario AI](docs/ai-workflow.md)                                                 | Prompt, decisioni e correzioni durante lo sviluppo                            |
 

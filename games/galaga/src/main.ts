@@ -1,0 +1,39 @@
+import './style.css';
+import { createAudio } from '@arcade/audio';
+import { createGameLoop } from '@arcade/engine-core';
+import { boundKeys, createKeyboard, createTouchButtons, mergeKeyStates } from '@arcade/input';
+import { getCanvasContext } from '@arcade/render';
+import { createHiScoreStore } from '@arcade/storage';
+import { bindings, readControls } from './controls';
+import { createGame, updateGame, type GameState } from './game';
+import { renderGame } from './render';
+import { NO_SOUND_COMMANDS, soundCommands } from './sound-commands';
+import { createSoundOutput } from './sound-output';
+
+const ctx = getCanvasContext('#screen');
+const keyboard = createKeyboard(window, { captureKeys: boundKeys(bindings) });
+const touch = createTouchButtons(document.querySelector('#touch-panel') ?? document.body);
+const audio = createAudio();
+const playSound = createSoundOutput(audio);
+const hiScores = createHiScoreStore('insert-coin/galaga/hi-score');
+
+/**
+ * One frame: read keyboard and touch buttons, update the pure game state, play the frame's
+ * sound, save the record when it grows. This is the only place where logic meets input, audio
+ * and storage.
+ */
+const step = (state: GameState): GameState => {
+  const controls = readControls(mergeKeyStates(keyboard.poll(), touch.poll()));
+  if (controls.mute) audio.toggleMute();
+  const next = updateGame(state, controls);
+  playSound(next.screen === 'playing' ? soundCommands(next.playing) : NO_SOUND_COMMANDS);
+  if (next.hiScore > state.hiScore) hiScores.save(next.hiScore);
+  return next;
+};
+
+// The game advances in whole frames, 60 a second, as the cabinet does.
+createGameLoop({
+  initialState: createGame(hiScores.load()),
+  update: step,
+  render: (state) => renderGame(ctx, state),
+}).start();

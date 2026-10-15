@@ -650,3 +650,50 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 **Verifica dell'AI:** riletti nel sorgente originale `GRAVT`, `TRSTAB`, `SINES`, `FRCMLT`, `MULTPA`, `ACCEL`, `SUMSUM`, `FRMECNT` e `INVELX`, controllando anche che il file sia in esadecimale (`.RADIX 16`). Il remake li riproduce esattamente: gravità 17 per passo, spinta piena verso il basso 27, quindi solo 10 di margine. Una simulazione con il codice del gioco conferma che 3 secondi di caduta libera chiedono 5 secondi di spinta piena e circa 50 unità di carburante. La difficoltà è quella del cabinato, non un errore di trascrizione.
 
 **Correzione:** due moltiplicatori in `tuning.config.ts`, `physics.gravityScale` e `physics.thrustScale`, arrotondati a unità intere con `scaleSpeed`, perché il programma non ha frazioni. Provati i valori, l'autore ha scelto la gravità originale e `thrustScale` 1,5: "sempre difficile ma fattibile".
+
+## 2026-10-15 · Galaga: un quinto gioco in dieci passi
+
+**Richiesta (Luca, in treno, senza poter approvare passo per passo):** un nuovo branch per _Galaga_ (Namco, 1981), con l'AI nel ruolo di un contributore che apre una PR al manutentore: una checklist come per i giochi precedenti (informazioni sull'originale, regole di movimento, sprite, suoni...), poi tutti i passi di fila. Cabinato verticale come Space Invaders, con i pulsanti sotto lo schermo per giocare da telefono. A PR pronta, l'anteprima su `/pr-<numero>/` per provarlo fuori dal sito pubblico.
+
+**Decisioni dell'AI:**
+
+- **La fonte:** il sorgente Z80 commentato di Glenn A. Neidermeier (neiderm/arcade), che si ricompila nelle ROM originali, più MAME per l'hardware. Le marcature distinguono [P] (processori _main_ e _sub_) da [S] (processore del suono). Tutto nella [guida delle meccaniche](../games/galaga/docs/meccaniche-originali.md), scritta prima del codice.
+- **Eseguire la ROM invece di imitarla:** le traiettorie degli alieni sono programmi di byte interpretati da `f_08D3`. Il remake ha un interprete che esegue gli stessi byte con la stessa aritmetica intera dello Z80 (seno e coseno su un ottagono), perché le curve sono state disegnate con quell'aritmetica.
+- **La ROM resta fuori dal repository:** quattro script in `scripts/galaga/` leggono le ROM del set MAME e generano TypeScript leggibile (sprite in _ASCII art_, tabelle con l'etichetta del sorgente e l'indirizzo). Il set usato (Midway) ha gli stessi byte del set Namco del sorgente, ma a indirizzi un po' diversi: ogni script lo dice.
+- **Tre processori, uno stato:** nessuna emulazione delle CPU; i compiti del _main_ e del _sub_ diventano moduli puri che leggono e scrivono un solo `PlayingState` immutabile, come la RAM condivisa del cabinato.
+- **Il suono emulato:** le melodie sono a tre voci e la ROM ha le note, quindi niente suoni descritti a mano: un nuovo pacchetto, `@arcade/wsg`, emula il chip a forme d'onda Namco, il programma del suono è portato dalla ROM (120 tick al secondo, priorità fissa degli effetti) e `@arcade/audio` ha un nuovo `stream` che accoda i campioni senza buchi ([guida 15](15-chip-sonoro-namco.md)). Solo l'esplosione del caccia (chip 54XX, analogico) resta un rumore filtrato.
+- **Un solo file da regolare:** `tuning.config.ts` con difficoltà (livello A di fabbrica), vite, soglie delle vite extra, volume ed esplosione, ognuno con la sua fonte.
+- **Cosa manca, dichiarato:** un solo giocatore, niente crediti (la moneta avvia la partita), l'attract senza allenamento e partita dimostrativa, niente logo "namco" (le tessere da \$66 a \$6C provate non lo disegnano).
+
+**Errori corretti lungo la strada:** un test che faceva calare l'inviluppo un tick troppo presto (al tick del "hold" il volume è ancora 10); il minimo del tremolo del raggio traente (3, non 4); la durata della musica d'inizio, misurata nei test invece che stimata; il logo "namco" disegnato con tessere sbagliate, poi tolto.
+
+**Verifica:** 715 test alla consegna (tra cui 14 sul programma del suono e i test del chip), typecheck, lint, build e Prettier; partite provate in un browser senza schermo, con schermate di formazione, cattura, stage bonus e attract; circa 60 blocchi di campioni al secondo senza errori; su un telefono simulato (390 × 844, touch) il pannello del cabinato funziona e MONETA avvia la partita. Guida [16 · Un quinto gioco: Galaga](16-quinto-gioco.md). Versioni: Galaga 1.0.0, root 1.4.0; i tag li crea Luca dopo l'unione.
+
+## 2026-10-15 · Galaga: il punteggio inclinato
+
+**Problema segnalato da Luca** provando l'anteprima: il punteggio di un Boss colpito compariva inclinato o capovolto come lo sprite dell'alieno.
+
+**Verifica dell'AI:** nel sorgente, all'ultimo passo dell'esplosione (`l_24DA`) il programma scrive \$0C nel registro di controllo dello sprite (dimensione doppia, nessuna specchiatura), e quando mostra il punteggio (`l_2529`) lo riscrive con la sola dimensione. Sul cabinato quindi esplosione grande e punteggio sono sempre dritti; il remake invece conservava le specchiature dell'ultimo orientamento dell'alieno. Era un errore del remake.
+
+**Correzione:** `object-states.ts` azzera le specchiature negli stessi due punti, con un test che parte da un alieno capovolto.
+
+## 2026-10-15 · Galaga: la revisione di Copilot
+
+**Due commenti** sulla PR #2, verificati invece che accettati sulla fiducia:
+
+- **La coda dei campioni** (`stream.ts`): `nextChunkStart` ripartiva con 60 ms di anticipo quando in coda restavano meno di 15 ms di suono, aggiungendo un silenzio mentre la coda suonava ancora. Applicato: finché c'è suono in coda il pezzo nuovo parte subito dopo; si riparte con l'anticipo solo a coda esaurita.
+- **La colonna della tabella delle bombe** (`bomber-timers.ts`): con 40 alieni vivi la colonna vale 4 e si legge il primo byte della riga dopo. Non applicato: lo fa anche il programma originale (`c_08BE`, e il sorgente commentato nota che le due tabelle devono essere contigue per questo), e il remake copia anche i byte che seguono la tabella. Aggiunti un commento e un test che fissano il comportamento della ROM; la decisione resta a Luca.
+
+## 2026-10-15 · Galaga: la revisione con /pr-review
+
+**Dieci commenti** della revisione con la skill del progetto, ognuno verificato sul sorgente originale prima di applicarlo con `/pr-resolve`:
+
+- **L'alieno a testa in giù** (`object-states.ts`): tornato in formazione restava capovolto, perché il bit 0 del controllo dello sprite, che l'originale prova e azzera (`case_245F`), è il capovolgimento in verticale (`flipY`) e non quello orizzontale. Corretto, con un test.
+- **La pausa fra le ondate** (`wave-launcher.ts`): negli stage normali l'ondata dopo parte appena nessun alieno vola; solo gli stage bonus aspettano il timer di gioco (`f_2916`). Corretto, con tre test.
+- **`flight.ts` troppo lungo** (493 righe): diviso in `flight-world.ts` (il mondo condiviso), `flight-commands.ts` (i comandi da \$EF a \$FF) e `flight-bombs.ts` (le bombe in volo), come chiede CLAUDE.md.
+- **L'arrivo a casa** cambiava anche il disegno: l'originale (`l_0D03`) aggiorna solo la posizione.
+- **Il test del suono del caccia extra** non provava ciò che diceva il nome: riscritto.
+- **Il test della perdita del caccia** guardava la prima esplosione, che poteva essere quella di metà caccia doppio: ora cerca un caccia singolo.
+- **Documenti**: il caccia catturato vale 500 in formazione e 1000 in volo; la schermata attract è [P], non [S]; il set MAME è `galagamw`; tolto il link alle note di ricerca, che non sono nel repository; il logo "namco" manca perché le tessere provate non lo disegnano (la ROM dei caratteri è la stessa del set Namco); i punti del bonus sono in centinaia.
+
+**Una segnalazione scartata:** un agente sosteneva che il suono a impulsi restasse acceso nella schermata attract; due simulazioni realistiche (600 fotogrammi ciascuna) l'hanno smentito.

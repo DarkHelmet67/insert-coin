@@ -116,3 +116,5 @@ L'ordine conta: rispondere e chiudere **dopo** il push garantisce che una conver
 5. Unisci la PR: il sito principale si aggiorna e la cartella dell'anteprima sparisce.
 
 Il percorso, con le decisioni prese, è nel [diario AI](ai-workflow.md).
+
+Prossima guida: [15 · Il chip sonoro Namco](15-chip-sonoro-namco.md).
