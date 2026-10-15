@@ -667,7 +667,7 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 
 **Errori corretti lungo la strada:** un test che faceva calare l'inviluppo un tick troppo presto (al tick del "hold" il volume è ancora 10); il minimo del tremolo del raggio traente (3, non 4); la durata della musica d'inizio, misurata nei test invece che stimata; il logo "namco" disegnato con tessere sbagliate, poi tolto.
 
-**Verifica:** 715 test (tra cui 14 sul programma del suono e i test del chip), typecheck, lint, build e Prettier; partite provate in un browser senza schermo, con schermate di formazione, cattura, stage bonus e attract; circa 60 blocchi di campioni al secondo senza errori; su un telefono simulato (390 × 844, touch) il pannello del cabinato funziona e MONETA avvia la partita. Guida [16 · Un quinto gioco: Galaga](16-quinto-gioco.md). Versioni: Galaga 1.0.0, root 1.4.0; i tag li crea Luca dopo l'unione.
+**Verifica:** 715 test alla consegna (tra cui 14 sul programma del suono e i test del chip), typecheck, lint, build e Prettier; partite provate in un browser senza schermo, con schermate di formazione, cattura, stage bonus e attract; circa 60 blocchi di campioni al secondo senza errori; su un telefono simulato (390 × 844, touch) il pannello del cabinato funziona e MONETA avvia la partita. Guida [16 · Un quinto gioco: Galaga](16-quinto-gioco.md). Versioni: Galaga 1.0.0, root 1.4.0; i tag li crea Luca dopo l'unione.
 
 ## 2026-10-15 · Galaga: il punteggio inclinato
 
