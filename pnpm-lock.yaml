@@ -98,6 +98,9 @@ importers:
       '@arcade/storage':
         specifier: workspace:*
         version: link:../../packages/storage
+      '@arcade/wsg':
+        specifier: workspace:*
+        version: link:../../packages/wsg
 
   games/lunar-lander:
     dependencies:
@@ -159,6 +162,8 @@ importers:
   packages/storage: {}
 
   packages/vector: {}
+
+  packages/wsg: {}
 
 packages:
 

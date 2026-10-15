@@ -6,7 +6,7 @@
 import { withTasks } from './capture-state';
 import { MESSAGES, eraseRow, show } from './messages';
 import { DISPOSITION, FIGHTER, objectAt, updateObject, type GameObject } from './objects';
-import { play, type PlayingState } from './playing';
+import type { PlayingState } from './playing';
 import { setTimer } from './clock';
 
 /** Sprite y of the fighter at the bottom of the screen, and where it meets the Boss. */
@@ -165,16 +165,15 @@ export const carryFighter = (state: PlayingState): PlayingState => {
   if (capture.showText) return becomeCaptured(state);
   const timer = state.timers[1];
   if (timer !== 0) {
-    // While the text shows the Boss waits, its instruction kept from running out.
-    const tune = timer === 4;
-    const waiting: PlayingState = {
+    // While the text shows the Boss waits, its instruction kept from running out. At 4 the
+    // timer skips to 3, which the tune of the captured fighter waits for (`l_19C7`).
+    return {
       ...state,
-      timers: tune ? setTimer(state.timers, 1, 3) : state.timers,
+      timers: timer === 4 ? setTimer(state.timers, 1, 3) : state.timers,
       slots: state.slots.map((s, i) =>
         i === capture.slot && s !== undefined ? { ...s, timer: 4 } : s,
       ),
     };
-    return tune ? play(waiting, 'fighterCaptured') : waiting;
   }
   const erased = { ...state, messages: eraseRow(state.messages, MESSAGES.fighterCaptured.row) };
   const boss = objectAt(state.objects, capture.object);

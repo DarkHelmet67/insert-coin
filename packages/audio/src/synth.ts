@@ -92,3 +92,21 @@ export const playEffect = (ctx: SynthContext, effect: SoundEffect): void => {
     playSound(ctx, sound);
   });
 };
+
+/**
+ * Plays `samples` (one channel at `rate` hertz) at `start` on the audio clock: a chunk of a
+ * sound made by the game itself, such as an emulated sound chip.
+ */
+export const playSamples = (
+  ctx: SynthContext,
+  samples: Float32Array<ArrayBuffer>,
+  rate: number,
+  start: number,
+): void => {
+  const buffer = ctx.createBuffer(1, samples.length, rate);
+  buffer.copyToChannel(samples, 0);
+  const source = ctx.createBufferSource();
+  source.buffer = buffer;
+  source.connect(ctx.destination);
+  source.start(start);
+};

@@ -4,12 +4,13 @@
  * leftmost digits of the score with the next threshold after each change of the score.
  */
 import { play, type PlayingState } from './playing';
+import { tuning } from './tuning.config';
 
 /** First threshold, and the step of the following ones, in tens of thousands. */
-export const FIRST_BONUS = 2;
-const BONUS_STEP = 7;
+export const FIRST_BONUS = tuning.extraLives.first;
+const BONUS_STEP = tuning.extraLives.every;
 
-/** The threshold after `bonus`: 2, then 7, then every 7. */
+/** The threshold after `bonus`: 2, then 7, then every 7 with the factory setting. */
 export const nextBonus = (bonus: number): number =>
   bonus < BONUS_STEP ? BONUS_STEP : bonus + BONUS_STEP;
 

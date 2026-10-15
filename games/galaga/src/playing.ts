@@ -15,7 +15,8 @@ import { STARS_STOPPED, type StarControl } from './star-control';
 import { STARS_STILL, type StarSpeed } from './stars';
 import { startLauncher, type Launcher } from './wave-launcher';
 import type { Phase } from './program';
-import { stageParameters, RANK } from './stage-setup';
+import { stageParameters } from './stage-setup';
+import { tuning } from './tuning.config';
 
 /** The scrolling starfield: the shift register's phase and the speed chosen by the program. */
 export interface StarField {
@@ -135,8 +136,8 @@ export const emptyPlayingState = (phase: Phase): PlayingState => ({
   stars: { phase: 0, speed: STARS_STILL },
   starControl: STARS_STOPPED,
   stage: 0,
-  rank: RANK.A,
-  params: stageParameters(1, RANK.A),
+  rank: tuning.rank,
+  params: stageParameters(1, tuning.rank),
   looks: new Map(),
   launcher: { ...startLauncher([]), running: false },
   entryBombBits: 0,
@@ -154,7 +155,7 @@ export const emptyPlayingState = (phase: Phase): PlayingState => ({
   alive: 0,
   counting: 0,
   restart: false,
-  reserve: 2,
+  reserve: tuning.reserve,
   badges: 0,
   messages: [],
   score: 0,

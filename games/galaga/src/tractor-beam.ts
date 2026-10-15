@@ -8,7 +8,7 @@ import { ATTACK_PROGRAM } from './attacks';
 import { setBeamRow, withTasks, type Capture } from './capture-state';
 import type { FlightSlot } from './flight-slot';
 import { DISPOSITION, FIGHTER, objectAt } from './objects';
-import { play, type PlayingState } from './playing';
+import type { PlayingState } from './playing';
 
 /** The flight slot of the capturing Boss, changed by `change`. */
 const changeBossSlot = (
@@ -107,21 +107,21 @@ const beamStep = (state: PlayingState): PlayingState => {
   const hovering = changeBossSlot(state, (s) => ({ ...s, timer: 0xff }));
   const step = capture.step + 1;
   const row = step & 0x0f;
-  const opening = step === 1 ? play(hovering, 'tractorBeam') : hovering;
   if (row !== 0x0b) {
     const closing = (step & 0x40) !== 0;
     return withCapture(
-      opening,
+      hovering,
       closing
         ? setBeamRow({ ...capture, step }, 0x0b - row, false)
         : setBeamRow({ ...capture, step }, row, true),
     );
   }
-  if ((step & 0x40) === 0) return withCapture(opening, { ...capture, step: 0x40, countdown: 0x40 });
+  if ((step & 0x40) === 0)
+    return withCapture(hovering, { ...capture, step: 0x40, countdown: 0x40 });
   if (capture.connected && (step & 0x20) === 0) {
-    return withCapture(opening, { ...capture, step: 0x68 });
+    return withCapture(hovering, { ...capture, step: 0x68 });
   }
-  return beamEnds(withCapture(opening, { ...capture, step }));
+  return beamEnds(withCapture(hovering, { ...capture, step }));
 };
 
 /**
@@ -133,15 +133,12 @@ const tryToCatch = (state: PlayingState): PlayingState => {
   if (capture.step !== 0x40) return state;
   const distance = (capture.beamX - objectAt(state.objects, FIGHTER).x + 0x1b) & 0xff;
   if (distance >= 0x36 || !state.tasks.stick || state.restart) return state;
-  return play(
-    {
-      ...state,
-      capture: withTasks({ ...capture, beamSpeed: 0x0a }, { pull: true }),
-      tasks: { ...state.tasks, stick: false, fighterHits: false },
-      starControl: { ...state.starControl, backwards: true },
-    },
-    'beamCapture',
-  );
+  return {
+    ...state,
+    capture: withTasks({ ...capture, beamSpeed: 0x0a }, { pull: true }),
+    tasks: { ...state.tasks, stick: false, fighterHits: false },
+    starControl: { ...state.starControl, backwards: true },
+  };
 };
 
 /** `f_2222`: one frame of the beam. */

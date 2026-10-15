@@ -16,4 +16,5 @@ export {
   type SoundEffect,
   type ToneSound,
 } from './sound';
-export { playEffect, playSound, type SynthContext } from './synth';
+export { nextChunkStart, STREAM_LEAD, STREAM_MAX_LEAD } from './stream';
+export { playEffect, playSamples, playSound, type SynthContext } from './synth';

@@ -79,7 +79,8 @@ const scoreHit = (world: HitWorld, id: number, color: number, flying: boolean): 
     world.capture.object === id
       ? { ...world, capture: { ...world.capture, busy: false, object: 1 } }
       : world;
-  const sound: SoundName = color === 7 ? 'fighterHit' : (HIT_SOUNDS[(color - 1) & 3] ?? 'beeHit');
+  const sound: SoundName =
+    color === 7 ? 'capturedFighterHit' : (HIT_SOUNDS[(color - 1) & 3] ?? 'beeHit');
   // A captured fighter is shot: it is lost for good, and a new capture may start.
   const released = color === 7 ? { ...freed, capture: { ...freed.capture, busy: false } } : freed;
   return count({ ...released, sounds: [...released.sounds, sound] }, color, flying ? 2 : 1);
@@ -129,7 +130,6 @@ const rescue = (world: HitWorld, fighter: number): HitWorld => {
       { ...world.capture, object: fighter, step: 0, pulling: true },
       { rescue: true },
     ),
-    sounds: [...world.sounds, 'rescue'],
   };
 };
 

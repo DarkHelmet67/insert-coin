@@ -130,7 +130,11 @@ shot: [
 
 I tempi restano precisi perché ogni strato viene programmato sull'orologio dell'`AudioContext`, non con `setTimeout`. Come sono stati ricavati questi numeri dalle registrazioni originali è spiegato nella [guida delle meccaniche di Space Invaders](../games/space-invaders/docs/meccaniche-originali.md#8-i-suoni-misurati-sugli-originali).
 
-## 7. Un'eccezione alle regole
+## 7. Campioni fatti dal gioco
+
+Dal quinto gioco in poi alcuni suoni non sono descritti come dati ma **calcolati dal gioco**: Galaga emula il suo chip sonoro e produce i campioni fotogramma per fotogramma. Per questi c'è `audio.stream(campioni, frequenza)`, che li mette in coda sull'orologio audio uno dopo l'altro, senza buchi. Come funziona è spiegato nella [guida 15](15-chip-sonoro-namco.md).
+
+## 8. Un'eccezione alle regole
 
 I nodi Web Audio si configurano per assegnamento (`oscillator.type = 'square'`, `source.buffer = buffer`), proprio come il contesto del canvas. La regola ESLint sull'immutabilità è quindi disattivata **solo** per `synth.ts`, e l'eccezione è documentata in [CLAUDE.md](../CLAUDE.md).
 

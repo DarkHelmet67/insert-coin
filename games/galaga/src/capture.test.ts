@@ -1,4 +1,6 @@
 import { describe, expect, it } from 'vitest';
+import { soundCommands } from './sound-commands';
+import { EFFECT } from './sound-state';
 import { spin } from './capture-fighter';
 import { NO_CAPTURE } from './capture-state';
 import { noControls } from './controls';
@@ -60,7 +62,7 @@ describe('a capture and a rescue', () => {
 
   it('a Boss catches the fighter with its beam and takes it home', () => {
     const caught = first((s) => s.capture.tasks.pull);
-    expect(caught?.sounds).toContain('beamCapture');
+    expect(caught && soundCommands(caught).writes).toContainEqual([EFFECT.beamCapture, 1]);
     const carried = first((s) => s.capture.tasks.carry && !s.capture.showText);
     expect(carried?.messages.map((m) => m.text)).toContain('FIGHTER CAPTURED');
     const held = first((s) => s.restart && s.capture.busy);
@@ -71,7 +73,8 @@ describe('a capture and a rescue', () => {
   });
 
   it('shooting the Boss as it dives frees the fighter: a double fighter', () => {
-    expect(first((s) => s.capture.tasks.rescue)?.sounds).toContain('rescue');
+    const rescue = first((s) => s.capture.tasks.rescue);
+    expect(rescue && soundCommands(rescue).writes).toContainEqual([EFFECT.rescue, 1]);
     const joined = first((s) => s.dual);
     expect(joined).toBeDefined();
     expect(objectAt(joined?.objects ?? [], FIGHTER).x).toBe(0x71);

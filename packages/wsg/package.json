@@ -1,0 +1,10 @@
+{
+  "name": "@arcade/wsg",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Namco's 3-voice waveform sound generator (WSG): Pac-Man, Galaga and their family.",
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

@@ -34,7 +34,7 @@ describe('a simulated game', () => {
   });
 
   it('loses the fighter, which then explodes', () => {
-    const lost = states.findIndex((s) => s.sounds.includes('fighterHit'));
+    const lost = states.findIndex((s) => s.sounds.includes('fighterExplosion'));
     expect(lost).toBeGreaterThan(0);
     expect(objectAt(states[lost]?.objects ?? [], FIGHTER).code).toBe(0x20);
   });

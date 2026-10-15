@@ -127,7 +127,7 @@ const loseFighters = (state: PlayingState, hits: readonly number[]): PlayingStat
           (current, hit) => (current.dual ? loseOneOfTwo(current, hit) : loseFighter(current)),
           state,
         ),
-        'fighterHit',
+        'fighterExplosion',
       );
 
 /** One frame of collisions; the hits are turned into points at once. */
