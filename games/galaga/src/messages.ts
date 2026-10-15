@@ -21,6 +21,14 @@ export const MESSAGES = {
   gameOver: { text: 'GAME OVER', column: 10, row: 18, palette: 0 },
   challengingStage: { text: 'CHALLENGING STAGE', column: 5, row: 18, palette: 0 },
   fighterCaptured: { text: 'FIGHTER CAPTURED', column: 6, row: 19, palette: 4 },
+  numberOfHits: { text: 'NUMBER OF HITS', column: 5, row: 18, palette: 0 },
+  bonus: { text: 'BONUS', column: 8, row: 21, palette: 0 },
+  perfect: { text: 'PERFECT !', column: 10, row: 15, palette: 4 },
+  specialBonus: { text: 'SPECIAL BONUS 10000 PTS', column: 2, row: 21, palette: 5 },
+  results: { text: '-RESULTS-', column: 9, row: 17, palette: 4 },
+  shotsFired: { text: 'SHOTS FIRED', column: 4, row: 20, palette: 5 },
+  resultHits: { text: 'NUMBER OF HITS', column: 4, row: 23, palette: 5 },
+  hitMissRatio: { text: 'HIT-MISS RATIO', column: 4, row: 26, palette: 3 },
 } as const satisfies Readonly<Record<string, Message>>;
 
 /** "STAGE n": the number is written after the text, from column 16. */

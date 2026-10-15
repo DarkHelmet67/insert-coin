@@ -18,4 +18,8 @@ export type SoundName =
   | 'tractorBeam'
   | 'beamCapture'
   | 'fighterCaptured'
-  | 'rescue';
+  | 'rescue'
+  | 'extraLife'
+  | 'challengeEnd'
+  | 'perfect'
+  | 'bonusBee';

@@ -7,6 +7,7 @@ import type { FlightSlot } from './flight-slot';
 import { initialFormation, type Formation } from './formation';
 import type { Message } from './messages';
 import { setUpBombs } from './bombs';
+import { FIRST_BONUS } from './extra-lives';
 import { emptyObjects, type Objects } from './objects';
 import { NO_PATHS, type RocketPath } from './rockets';
 import type { SoundName } from './sound-names';
@@ -36,6 +37,8 @@ export interface Tasks {
   /** `f_1F85` and `f_1F04`: the joystick and the fire button are read. */
   readonly stick: boolean;
   readonly fire: boolean;
+  /** `f_1A80`: the clone attack of the bonus bee. */
+  readonly clones: boolean;
   /** `f_05EE` on the second processor: aliens and bombs can hit the fighter. */
   readonly fighterHits: boolean;
 }
@@ -48,6 +51,7 @@ const NO_TASKS: Tasks = {
   stick: false,
   fire: false,
   fighterHits: false,
+  clones: false,
 };
 
 /** Everything about a game in progress. */
@@ -106,6 +110,8 @@ export interface PlayingState {
   readonly badges: number;
   readonly messages: readonly Message[];
   readonly score: number;
+  /** The next extra fighter, in tens of thousands of points (`_b_mcfg_bonus`). */
+  readonly nextBonus: number;
   /** Rockets fired and aliens hit, for the results at the end of the game. */
   readonly shots: number;
   readonly hits: number;
@@ -152,6 +158,7 @@ export const emptyPlayingState = (phase: Phase): PlayingState => ({
   badges: 0,
   messages: [],
   score: 0,
+  nextBonus: FIRST_BONUS,
   shots: 0,
   hits: 0,
   sounds: [],

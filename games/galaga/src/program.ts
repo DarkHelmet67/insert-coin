@@ -10,6 +10,7 @@ import { stageFlags } from './badges';
 import { setTimer } from './clock';
 import { placeFighter } from './fighter';
 import { initialFormation } from './formation';
+import { scriptLines, startWait, waitOver, type ScriptName } from './endings';
 import { eraseRow, MESSAGES, show, shownAt, stageMessage } from './messages';
 import { ENEMY_OBJECTS, type Objects } from './objects';
 import { flyingCount, play, type PlayingState } from './playing';
@@ -31,8 +32,15 @@ export type Phase =
   | { readonly step: 'running' }
   /** The stage is over or the fighter was lost: a pause before what comes next. */
   | { readonly step: 'restart' }
-  /** No fighters left. */
-  | { readonly step: 'gameOver' };
+  /** A scripted sequence: challenge results or the end of the game (`endings.ts`). */
+  | {
+      readonly step: 'ending';
+      readonly script: ScriptName;
+      readonly line: number;
+      readonly waiting: boolean;
+    }
+  /** The game is over: back to the attract screen. */
+  | { readonly step: 'over' };
 
 /** Frames between two badges, each with its "click" (`c_build_token_1`). */
 const BADGE_FRAMES = 8;
@@ -66,10 +74,11 @@ const setUpStage = (state: PlayingState): PlayingState => {
     attacks: newAttacks(),
     maxBombers: params.maxBombers,
     flyingHits: 0,
+    tripleLeft: 0,
     groupLeft: isChallengeStage(state.stage) ? 8 : 0,
     formation: initialFormation(),
     objects: clearHits(state.objects),
-    tasks: { ...state.tasks, sway: true, breathing: false, attacks: false },
+    tasks: { ...state.tasks, sway: true, breathing: false, attacks: false, clones: false },
     wavesEnabled: false,
     swayStops: false,
     params,
@@ -177,17 +186,43 @@ const restart = (state: PlayingState): PlayingState => {
   }
   if (state.timers[3] !== 0) return state;
   if (state.restart || state.alive > 0) {
-    if (state.reserve === 0) {
-      return {
-        ...state,
-        messages: show(state.messages, MESSAGES.gameOver),
-        phase: { step: 'gameOver' },
-      };
-    }
+    if (state.reserve === 0) return startEnding(state, 'gameOver');
     const fewer = { ...state, reserve: state.reserve - 1 };
     return state.alive === 0 ? startSplash(fewer, 'respawn') : startRespawn(fewer);
   }
+  if (isChallengeStage(state.stage)) {
+    return startEnding(state, state.flyingHits === 40 ? 'perfect' : 'challenge');
+  }
   return startSplash(state, 'ready');
+};
+
+/** The start of a scripted sequence. */
+const startEnding = (state: PlayingState, script: ScriptName): PlayingState => ({
+  ...state,
+  phase: { step: 'ending', script, line: 0, waiting: false },
+});
+
+/**
+ * One frame of a scripted sequence: run the next line, or wait. At the end, the next stage
+ * follows the challenge results, the attract screen follows the game.
+ */
+const ending = (state: PlayingState, script: ScriptName, line: number, waiting: boolean) => {
+  const lines = scriptLines(script, state);
+  const current = lines[line];
+  if (current === undefined) {
+    return script === 'gameOver'
+      ? { ...state, phase: { step: 'over' } as const }
+      : startSplash(state, 'ready');
+  }
+  if (waiting) {
+    return waitOver(state, current.wait)
+      ? { ...state, phase: { step: 'ending', script, line: line + 1, waiting: false } as const }
+      : state;
+  }
+  return {
+    ...startWait(current.run(state), current.wait),
+    phase: { step: 'ending', script, line, waiting: true } as const,
+  };
 };
 
 /** The game at its first frame: "PLAYER 1" and the start theme for 8 timer ticks. */
@@ -220,7 +255,9 @@ export const runProgram = (state: PlayingState): PlayingState => {
       return running(state);
     case 'restart':
       return restart(state);
-    case 'gameOver':
+    case 'ending':
+      return ending(state, phase.script, phase.line, phase.waiting);
+    case 'over':
       return state;
   }
 };

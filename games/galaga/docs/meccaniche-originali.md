@@ -103,19 +103,19 @@ Codice: [`capture-state.ts`](../src/capture-state.ts) (i byte di stato condivisi
 - **La tabella** [P `d_scoreman_inc_lut`, `hitd_dspchr`]: il programma conta i colpi per colore e moltiplica alla fine. Un'ape vale **50** in formazione e il doppio, **100**, in volo; una farfalla **80** e **160**; un Boss **150** in formazione.
 - **Il Boss in picchiata** [P `d_1CFD`]: **400** da solo, **800** con una scorta, **1600** con due. Il punteggio compare sullo schermo dove è stato colpito.
 - **Il caccia catturato** colpito in volo vale **1000** [P `l_0849`].
-- **Vite extra** [W, H]: a **20 000** e **70 000** punti, poi ogni 70 000, con 3 vite di partenza: la configurazione di fabbrica.
-- **Statistiche** [P `_top5_dlg_proc`]: a fine partita compaiono i colpi sparati, quelli andati a segno e la percentuale.
+- **Vite extra** [P `gctl_supv_score`, W, H]: a **20 000** e **70 000** punti, poi ogni 70 000, con 3 vite di partenza: la configurazione di fabbrica. Il programma confronta le due cifre più alte del punteggio con la soglia successiva ogni volta che il punteggio cambia.
+- **Statistiche** [P `gctl_plyr_terminate`, `c_0A72_puts_hitmiss_ratio`]: a fine partita, dopo "GAME OVER", lo schermo si svuota e compaiono i colpi sparati, quelli andati a segno e la percentuale con un decimale, arrotondata; restano per circa 7 secondi.
 
-Codice: [`score.ts`](../src/score.ts), [`hits.ts`](../src/hits.ts).
+Codice: [`score.ts`](../src/score.ts), [`hits.ts`](../src/hits.ts), [`extra-lives.ts`](../src/extra-lives.ts), [`endings.ts`](../src/endings.ts).
 
 ## 9. Gli stage
 
 - **Stemmi** [P `gctl_stg_tokens`]: in basso a destra lo stage si conta con stemmi da 1, 5, 10, 20, 30 e 50 [W]. Prima di ogni stage compare la scritta "STAGE n".
 - **Challenging Stage** [P `c_25A2`, `d_challg_stg_dat`]: il terzo stage e poi uno ogni quattro (7, 11, 15…) è uno stage bonus: 40 alieni sfilano su traiettorie acrobatiche senza sparare e senza fermarsi. Gli alieni hanno forme diverse secondo lo stage (api, farfalle, libellule, astronavi…) [P `d_290E`, R]. Abbatterne un'intera fila da otto vale un bonus di 1000, 1500, 2000 o 3000 punti secondo lo stage [P `d_stage_chllg_rnd_attrib`]; alla fine ogni alieno colpito vale 100 punti e colpirli tutti e 40 dà **10 000** punti ("PERFECT!").
-- **I transitori** [P `l_29B3_setup_transients`, `f_1A80`]: dal quarto stage alcune ondate portano alieni in più che non entrano in formazione, e quando restano pochi alieni un'ape si divide in **tre** nemici speciali (scorpioni, astronavi di Bosconian, ammiraglie di Galaxian). Abbatterli tutti e tre dà 1000, 2000 o 3000 punti.
+- **I transitori** [P `l_29B3_setup_transients`, `f_1A80`]: dal quarto stage alcune ondate portano alieni in più che non entrano in formazione, e quando restano meno di 10 alieni un'ape (l'"ape bonus") lampeggia per 64 fotogrammi, poi picchia e si divide in **tre** nemici speciali (scorpioni, astronavi di Bosconian, ammiraglie di Galaxian). Abbatterli tutti e tre dà 1000, 2000 o 3000 punti.
 - **Fine stage** [P `gctl_supv_stage`]: lo stage finisce quando non resta nessun alieno; se il caccia viene distrutto, gli alieni in volo tornano in formazione prima che compaia il caccia successivo.
 
-Codice: [`stage.ts`](../src/stage.ts), [`challenge.ts`](../src/challenge.ts), [`transients.ts`](../src/transients.ts).
+Codice: [`stage-setup.ts`](../src/stage-setup.ts), [`attack-waves.ts`](../src/attack-waves.ts), [`badges.ts`](../src/badges.ts), [`clone-attack.ts`](../src/clone-attack.ts), [`endings.ts`](../src/endings.ts) (i risultati dello stage bonus: `gctl_chllng_stg_end`), [`program.ts`](../src/program.ts).
 
 ## 10. I colori e i disegni
 

@@ -52,6 +52,12 @@ export interface Attacks {
   readonly bossScores: readonly BossScore[];
   /** The alien chosen as bonus bee, which the manager does not launch (`_b_bbee_obj`). */
   readonly bonusBee: number;
+  /** Frames before the bonus bee leaves, counting up to 0 from $C0 (`_b_bbee_tmr`). */
+  readonly bonusBeeTimer: number;
+  /** Its own look, packed code and palette, taken back when it returns (`_b_bbee_clr_a`). */
+  readonly bonusBeeLook: number;
+  /** The palette it flashes to, 4, 5 or 6 by stage (`_b_bbee_clr_b`). */
+  readonly bonusBeeColor: number;
 }
 
 /** The default Boss score: 400 points (`01 B5` four times, `stg_init_env`). */
@@ -64,6 +70,9 @@ export const newAttacks = (): Attacks => ({
   bossToggle: 0,
   bossScores: [BOSS_400, BOSS_400, BOSS_400, BOSS_400],
   bonusBee: 1,
+  bonusBeeTimer: 0,
+  bonusBeeLook: 0x1b,
+  bonusBeeColor: 4,
 });
 
 /** What the manager changes. */

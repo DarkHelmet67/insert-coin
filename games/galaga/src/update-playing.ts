@@ -7,6 +7,7 @@ import { attack, collide, currentSettings, explode, fallBombs, isContinuous } fr
 import type { Controls } from './controls';
 import { moveFighter } from './fighter';
 import { carryFighter, pullFighter } from './capture-fighter';
+import { cloneAttack } from './clone-attack';
 import { withTasks } from './capture-state';
 import { runFlights, type FlightEvent, type FlightInputs } from './flight';
 import { runRescue } from './rescue';
@@ -59,7 +60,7 @@ const runWaves = (state: PlayingState): PlayingState => {
     groupLeft: result.groupCountReset === true ? 8 : state.groupLeft,
   };
   return result.completed === true
-    ? { ...updated, swayStops: true, tasks: { ...updated.tasks, attacks: true } }
+    ? { ...updated, swayStops: true, tasks: { ...updated.tasks, attacks: true, clones: true } }
     : updated;
 };
 
@@ -92,12 +93,19 @@ const flightInputs = (state: PlayingState): FlightInputs => ({
   bombInterval: state.bombInterval,
   bombsAllowed: state.tasks.fire && state.timers[1] === 0,
   formation: state.formation,
-  bonusBeeLook: 0x1b,
+  bonusBeeLook: state.attacks.bonusBeeLook,
 });
 
-/** `case_0A53`: the capturing Boss starts its dive: the beam will open above the fighter. */
-const startCaptureDive = (state: PlayingState, event: FlightEvent): PlayingState =>
-  event.kind === 'captureDive'
+/**
+ * What the flight programs report: the capturing Boss starts its dive (`case_0A53`), the beam
+ * will open above the fighter; the bonus bee is back home.
+ */
+const handleEvent = (state: PlayingState, event: FlightEvent): PlayingState => {
+  if (event.kind === 'bonusBeeHome') {
+    // `l_0E2A`: the bonus bee is back home as a plain alien.
+    return { ...state, attacks: { ...state.attacks, bonusBee: 1 } };
+  }
+  return event.kind === 'captureDive'
     ? {
         ...state,
         capture: withTasks(
@@ -106,6 +114,7 @@ const startCaptureDive = (state: PlayingState, event: FlightEvent): PlayingState
         ),
       }
     : state;
+};
 
 /** `f_08D3` on the second processor: every flying alien follows its program. */
 const flyAliens = (state: PlayingState): PlayingState => {
@@ -113,7 +122,7 @@ const flyAliens = (state: PlayingState): PlayingState => {
     { slots: state.slots, objects: state.objects, bombDrift: state.bombDrift, events: [] },
     flightInputs(state),
   );
-  const flown = world.events.reduce(startCaptureDive, {
+  const flown = world.events.reduce(handleEvent, {
     ...state,
     slots: world.slots,
     objects: world.objects,
@@ -163,6 +172,7 @@ export const updatePlaying = (state: PlayingState, controls: Controls): PlayingS
     updateStars,
     runWaves,
     moveFormation,
+    cloneAttack,
     attack,
     carryFighter,
     runBeam,

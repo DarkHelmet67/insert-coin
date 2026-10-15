@@ -44,7 +44,8 @@ export const updateGame = (state: GameState, controls: Controls): GameState => {
         : updateAttract(state);
     case 'playing': {
       const playing = updatePlaying(state.playing, controls);
-      return { ...state, playing, hiScore: Math.max(state.hiScore, playing.score) };
+      const hiScore = Math.max(state.hiScore, playing.score);
+      return playing.phase.step === 'over' ? createGame(hiScore) : { ...state, playing, hiScore };
     }
   }
 };

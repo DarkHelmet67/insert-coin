@@ -11,6 +11,7 @@ import { setTimer } from './clock';
 import { detectHits, explodeFighter, startExplosions, type HitWorld } from './hits';
 import { FIGHTER, FIGHTER_2, objectAt, updateObject } from './objects';
 import { flyingCount, play, type PlayingState } from './playing';
+import { addPoints } from './extra-lives';
 import { hitPoints, NO_HITS } from './score';
 import { challengeBonus } from './stage-setup';
 
@@ -152,9 +153,8 @@ export const collide = (state: PlayingState): PlayingState => {
     capture: world.capture,
     tripleLeft: world.tripleLeft,
     sounds: world.sounds,
-    score: state.score + hitPoints(world.hitCounts),
     timers:
       world.quietTimer === undefined ? state.timers : setTimer(state.timers, 1, world.quietTimer),
   };
-  return loseFighters(updated, world.fightersHit);
+  return loseFighters(addPoints(updated, hitPoints(world.hitCounts)), world.fightersHit);
 };
