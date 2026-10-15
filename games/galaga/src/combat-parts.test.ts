@@ -6,6 +6,7 @@ import { NO_CAPTURE } from './capture-state';
 import { detectHits, startExplosions, type HitWorld } from './hits';
 import { DISPOSITION, emptyObjects, FIGHTER, FIRST_BOMB, objectAt, updateObject } from './objects';
 import { hitPoints, NO_HITS, pointsOf } from './score';
+import { BOMB_ENABLE_TABLE } from './rom/main-rom';
 import { RANK, challengeBonus, stageParameters } from './stage-setup';
 
 describe('bomber settings', () => {
@@ -20,6 +21,16 @@ describe('bomber settings', () => {
   it('let more aliens attack after the first 30 seconds', () => {
     expect(bomberSettings(params, 40, 0x78, false, 1).maxBombers).toBe(1);
     expect(bomberSettings(params, 40, 0x3b, false, 1).maxBombers).toBe(params.maxBombersLater);
+  });
+
+  it('read past the row with all 40 aliens alive, as the original does (c_08BE)', () => {
+    const settings = bomberSettings(params, 40, 0x78, false, 1);
+    // Column 4 is the first byte of the next row: $093c + 4 for the Boss, $091c + 4 for bombs.
+    expect(settings.reload[0]).toBe(BOMB_ENABLE_TABLE[32 + params.bossTimer * 4 + 4]);
+    expect(settings.bombBits).toBe(BOMB_ENABLE_TABLE[params.bombEnable * 4 + 4]);
+    expect(bomberSettings(params, 39, 0x78, false, 1).reload[0]).toBe(
+      BOMB_ENABLE_TABLE[32 + params.bossTimer * 4 + 3],
+    );
   });
 });
 

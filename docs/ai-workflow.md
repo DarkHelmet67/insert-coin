@@ -676,3 +676,10 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 **Verifica dell'AI:** nel sorgente, all'ultimo passo dell'esplosione (`l_24DA`) il programma scrive \$0C nel registro di controllo dello sprite (dimensione doppia, nessuna specchiatura), e quando mostra il punteggio (`l_2529`) lo riscrive con la sola dimensione. Sul cabinato quindi esplosione grande e punteggio sono sempre dritti; il remake invece conservava le specchiature dell'ultimo orientamento dell'alieno. Era un errore del remake.
 
 **Correzione:** `object-states.ts` azzera le specchiature negli stessi due punti, con un test che parte da un alieno capovolto.
+
+## 2026-10-15 · Galaga: la revisione di Copilot
+
+**Due commenti** sulla PR #2, verificati invece che accettati sulla fiducia:
+
+- **La coda dei campioni** (`stream.ts`): `nextChunkStart` ripartiva con 60 ms di anticipo quando in coda restavano meno di 15 ms di suono, aggiungendo un silenzio mentre la coda suonava ancora. Applicato: finché c'è suono in coda il pezzo nuovo parte subito dopo; si riparte con l'anticipo solo a coda esaurita.
+- **La colonna della tabella delle bombe** (`bomber-timers.ts`): con 40 alieni vivi la colonna vale 4 e si legge il primo byte della riga dopo. Non applicato: lo fa anche il programma originale (`c_08BE`, e il sorgente commentato nota che le due tabelle devono essere contigue per questo), e il remake copia anche i byte che seguono la tabella. Aggiunti un commento e un test che fissano il comportamento della ROM; la decisione resta a Luca.

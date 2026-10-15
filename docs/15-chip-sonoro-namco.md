@@ -89,7 +89,7 @@ Il gioco resta puro: a ogni fotogramma `soundCommands` (`sound-commands.ts`) tra
 audio.stream(frame.samples, SAMPLE_RATE);
 ```
 
-`stream` è la novità di `@arcade/audio` per i suoni fatti dal gioco: mette i pezzi uno dopo l'altro sull'orologio audio, senza buchi. Il game loop e l'orologio audio non battono insieme, quindi i pezzi partono con un piccolo anticipo (60 ms); se il gioco resta indietro si riparte con lo stesso anticipo, se va troppo avanti (dopo una pausa della scheda del browser) il pezzo si scarta (`nextChunkStart` in `stream.ts`).
+`stream` è la novità di `@arcade/audio` per i suoni fatti dal gioco: mette i pezzi uno dopo l'altro sull'orologio audio, senza buchi. Il game loop e l'orologio audio non battono insieme, quindi i pezzi partono con un piccolo anticipo (60 ms); finché resta suono in coda il pezzo nuovo parte subito dopo, anche se manca pochissimo, perché ripartire in anticipo aggiungerebbe un silenzio; solo se la coda si esaurisce si riparte con lo stesso anticipo, se va troppo avanti (dopo una pausa della scheda del browser) il pezzo si scarta (`nextChunkStart` in `stream.ts`).
 
 L'unico suono che non viene dal chip è l'**esplosione del caccia**: sul cabinato la fa un altro chip, il Namco 54XX, con un circuito analogico che neppure MAME emula del tutto. Il remake la imita con un `NoiseSound`, i cui valori stanno in `tuning.config.ts`.
 

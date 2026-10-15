@@ -19,7 +19,13 @@ export interface BomberSettings {
   readonly continuous: boolean;
 }
 
-/** `c_08BE`: a byte of the 4-per-row table, the column given by the tens of aliens left. */
+/**
+ * `c_08BE`: a byte of the 4-per-row table, the column given by the tens of aliens left. The
+ * column is not clamped, as in the original: with all 40 aliens alive it is 4, and the program
+ * reads the first byte of the next row (the commented source notes that the two tables must be
+ * contiguous for this). The ROM bytes after the table are copied too, so the remake reads the
+ * same values.
+ */
 const byAliensLeft = (first: number, row: number, alive: number): number =>
   BOMB_ENABLE_TABLE[first + row * 4 + Math.floor(alive / 10)] ?? 0;
 
