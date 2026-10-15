@@ -144,4 +144,6 @@ Codice: [`pixel-art.ts`](../src/pixel-art.ts), [`sprite-rom.ts`](../src/sprite-r
 
 - **Un solo giocatore** [N]: la modalità a due giocatori alternati non c'è.
 - **Il livello di difficoltà** [N] è il livello A di fabbrica; gli altri tre sono nelle tabelle e si possono scegliere in `tuning.config.ts`.
+- **La schermata attract** [S `f_17B2`, `d_attrmode_sptiles`]: come sul cabinato, "GALAGA", "-- SCORE --" e la tabella dei punti compaiono una riga al secondo, con gli alieni dritti accanto ai loro punti, poi il copyright. Il cabinato prosegue con un allenamento e una partita dimostrativa guidati dal programma (`d_1928`, `d_1887`): il remake non li ha e ripete la schermata delle informazioni [N]. Manca anche il logo "namco" sotto il copyright: nella ROM dei caratteri usata (`2600j.bin`, del set Midway) le tessere da \$66 a \$6C non lo disegnano [N].
+- **La moneta avvia la partita** [N]: il remake non conta i crediti, quindi niente "PUSH START BUTTON" e niente suono della moneta.
 - **Il caccia doppio, le catture e i transitori** seguono le tabelle della ROM; dove il programma passa i dati da un processore all'altro con tempi che dipendono dall'hardware (per esempio la rotazione del caccia catturato), i tempi sono ricavati dal codice e segnati [N] se approssimati.
