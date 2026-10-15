@@ -117,12 +117,14 @@ Codice: [`stage.ts`](../src/stage.ts), [`challenge.ts`](../src/challenge.ts), [`
 
 ## 10. I colori e i disegni
 
-- **Gli sprite** [R `gg1-11.4d`, `gg1-10.4f`]: 128 sprite da 16 × 16 pixel a 2 bit. Ogni alieno ne usa 8: sei orientamenti, il disegno verticale e quello con le ali chiuse. Il remake li tiene come _ASCII art_ copiata dalla ROM, con le cifre 0-3 al posto dei colori.
-- **I caratteri** [R `gg1-9.4l`]: 128 caratteri da 8 × 8, per le scritte, gli stemmi degli stage, le vite e il raggio traente.
-- **I colori** [R `prom-5.5n`, `prom-3.1c`, `prom-4.2n`]: una tavolozza di 32 colori (tre bit di rosso e di verde, due di blu) e le tabelle che ne scelgono quattro per ogni sprite o carattere.
-- **Le stelle** [H `starfield_05xx`]: un chip disegna un campo di stelle colorate che scorrono verso il basso; durante il gioco metà delle stelle si spegne e si accende a turno, dando lo scintillio. Si fermano quando il caccia è stato distrutto e accelerano tra uno stage e l'altro [P `ds_99B9_star_ctrl`].
+- **Gli sprite** [R `2800l`, `2700k`, nel set MAME `galaga`]: 128 sprite da 16 × 16 pixel, con 4 valori per pixel. Ogni alieno ne usa 8: sei orientamenti, il disegno verticale e quello con le ali chiuse; gli altri due quadranti si ottengono specchiando. Le esplosioni grandi sono sprite "doppi" di 2 × 2 tessere.
+- **I caratteri** [R `2600j`]: 128 caratteri da 8 × 8, per le scritte (cifre da 0, lettere da 0x0A: il programma scrive in ASCII e sottrae 0x30 o 0x37), gli stemmi degli stage, il logo Namco e il raggio traente.
+- **I colori** [R `prom-5.5n`, `prom-3.1c`, `prom-4.2n`]: una tavolozza di 32 colori (tre bit di rosso e di verde, due di blu, pesati dalle resistenze del circuito) e due tabelle che ne scelgono quattro per ogni tavolozza di sprite o di caratteri. Il colore 15, nero, è "trasparente": i pixel che ci finiscono sopra non si disegnano.
+- **Le stelle** [H `starfield_05xx`]: un chip fa girare un registro a scorrimento di 16 bit, un passo per pixel, e accende una stella quando 8 dei suoi bit hanno un valore fisso: 256 stelle possibili, in 4 gruppi da 64. Il registro si ripete ogni 65.535 passi ma un fotogramma ne dura 65.536: per questo le stelle si spostano da sole di un pixel a fotogramma; qualche passo in più o in meno le fa correre, rallentare o fermare. Il programma mostra due gruppi alla volta e li cambia ogni 4 fotogrammi [P `jp_Task_man`]: è lo scintillio. Si fermano quando il caccia è stato distrutto e accelerano stage dopo stage [P `f_1D76`, `ds_99B9_star_ctrl`].
 
-Codice: [`rom-sprites.ts`](../src/rom-sprites.ts), [`rom-chars.ts`](../src/rom-chars.ts), [`palette.ts`](../src/palette.ts), [`stars.ts`](../src/stars.ts).
+Il remake non copia la ROM nel repository (è di Namco): lo script [`scripts/galaga/extract-rom-art.js`](../../../scripts/galaga/extract-rom-art.js) legge le ROM del set MAME e scrive in [`src/art/`](../src/art/) ogni tessera come _ASCII art_ (`.` trasparente, `1`, `2`, `3` i tre colori) e le PROM dei colori byte per byte. Il disegno usa lo `Sprite` monocromatico condiviso: ogni tessera diventa tre sprite, uno per colore, disegnati uno sull'altro. Le stelle non fanno girare il registro 65.536 volte a fotogramma: le 256 stelle si trovano una volta sola, poi si calcola dove cade ciascuna.
+
+Codice: [`pixel-art.ts`](../src/pixel-art.ts), [`sprite-rom.ts`](../src/sprite-rom.ts), [`palette.ts`](../src/palette.ts), [`text.ts`](../src/text.ts), [`stars.ts`](../src/stars.ts).
 
 ## 11. I suoni
 
