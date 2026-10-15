@@ -100,3 +100,5 @@ L'unico suono che non viene dal chip è l'**esplosione del caccia**: sul cabinat
 - `games/galaga/src/sound-commands.test.ts`: le scritture dei registri e un fotogramma di campioni.
 
 I dati si rigenerano dalle ROM con `node scripts/galaga/extract-rom-sound.js <cartella delle ROM>`.
+
+Prossima guida: [16 · Un quinto gioco: Galaga](16-quinto-gioco.md).

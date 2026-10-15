@@ -2,7 +2,8 @@
  * The values of the remake that the sources do not fix for certain, or that the cabinet lets
  * the owner choose, in one place so they are easy to change and to test. Each value says where
  * it comes from:
- * - [S] read in the original program, with the label of its commented source code;
+ * - [P] read in the program of the main or sub processor, with the label of its commented source;
+ * - [S] read in the program of the sound processor;
  * - [R] read in the ROMs;
  * - [H] from the hardware, through MAME;
  * - [W] from written sources (manuals, articles);
@@ -15,7 +16,7 @@ import { RANK, type Rank } from './stage-setup';
 export const tuning = {
   /**
    * The difficulty (DIP switches): A is the factory setting [W manual], the easiest; B, C and D
-   * make the aliens dive and bomb more [S `bmbr_stg_cfg_dat`].
+   * make the aliens dive and bomb more [P `bmbr_stg_cfg_dat`].
    */
   rank: RANK.A as Rank,
 
@@ -24,7 +25,7 @@ export const tuning = {
 
   /**
    * Extra fighters, in tens of thousands of points: the first at 20 000, the second at 70 000,
-   * then one every 70 000, the factory setting [W manual, S `gctl_supv_score`].
+   * then one every 70 000, the factory setting [W manual, P `gctl_supv_score`].
    */
   extraLives: { first: 2, every: 7 },
 
