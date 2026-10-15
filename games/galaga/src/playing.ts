@@ -1,12 +1,17 @@
-import type { Controls } from './controls';
+import type { AlienLook, Rank, StageParameters } from './stage-setup';
+import { NO_TIMERS, type GameTimers } from './clock';
 import { SLOT_COUNT, type BombDrift } from './flight';
 import type { FlightSlot } from './flight-slot';
-import { moveFighter, placeFighter } from './fighter';
 import { initialFormation, type Formation } from './formation';
+import type { Message } from './messages';
 import { emptyObjects, type Objects } from './objects';
-import { fireRocket, moveRockets, NO_PATHS, type RocketPath } from './rockets';
+import { NO_PATHS, type RocketPath } from './rockets';
 import type { SoundName } from './sound-names';
-import { advanceStars, STARS_SLOW, type StarSpeed } from './stars';
+import { STARS_STOPPED, type StarControl } from './star-control';
+import { STARS_STILL, type StarSpeed } from './stars';
+import { startLauncher, type Launcher } from './wave-launcher';
+import type { Phase } from './program';
+import { stageParameters, RANK } from './stage-setup';
 
 /** The scrolling starfield: the shift register's phase and the speed chosen by the program. */
 export interface StarField {
@@ -14,10 +19,39 @@ export interface StarField {
   readonly speed: StarSpeed;
 }
 
+/**
+ * The tasks of the main processor that the program turns on and off (`ds_cpu0_task_actv`),
+ * by what they do.
+ */
+export interface Tasks {
+  /** `f_2A90`: the grid sways while the waves enter. */
+  readonly sway: boolean;
+  /** `f_1DE6`: the grid breathes once all aliens are home. */
+  readonly breathing: boolean;
+  /** `f_1B65` and `f_1A80`: aliens leave the formation to attack. */
+  readonly attacks: boolean;
+  /** `f_1F85` and `f_1F04`: the joystick and the fire button are read. */
+  readonly stick: boolean;
+  readonly fire: boolean;
+}
+
+/** All tasks off. */
+const NO_TASKS: Tasks = {
+  sway: false,
+  breathing: false,
+  attacks: false,
+  stick: false,
+  fire: false,
+};
+
 /** Everything about a game in progress. */
 export interface PlayingState {
   /** Frames since the game started (`ds3_92A0_frame_cts[0]`). */
   readonly frame: number;
+  readonly timers: GameTimers;
+  /** Where the main program is. */
+  readonly phase: Phase;
+  readonly tasks: Tasks;
   readonly objects: Objects;
   readonly slots: readonly (FlightSlot | undefined)[];
   readonly bombDrift: readonly BombDrift[];
@@ -28,6 +62,30 @@ export interface PlayingState {
   readonly dual: boolean;
   readonly formation: Formation;
   readonly stars: StarField;
+  readonly starControl: StarControl;
+  /** The stage being played (1, 2, ...), the difficulty, and what the stage setup decided. */
+  readonly stage: number;
+  readonly rank: Rank;
+  readonly params: StageParameters;
+  readonly looks: ReadonlyMap<number, AlienLook>;
+  readonly launcher: Launcher;
+  readonly entryBombBits: number;
+  /** Resting aliens follow the grid (`ds_9200_glbls[$0B]`). */
+  readonly enemiesEnabled: boolean;
+  /** New waves may start (`_b_atk_wv_enbl`). */
+  readonly wavesEnabled: boolean;
+  /** All waves are home: the sway stops in the middle (`_b_nestlr_inh`). */
+  readonly swayStops: boolean;
+  /** Aliens in play, as counted by the object manager, and the count in progress. */
+  readonly alive: number;
+  readonly counting: number;
+  /** The fighter was lost: the stage restarts (`ds_9200_glbls[$13]`). */
+  readonly restart: boolean;
+  /** Fighters in reserve (`_b_nships`), shown at the bottom left. */
+  readonly reserve: number;
+  /** Stage badges shown so far: they appear one by one. */
+  readonly badges: number;
+  readonly messages: readonly Message[];
   readonly score: number;
   /** Rockets fired and aliens hit, for the results at the end of the game. */
   readonly shots: number;
@@ -36,44 +94,48 @@ export interface PlayingState {
   readonly sounds: readonly SoundName[];
 }
 
-/** A new game: the fighter at the bottom, the stars moving. */
-export const initialPlayingState = (): PlayingState => ({
+/** A game before its first frame: the main program starts with the "PLAYER 1" screen. */
+export const emptyPlayingState = (phase: Phase): PlayingState => ({
   frame: 0,
-  objects: placeFighter(emptyObjects()),
+  timers: NO_TIMERS,
+  phase,
+  tasks: NO_TASKS,
+  objects: emptyObjects(),
   slots: Array.from({ length: SLOT_COUNT }, () => undefined),
   bombDrift: Array.from({ length: 8 }, () => ({ rate: 0, accumulator: 0 })),
   rocketPaths: NO_PATHS,
   stepToggle: false,
   dual: false,
   formation: initialFormation(),
-  stars: { phase: 0, speed: STARS_SLOW },
+  stars: { phase: 0, speed: STARS_STILL },
+  starControl: STARS_STOPPED,
+  stage: 0,
+  rank: RANK.A,
+  params: stageParameters(1, RANK.A),
+  looks: new Map(),
+  launcher: { ...startLauncher([]), running: false },
+  entryBombBits: 0,
+  enemiesEnabled: false,
+  wavesEnabled: false,
+  swayStops: false,
+  alive: 0,
+  counting: 0,
+  restart: false,
+  reserve: 2,
+  badges: 0,
+  messages: [],
   score: 0,
   shots: 0,
   hits: 0,
   sounds: [],
 });
 
-/** The fighter's part of a frame: move, fire, move the rockets. */
-const updateFighter = (state: PlayingState, controls: Controls): PlayingState => {
-  const moved = moveFighter(state.objects, state.stepToggle, controls.direction, state.dual);
-  const firing = controls.fire
-    ? fireRocket(moved.objects, state.rocketPaths, state.dual)
-    : { objects: moved.objects, paths: state.rocketPaths, fired: false };
-  return {
-    ...state,
-    objects: moveRockets(firing.objects, firing.paths),
-    rocketPaths: firing.paths,
-    stepToggle: moved.stepToggle,
-    shots: state.shots + (firing.fired ? 1 : 0),
-    sounds: firing.fired ? [...state.sounds, 'shot'] : state.sounds,
-  };
-};
+/** The state with `sound` started in this frame. */
+export const play = (state: PlayingState, sound: SoundName): PlayingState => ({
+  ...state,
+  sounds: [...state.sounds, sound],
+});
 
-/** One frame of play. */
-export const updatePlaying = (state: PlayingState, controls: Controls): PlayingState => {
-  const started: PlayingState = { ...state, frame: state.frame + 1, sounds: [] };
-  return {
-    ...updateFighter(started, controls),
-    stars: { ...state.stars, phase: advanceStars(state.stars.phase, state.stars.speed) },
-  };
-};
+/** Aliens in flight (`b_bugs_flying_nbr`): the flight slots in use. */
+export const flyingCount = (state: PlayingState): number =>
+  state.slots.filter((slot) => slot !== undefined).length;

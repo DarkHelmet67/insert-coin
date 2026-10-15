@@ -2,6 +2,7 @@ import { clearScreen, type DrawingContext } from '@arcade/render';
 import { drawScores, TEXT_COLOR } from './draw-hud';
 import { drawObjects } from './draw-objects';
 import { drawStars } from './draw-stars';
+import { drawBadges, drawMessages, drawReserve } from './draw-texts';
 import type { GameState } from './game';
 import { drawCellText } from './text';
 
@@ -20,6 +21,9 @@ export const renderGame = (ctx: DrawingContext, state: GameState): void => {
       const { playing } = state;
       drawStars(ctx, playing.stars, playing.frame);
       drawObjects(ctx, playing.objects);
+      drawMessages(ctx, playing.messages);
+      drawBadges(ctx, playing.stage, playing.badges);
+      drawReserve(ctx, playing.reserve);
       drawScores(ctx, playing.score, state.hiScore, ((playing.frame >> 4) & 1) === 1);
       break;
     }

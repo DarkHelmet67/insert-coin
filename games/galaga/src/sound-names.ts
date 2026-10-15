@@ -3,4 +3,15 @@
  * section 11 of the mechanics guide).
  */
 export type SoundName =
-  'shot' | 'beeHit' | 'butterflyHit' | 'bossHit' | 'bossDamaged' | 'fighterHit' | 'dive' | 'coin';
+  | 'shot'
+  | 'beeHit'
+  | 'butterflyHit'
+  | 'bossHit'
+  | 'bossDamaged'
+  | 'fighterHit'
+  | 'dive'
+  | 'coin'
+  | 'startTheme'
+  | 'challengeStart'
+  | 'badge'
+  | 'pulse';

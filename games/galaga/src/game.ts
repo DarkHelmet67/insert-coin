@@ -1,5 +1,7 @@
 import type { Controls } from './controls';
-import { initialPlayingState, updatePlaying, type PlayingState, type StarField } from './playing';
+import { emptyPlayingState, type PlayingState, type StarField } from './playing';
+import { startIntro } from './program';
+import { updatePlaying } from './update-playing';
 import { advanceStars, STARS_SLOW } from './stars';
 
 /** The screen being shown and its data. */
@@ -23,6 +25,9 @@ export const createGame = (hiScore: number): GameState => ({
   hiScore,
 });
 
+/** A new game, at the "PLAYER 1" screen. */
+const newGame = (): PlayingState => startIntro(emptyPlayingState({ step: 'intro' }));
+
 /** One frame of the attract screen: the stars keep moving. */
 const updateAttract = (state: Extract<GameState, { screen: 'attract' }>): GameState => ({
   ...state,
@@ -35,7 +40,7 @@ export const updateGame = (state: GameState, controls: Controls): GameState => {
   switch (state.screen) {
     case 'attract':
       return controls.coin
-        ? { screen: 'playing', playing: initialPlayingState(), hiScore: state.hiScore }
+        ? { screen: 'playing', playing: newGame(), hiScore: state.hiScore }
         : updateAttract(state);
     case 'playing': {
       const playing = updatePlaying(state.playing, controls);

@@ -50,7 +50,7 @@ Codice: [`fighter.ts`](../src/fighter.ts), [`rockets.ts`](../src/rockets.ts), [`
 - **Il respiro** [P `f_1DE6`, `d_1E64_bitmap_tables`]: poi la formazione comincia a pulsare, allargandosi e stringendosi. Ogni 4 fotogrammi il contatore avanza di 1, da 0 a 31 e ritorno; una tabella di bit decide quali colonne e righe si spostano di un pixel a quel passo, così le colonne esterne e le righe basse si muovono di più. Il suono "pulsante" della formazione segue lo stesso ritmo [S].
 - **Il battito d'ali** [P `f_1DE6`]: gli alieni fermi alternano due disegni (ali aperte e chiuse) con lo stesso ritmo del respiro.
 
-Codice: [`formation.ts`](../src/formation.ts).
+Codice: [`formation.ts`](../src/formation.ts), [`object-states.ts`](../src/object-states.ts) (il gestore degli oggetti `f_23DD`, che ogni 4 fotogrammi mette gli alieni fermi al loro posto, li fa girare dritti quando arrivano e manda avanti le esplosioni).
 
 ## 4. Il volo: un piccolo linguaggio di traiettorie
 
@@ -73,9 +73,11 @@ Il remake **esegue gli stessi byte** con un interprete che ricalca la routine or
 - **Coppie e file** [P `f_2916`]: ogni ondata è fatta di coppie (un alieno per lato, o due della stessa fila). Un alieno parte ogni 8 fotogrammi, salvo quelli segnati per partire insieme al compagno.
 - **La partenza** [P `db_2A6C`]: dall'alto, poco fuori dallo schermo, puntando in basso; o dai lati in basso, puntando verso destra o sinistra.
 - **Le tabelle per stage** [P `d_combat_stg_dat`, `d_combat_stg_dat_idx`]: 13 configurazioni per gli stage normali, scelte secondo lo stage e la difficoltà. Dopo il 23° stage il programma ripete in ciclo gli ultimi quattro.
-- **Le prossime ondate aspettano** [P `f_2916`]: un'ondata non parte finché la precedente non è tutta in volo verso casa.
+- **Le prossime ondate aspettano** [P `f_2916`]: un'ondata non parte finché la precedente non è tutta al suo posto, più una pausa di 2 "tic" dei timer di gioco (un tic ogni 32 fotogrammi, [P `f_1DD2`]).
+- **Gli alieni di passaggio** [P `l_2612`, `l_29B3`]: dal quarto stage alcune ondate portano 2 o 4 alieni in più, inseriti in posizioni casuali: entrano con gli altri ed escono dallo schermo senza prendere posto. Il programma originale ricava il caso dal registro di refresh dello Z80, che nessuna emulazione della sola logica può riprodurre: il remake usa un generatore di byte casuali [N].
+- **La sequenza dello stage** [P `stg_init_splash`, `c_new_level_tokens`, `c_player_respawn`]: "PLAYER 1" con la musica di inizio, poi "STAGE 1" e le bandierine dello stage in basso a destra, una ogni 8 fotogrammi con il suo "clic"; poi compare il caccia, le stelle partono e accelerano fino alla velocità dello stage [P `f_1D76`].
 
-Codice: [`waves.ts`](../src/waves.ts), [`rom-stages.ts`](../src/rom-stages.ts).
+Codice: [`attack-waves.ts`](../src/attack-waves.ts), [`wave-launcher.ts`](../src/wave-launcher.ts), [`stage-setup.ts`](../src/stage-setup.ts), [`program.ts`](../src/program.ts), [`rom/main-rom.ts`](../src/rom/main-rom.ts) (tabelle copiate dalla ROM dallo script `scripts/galaga/extract-rom-tables.js`).
 
 ## 6. Le picchiate e le bombe
 
