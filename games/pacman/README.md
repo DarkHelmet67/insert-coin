@@ -11,7 +11,7 @@ Stato: **completo** (versione 1.0.0). Le regole vengono dal programma della ROM 
 | Frecce o **W A S D** | Muove Pac-Man                |
 | **M**                | Audio sì/no                  |
 
-Su telefoni e tablet: la croce del joystick a sinistra, MONETA e AUDIO al centro, START a destra; in orizzontale i comandi passano ai lati dello schermo.
+Su telefoni e tablet: la croce del joystick a sinistra, MONETA e AUDIO al centro, START a destra; in orizzontale i comandi passano ai lati dello schermo. Il primo tocco porta la pagina a schermo intero, e il pulsante SCHERMO INTERO la riporta lì se ne esci; su iPhone, dove Safari non lo permette, si usa Condividi → Aggiungi alla schermata Home.
 
 I valori incerti o da scegliere (vite, soglia della vita extra, volume, durata dei punti di un fantasma) sono tutti in [`src/tuning.config.ts`](src/tuning.config.ts).
 

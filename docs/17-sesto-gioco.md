@@ -43,7 +43,7 @@ Tutto è nella [guida delle meccaniche](../games/pacman/docs/meccaniche-original
 | `@arcade/wsg`         | l'emulatore del chip sonoro Namco, lo stesso di Galaga                               |
 | `@arcade/storage`     | `createHiScoreStore('insert-coin/pacman/hi-score')`                                  |
 
-Il pannello touch è quello dei giochi verticali ([guida 08](08-comandi-touch.md)), con una novità: Pac-Man ha un joystick a **quattro direzioni**, quindi le frecce formano una croce. Il dito può scivolare da una freccia all'altra senza staccarsi, come su una leva vera.
+Il pannello touch è quello dei giochi verticali ([guida 08](08-comandi-touch.md)), con una novità: Pac-Man ha un joystick a **quattro direzioni**, quindi le frecce formano una croce. Il dito può scivolare da una freccia all'altra senza staccarsi, come su una leva vera. Come in Asteroids e Lunar Lander, il primo tocco porta la pagina a schermo intero (`enterFullscreenOnTouch`) e un pulsante SCHERMO INTERO la riporta lì dopo esserne usciti; per iPhone ci sono il manifesto e l'icona da aggiungere alla schermata Home.
 
 ## 4. Un pacchetto nato da un gioco: `@arcade/tiles`
 

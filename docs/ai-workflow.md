@@ -716,3 +716,11 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 **Errori corretti lungo la strada:** la riga dello schermo di una casella (Y meno `1E`, non `1D`, verificato sulla routine `202D`); la disposizione dei pixel degli sprite, diversa da Galaga; lo scostamento orizzontale degli sprite (232, non 233); un fantasma mangiato che veniva "mangiato di nuovo" perché diventava occhi solo al passo dopo; i suoni che si accumulavano da un fotogramma all'altro; un test degli intermezzi che usava il labirinto vero, i cui muri deviavano Pac-Man.
 
 **Verifica:** 877 test alla consegna, typecheck, lint, build e Prettier; ogni passo guardato in un browser senza schermo (labirinto, fantasmi in fuga e in casa, morte, lampeggio di fine livello, livello 256, presentazione, inseguimento, demo, i tre intermezzi); la sequenza dei suoni controllata sui campioni generati; su un telefono simulato, in verticale e in orizzontale, MONETA e START avviano la partita. Guida [17 · Il sesto gioco: Pac-Man](17-sesto-gioco.md). Versioni: Pac-Man 1.0.0, root 1.5.0; i tag li crea Luca dopo l'unione.
+
+## 2026-10-16 · Pac-Man: schermo intero sul telefono
+
+**Richiesta (Luca, dopo la prova dell'anteprima):** "Lavoro fantastico, come sempre!", e da smartphone la modalità a schermo intero, utile soprattutto giocando in orizzontale, come per Asteroids e Lunar Lander.
+
+**Soluzione:** lo stesso schema dei due giochi vettoriali, senza codice nuovo: `enterFullscreenOnTouch` al primo tocco e `showFullscreenButton` per un pulsante SCHERMO INTERO accanto a MONETA e AUDIO, visibile solo dove il browser lo permette. Per iPhone il manifesto (`display: fullscreen`, senza orientamento fisso: Pac-Man si gioca anche in verticale), le icone con lo sprite di Pac-Man e i meta `apple-mobile-web-app-*`.
+
+**Verifica:** su un telefono simulato, in verticale e in orizzontale, il pulsante compare accanto agli altri comandi senza coprire lo schermo.
