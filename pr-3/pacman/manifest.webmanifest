@@ -1,0 +1,15 @@
+{
+  "name": "Pac-Man",
+  "short_name": "Pac-Man",
+  "description": "Remake di Pac-Man (Namco, 1980) in TypeScript.",
+  "lang": "it",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "icons": [
+    { "src": "icon-180.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
