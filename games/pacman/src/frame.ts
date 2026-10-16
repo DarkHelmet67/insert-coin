@@ -6,7 +6,9 @@ import { isScatter, tickModes } from './ghost-modes';
 import { GHOST } from './ghosts';
 import { moveInHouse, releaseByTimer, tickHouseClock } from './house';
 import type { Joystick } from './pacman';
-import type { Playing } from './playing';
+import { roundOf, type Playing } from './playing';
+import { fruitDue, fruitOf } from './fruit';
+import { DELAY, timerOf } from './timers';
 import { writeVideo } from './video';
 
 /** The idle timer of the house: a ghost leaves when Pac-Man stops eating ($13DD). */
@@ -78,9 +80,22 @@ const tickBlink = (playing: Playing): Playing => {
 const tickPoints = (playing: Playing): Playing =>
   playing.eating === undefined ? playing : { ...playing, eating: tickEating(playing.eating) };
 
+/** The fruit comes out under the house at 70 and 170 dots (routine $0EAD), not while dying. */
+const releaseFruit = (playing: Playing): Playing => {
+  if (playing.killer !== undefined) return playing;
+  const due = fruitDue(playing.dotsEaten, playing.fruitsReleased, playing.fruit);
+  if (due === undefined) return playing;
+  return {
+    ...playing,
+    fruit: { kind: fruitOf(roundOf(playing)), shown: true },
+    fruitsReleased: playing.fruitsReleased.map((released, i) => released || i === due),
+    fruitTimer: timerOf(DELAY.fruit),
+  };
+};
+
 /**
  * One frame of play (routine $08EB): the core runs twice, so the fastest actors move two
- * pixels; then the house, the clocks, and the decisions the ghosts asked for.
+ * pixels; then the house, the clocks, the fruit and the decisions the ghosts asked for.
  */
 export const updatePlaying = (playing: Playing, joystick: Joystick): Playing => {
   const work = updateCore(updateCore({ playing, pending: [] }, joystick), joystick);
@@ -96,5 +111,5 @@ export const updatePlaying = (playing: Playing, joystick: Joystick): Playing => 
     elroy1: clocked.elroy.elroy1,
     tiles: clocked.video.tiles,
   });
-  return { ...clocked, ghosts: decided.ghosts, seed: decided.seed };
+  return releaseFruit({ ...clocked, ghosts: decided.ghosts, seed: decided.seed });
 };

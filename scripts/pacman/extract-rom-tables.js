@@ -36,6 +36,8 @@ const TABLES = [
   { name: 'SPEEDS', doc: '42 bytes per speed entry', address: 0x330f, length: 7 * 42 },
   { name: 'MAZE_DRAWING', doc: 'compressed maze tiles', address: 0x3435, length: 381 },
   { name: 'DOT_STEPS', doc: 'distance between dot cells', address: 0x35b5, length: 240 },
+  // The fruit row reads 2 bytes per fruit; on level 256 it runs on for 256 fruits.
+  { name: 'FRUIT_ROW', doc: 'tile and color per fruit, and on', address: 0x3b08, length: 512 },
 ];
 
 const hex = (/** @type {number} */ n, /** @type {number} */ digits) =>

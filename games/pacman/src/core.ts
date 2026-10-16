@@ -10,7 +10,8 @@ import { releaseByDots } from './house';
 import { updatePacMan, type Joystick } from './pacman';
 import { withGhost, type Playing } from './playing';
 import { POINTS } from './score';
-import { addPoints, eatTile } from './scoring';
+import { addPoints, eatFruit, eatTile } from './scoring';
+import { tickDeath } from './death';
 import { tuning } from './tuning.config';
 
 /** The game and the decisions the ghosts asked for so far in this frame. */
@@ -45,7 +46,7 @@ const movePacMan = (playing: Playing, joystick: Joystick): Playing => {
     pacman: move.pacman,
     dotsAtLastMove: move.active ? playing.dotsEaten : playing.dotsAtLastMove,
   };
-  return move.canEat ? eatTile(moved) : moved;
+  return move.canEat ? eatTile(eatFruit(moved)) : moved;
 };
 
 /** One ghost's move in one update; Blinky checks Cruise Elroy first ($1B40). */
@@ -103,12 +104,15 @@ const continueEating = (playing: Playing): Playing => {
 };
 
 /**
- * One pass of the game's core ($1017): eyes first; then either the ghost being eaten, or the
- * collisions, Pac-Man, the four ghosts, the blue time and the house. Once a ghost has caught
- * Pac-Man nothing moves any more.
+ * One pass of the game's core ($1017): once a ghost has caught Pac-Man only his death goes
+ * on; otherwise eyes first; then either the ghost being eaten, or the
+ * collisions, Pac-Man, the four ghosts, the blue time and the house.
  */
 export const updateCore = (work: FrameWork, joystick: Joystick): FrameWork => {
-  if (work.playing.killer !== undefined) return work;
+  const { playing } = work;
+  if (playing.killer !== undefined) {
+    return { ...work, playing: { ...playing, death: tickDeath(playing.death) } };
+  }
   const eyes = work.playing.ghosts.reduce(moveEyes, work);
   if (eyes.playing.eating !== undefined) {
     return { ...eyes, playing: continueEating(eyes.playing) };

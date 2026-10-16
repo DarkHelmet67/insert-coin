@@ -22,4 +22,11 @@ export const tuning = {
    * every 6 frames, so the real wait is 55 to 60 frames depending on that clock [P]; we take 60.
    */
   ghostPointsFrames: 60,
+  /** Lives at the start of a game: the DIP switches allow 1, 2, 3 or 5; 3 from the factory [P `26D0`]. */
+  lives: 3,
+  /**
+   * The extra life, as the entry of the table at $2728 picked by the DIP switches: 0 for 10 000
+   * points (factory setting), 1 for 15 000, 2 for 20 000, 3 for none [P `2728`].
+   */
+  extraLifeSetting: 0,
 } as const;

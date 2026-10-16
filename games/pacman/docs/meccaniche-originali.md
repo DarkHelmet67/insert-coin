@@ -87,15 +87,20 @@ Codice: [`ghost-house.ts`](../src/ghost-house.ts).
 
 Codice: [`energizer.ts`](../src/energizer.ts), [`collisions.ts`](../src/collisions.ts).
 
-## 7. Frutta, punteggi, livelli
+## 7. Frutta, punteggi, vite, livelli
 
-- **La frutta** [P `0EAD`, `0EFD`]: compare sotto la casa dopo 70 e 170 puntini. Ciliegia 100, fragola 300, pesca 500, mela 700, uva 1000, Galaxian 2000, campana 3000, chiave 5000.
+- **La frutta** [P `0EAD`, `0EFD`]: compare sotto la casa quando i puntini mangiati sono **esattamente** 70 e 170, se nessun'altra frutta è in giro. Resta 10 secondi [P `0EF8`], contati sull'orologio della macchina: per questo dura tra 9 e 10 secondi. Ciliegia 100, fragola 300, pesca 500, mela 700, uva 1000, Galaxian 2000, campana 3000, chiave 5000.
+- **Mangiarla** [P `199B`]: Pac-Man deve trovarsi esattamente sul suo pixel. I punti restano scritti 2 secondi; la frutta sparisce ma per il programma "c'è" ancora fino allo scadere dei suoi 10 secondi, quindi se Pac-Man arriva a 170 puntini prima, la seconda frutta salta.
+- **I timer** [P `0221`]: le attese del gioco sono "compiti a tempo" con un'unità (fotogrammi, decimi, secondi) e un conteggio. Le unità seguono un unico orologio, e un timer di 2 secondi dura fra 1,9 e 2 secondi. Codice: [`timers.ts`](../src/timers.ts).
 - **Puntini** [P `2A5A`]: 10 punti, la pillola 50. In tutto 240 puntini e 4 pillole.
-- **La vita extra** [P `2728`]: a 10 000 punti (impostazione di fabbrica).
-- **La fine del livello** [P `09D8`–`0A0E`]: il labirinto lampeggia bianco e blu, poi riparte con il livello successivo. Dopo i livelli 2, 5, 9, 13 e 17 c'è un intermezzo.
-- **Il livello 256** [W]: il contatore dei livelli è di un byte; la routine che disegna la frutta in basso ne disegna troppa e copre metà del labirinto con caratteri a caso.
+- **La vita extra** [P `2A7E`, `2B33`]: una sola, quando le migliaia del punteggio raggiungono l'impostazione dei DIP switch (10 000 punti di fabbrica). In basso a sinistra si vedono al massimo 5 vite di riserva: con 6 o più la routine non ne disegna nessuna [P `2B4A`].
+- **La morte** [P `1291`]: per un secondo tutto si ferma, poi i fantasmi spariscono e Pac-Man si consuma negli sprite da `34` a `3F`. Poi il labirinto viene ridisegnato con i puntini rimasti [P `2487`, `0988`] e la casa usa il contatore unico.
+- **L'inizio** [P `0674`, `0899`]: "PLAYER ONE" e "READY!" senza personaggi per 2,3 secondi, poi i personaggi al loro posto per altri 2 secondi; una delle vite in basso entra in campo.
+- **La fine del livello** [P `08DE`, `09D8`–`0A0E`]: a 244 puntini tutto si ferma per 2 secondi, poi i fantasmi spariscono e il labirinto lampeggia 8 volte, bianco e blu, 0,2 secondi ciascuna; lo schermo resta vuoto 0,3 secondi (anche i punteggi, perché la RAM dei colori viene azzerata) e si riparte. Dopo i livelli 2, 5, 9, 13 e 17 c'è un intermezzo.
+- **La fila della frutta** [P `2BEA`]: in basso a destra la frutta dei livelli giocati, al massimo le ultime 7.
+- **Il livello 256** [P `2BEA`, W]: il contatore dei livelli è di un byte. Al livello 256 la routine della fila chiede 0 frutti, e il suo ciclo conta 0 come 256: disegna 256 frutti leggendo i byte della ROM che seguono la tabella, e copre la metà destra del labirinto. Non ci sono più abbastanza puntini per finire il livello. Il remake esegue la stessa routine e ottiene lo stesso schermo.
 
-Codice: [`fruit.ts`](../src/fruit.ts), [`score.ts`](../src/score.ts), [`levels.ts`](../src/levels.ts).
+Codice: [`fruit.ts`](../src/fruit.ts), [`lives.ts`](../src/lives.ts), [`death.ts`](../src/death.ts), [`game.ts`](../src/game.ts), [`screen.ts`](../src/screen.ts), [`restart.ts`](../src/restart.ts), [`score.ts`](../src/score.ts), [`levels.ts`](../src/levels.ts).
 
 ## 8. Suoni
 

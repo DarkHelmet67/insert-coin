@@ -1,4 +1,9 @@
 import { mealOn, type Meal } from './eating';
+import { eatsFruit, fruitPointsText } from './fruit';
+import { earnsExtraLife, livesTiles } from './lives';
+import { textWrites } from './texts';
+import { DELAY, timerOf } from './timers';
+import { tuning } from './tuning.config';
 import { startFright } from './energizer';
 import { tileAddress } from './geometry';
 import { countDot } from './house';
@@ -7,11 +12,27 @@ import type { Playing } from './playing';
 import { HIGH_SCORE_ADDRESS, pointsOf, SCORE_ADDRESS, scoreWrites } from './score';
 import { writeVideo } from './video';
 
-/** Adds points to the score and shows it, with the high score when it is beaten ($2A5A). */
+/** The extra life, when the score earns it: one more life and one more at the bottom ($2B33). */
+const giveExtraLife = (playing: Playing): Playing => {
+  if (!earnsExtraLife(playing.score, tuning.extraLifeSetting, playing.extraLife)) return playing;
+  const livesShown = playing.livesShown + 1;
+  return {
+    ...playing,
+    extraLife: true,
+    lives: playing.lives + 1,
+    livesShown,
+    video: writeVideo(playing.video, { tiles: livesTiles(livesShown) }),
+  };
+};
+
+/**
+ * Adds points to the score and shows it (routine $2A5A); then the extra life, and the high
+ * score when it is beaten.
+ */
 export const addPoints = (playing: Playing, entry: number): Playing => {
   const score = playing.score + pointsOf(entry);
   const hiScore = Math.max(score, playing.hiScore);
-  return {
+  return giveExtraLife({
     ...playing,
     score,
     hiScore,
@@ -21,6 +42,22 @@ export const addPoints = (playing: Playing, entry: number): Playing => {
         ...(hiScore > playing.hiScore ? scoreWrites(hiScore, HIGH_SCORE_ADDRESS) : []),
       ],
     }),
+  });
+};
+
+/**
+ * Pac-Man eats the fruit (routine $199B): its points are added and written under the house
+ * for 2 seconds. The fruit disappears but counts as present until its own timer runs out.
+ */
+export const eatFruit = (playing: Playing): Playing => {
+  const { fruit } = playing;
+  if (fruit === undefined || !eatsFruit(fruit, playing.pacman.position)) return playing;
+  const scored = addPoints(playing, fruit.kind.points);
+  return {
+    ...scored,
+    fruit: { ...fruit, shown: false },
+    fruitTextTimer: timerOf(DELAY.pause),
+    video: writeVideo(scored.video, textWrites(fruitPointsText(fruit.kind))),
   };
 };
 
