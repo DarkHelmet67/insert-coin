@@ -8,6 +8,12 @@ export const GHOST = { blinky: 0, pinky: 1, inky: 2, clyde: 3 } as const;
 /** One of the four ghosts. */
 export type GhostId = (typeof GHOST)[keyof typeof GHOST];
 
+/** The palettes of Blinky, Pinky, Inky and Clyde: red, pink, cyan, orange. */
+export const GHOST_PALETTES: readonly number[] = [1, 3, 5, 7];
+
+/** The palettes of blue ghosts, flashing white near the end, and of eyes. */
+export const PALETTE = { blue: 0x11, white: 0x12, eyes: 0x19 } as const;
+
 /** Every ghost, in table order. */
 export const GHOST_IDS: readonly GhostId[] = [GHOST.blinky, GHOST.pinky, GHOST.inky, GHOST.clyde];
 
@@ -55,6 +61,8 @@ export interface Ghost {
   /** Must turn around at the middle of its next tile ($4DB1). */
   readonly reverse: boolean;
   readonly speeds: GhostSpeeds;
+  /** The palette of its sprite ($4C03): the program changes it apart from the state. */
+  readonly palette: number;
 }
 
 /** Where each ghost starts a life (task $04 at $2576). */
@@ -92,5 +100,6 @@ export const newGhost = (id: GhostId, speeds: LevelSpeeds): Ghost => {
     blue: false,
     reverse: false,
     speeds: { normal: speeds.ghost, fright: speeds.ghostFright, tunnel: speeds.ghostTunnel },
+    palette: GHOST_PALETTES[id] ?? 1,
   };
 };

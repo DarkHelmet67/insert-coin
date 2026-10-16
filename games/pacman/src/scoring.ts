@@ -1,4 +1,5 @@
-import { mealOn } from './eating';
+import { mealOn, type Meal } from './eating';
+import { startFright } from './energizer';
 import { tileAddress } from './geometry';
 import { countDot } from './house';
 import { TILE } from './maze';
@@ -23,22 +24,26 @@ export const addPoints = (playing: Playing, entry: number): Playing => {
   };
 };
 
+/** An energizer makes the ghosts blue ($1A03); a dot does nothing more. */
+const energize = (playing: Playing, meal: Meal): Playing => {
+  if (meal.tile !== TILE.energizer) return playing;
+  return { ...playing, ...startFright(playing.ghosts, playing.settings.frightTime) };
+};
+
 /**
  * Pac-Man eats what is on his tile, if anything ($19CD): the tile is cleared, the points
- * added, Pac-Man pauses, and the ghost house counts the dot.
+ * added, Pac-Man pauses, the ghost house counts the dot, and an energizer frightens the ghosts.
  */
 export const eatTile = (playing: Playing): Playing => {
   const address = tileAddress(playing.pacman.tile);
   const meal = mealOn(playing.video.tiles[address] ?? TILE.space);
   if (meal === undefined) return playing;
-  return addPoints(
-    {
-      ...playing,
-      video: writeVideo(playing.video, { tiles: [{ address, value: TILE.space }] }),
-      dotsEaten: playing.dotsEaten + 1,
-      pacman: { ...playing.pacman, pause: meal.pause },
-      houseDots: countDot(playing.houseDots, playing.ghosts),
-    },
-    meal.points,
-  );
+  const eaten = {
+    ...playing,
+    video: writeVideo(playing.video, { tiles: [{ address, value: TILE.space }] }),
+    dotsEaten: playing.dotsEaten + 1,
+    pacman: { ...playing.pacman, pause: meal.pause },
+    houseDots: countDot(playing.houseDots, playing.ghosts),
+  };
+  return energize(addPoints(eaten, meal.points), meal);
 };

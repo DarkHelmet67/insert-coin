@@ -1,12 +1,17 @@
+import { ghostNearby, ghostOnTile } from './collisions';
+import { startEating, updateEating } from './eat-ghost';
+import { tickFright } from './energizer';
 import { updateEyes } from './eyes';
 import type { PendingDecision } from './ghost-decisions';
 import { updateElroy } from './ghost-modes';
 import { updateGhost, type Decision } from './ghost-move';
-import { GHOST, type Ghost } from './ghosts';
+import { GHOST, type Ghost, type GhostId } from './ghosts';
 import { releaseByDots } from './house';
 import { updatePacMan, type Joystick } from './pacman';
 import { withGhost, type Playing } from './playing';
-import { eatTile } from './scoring';
+import { POINTS } from './score';
+import { addPoints, eatTile } from './scoring';
+import { tuning } from './tuning.config';
 
 /** The game and the decisions the ghosts asked for so far in this frame. */
 export interface FrameWork {
@@ -20,6 +25,12 @@ const queue = (work: FrameWork, ghost: Ghost, decision: Decision | undefined): F
     ? work
     : { ...work, pending: [...work.pending, { id: ghost.id, decision }] };
 
+/** The eaten ghost turns into eyes, so Pac-Man can no longer meet it ($1066). */
+const makeEyes = (playing: Playing, id: GhostId): Playing => {
+  const ghost = playing.ghosts[id];
+  return ghost === undefined ? playing : withGhost(playing, { ...ghost, eyes: 'toDoor' });
+};
+
 /** The eyes of eaten ghosts on their way home ($1094-$10B4). */
 const moveEyes = (work: FrameWork, ghost: Ghost): FrameWork => {
   const step = updateEyes(ghost, work.playing.video.colors);
@@ -28,7 +39,7 @@ const moveEyes = (work: FrameWork, ghost: Ghost): FrameWork => {
 
 /** Pac-Man's move in one update ($1806); his last move remembers the dots eaten so far. */
 const movePacMan = (playing: Playing, joystick: Joystick): Playing => {
-  const move = updatePacMan(playing.pacman, joystick, false, playing.video.tiles);
+  const move = updatePacMan(playing.pacman, joystick, playing.fright.active, playing.video.tiles);
   const moved = {
     ...playing,
     pacman: move.pacman,
@@ -57,20 +68,54 @@ const moveGhost = (work: FrameWork, ghost: Ghost): FrameWork => {
   );
 };
 
-/** The house lets out the ghosts whose dot counters are full ($2069-$20AF). */
-const releaseGhosts = (playing: Playing): Playing => {
-  const released = releaseByDots(
-    playing.ghosts,
-    playing.houseDots,
-    playing.settings.houseDotLimits,
-  );
-  return { ...playing, ghosts: released.ghosts, houseDots: released.dots };
+/** The blue time and the house's releases ($1059-$1062). */
+const tickTimers = (playing: Playing): Playing => {
+  const fright = tickFright(playing.ghosts, playing.fright);
+  const released = releaseByDots(fright.ghosts, playing.houseDots, playing.settings.houseDotLimits);
+  return { ...playing, fright: fright.fright, ghosts: released.ghosts, houseDots: released.dots };
 };
 
-/** One pass of the game's core ($1017): eyes, Pac-Man, the four ghosts, the house. */
+/**
+ * Pac-Man meets a ghost ($1763): a blue one is eaten, for 200, 400, 800 then 1600 points;
+ * any other catches him.
+ */
+const meet = (playing: Playing, id: GhostId): Playing => {
+  if (!(playing.ghosts[id]?.blue ?? false)) return { ...playing, killer: id };
+  const eaten = playing.fright.eaten + 1;
+  return addPoints(
+    { ...playing, eating: startEating(id), fright: { ...playing.fright, eaten } },
+    POINTS.firstGhost + eaten - 1,
+  );
+};
+
+/** The ghost Pac-Man meets in this update, by tile, or by pixels while energized ($171D, $1789). */
+const collision = (playing: Playing): GhostId | undefined =>
+  ghostOnTile(playing.pacman, playing.ghosts) ??
+  (playing.fright.active ? ghostNearby(playing.pacman, playing.ghosts) : undefined);
+
+/** Shows the points of the ghost being eaten, then lets it go as eyes ($1235). */
+const continueEating = (playing: Playing): Playing => {
+  if (playing.eating === undefined) return playing;
+  const eating = updateEating(playing.eating, tuning.ghostPointsFrames);
+  return eating === undefined
+    ? makeEyes({ ...playing, eating: undefined }, playing.eating.ghost)
+    : { ...playing, eating };
+};
+
+/**
+ * One pass of the game's core ($1017): eyes first; then either the ghost being eaten, or the
+ * collisions, Pac-Man, the four ghosts, the blue time and the house. Once a ghost has caught
+ * Pac-Man nothing moves any more.
+ */
 export const updateCore = (work: FrameWork, joystick: Joystick): FrameWork => {
+  if (work.playing.killer !== undefined) return work;
   const eyes = work.playing.ghosts.reduce(moveEyes, work);
+  if (eyes.playing.eating !== undefined) {
+    return { ...eyes, playing: continueEating(eyes.playing) };
+  }
+  const met = collision(eyes.playing);
+  if (met !== undefined) return { ...eyes, playing: meet(eyes.playing, met) };
   const afterPacMan = { ...eyes, playing: movePacMan(eyes.playing, joystick) };
   const moved = afterPacMan.playing.ghosts.reduce(moveGhost, afterPacMan);
-  return { ...moved, playing: releaseGhosts(moved.playing) };
+  return { ...moved, playing: tickTimers(moved.playing) };
 };

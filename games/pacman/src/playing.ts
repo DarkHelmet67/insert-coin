@@ -1,6 +1,8 @@
+import type { Eating } from './eat-ghost';
+import { NO_FRIGHT, type Fright } from './energizer';
 import { NEW_MODE_CLOCK, NO_ELROY, type ModeClock } from './ghost-modes';
 import type { ElroySpeeds, ElroyState } from './ghost-move';
-import { GHOST_IDS, newGhost, type Ghost } from './ghosts';
+import { GHOST_IDS, newGhost, type Ghost, type GhostId } from './ghosts';
 import { NEW_HOUSE_CLOCK, NEW_HOUSE_DOTS, type HouseDots } from './house';
 import { levelSettings, type LevelSettings } from './levels';
 import { newMazeWrites, TILE } from './maze';
@@ -26,6 +28,14 @@ export interface Playing {
   readonly waveFrames: number;
   /** The random pointer of the blue ghosts ($4DC9). */
   readonly seed: number;
+  /** The effect of the last energizer. */
+  readonly fright: Fright;
+  /** Frames counted toward the next blink of the energizers ($4DCF). */
+  readonly blinkFrames: number;
+  /** A ghost being eaten ($4DAB). */
+  readonly eating: Eating | undefined;
+  /** The ghost that caught Pac-Man ($4DA5). */
+  readonly killer: GhostId | undefined;
   /** The dots counted by the house, and its clocks: moves ($4D94) and idle frames ($4D97). */
   readonly houseDots: HouseDots;
   readonly houseClock: number;
@@ -73,6 +83,10 @@ export const newPlaying = (hiScore: number): Playing => {
     wave: 0,
     waveFrames: 0,
     seed: 0,
+    fright: NO_FRIGHT,
+    blinkFrames: 0,
+    eating: undefined,
+    killer: undefined,
     houseDots: NEW_HOUSE_DOTS,
     houseClock: NEW_HOUSE_CLOCK,
     houseTimer: 0,

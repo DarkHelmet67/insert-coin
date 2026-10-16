@@ -15,4 +15,11 @@ export const tuning = {
    * frame, 60.606 frames a second [H `pacman.cpp`].
    */
   framesPerSecond: 6_144_000 / (384 * 264),
+
+  /**
+   * Frames the points of an eaten ghost stay on screen while the game stands still. The
+   * program asks its timer for 10 tenths of a second ($126E), counted on a clock that ticks
+   * every 6 frames, so the real wait is 55 to 60 frames depending on that clock [P]; we take 60.
+   */
+  ghostPointsFrames: 60,
 } as const;
