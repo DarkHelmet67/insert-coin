@@ -80,7 +80,7 @@ const speedSlot = (
 /**
  * The tunnel ends meet (routine $1ED0): a next tile past one end becomes the tile at the other.
  */
-const wrapTunnel = (tile: Point): Point => {
+export const wrapTunnel = (tile: Point): Point => {
   if (tile.x === 0x1d) return { ...tile, x: 0x3d };
   if (tile.x === 0x3e) return { ...tile, x: 0x1e };
   return tile;

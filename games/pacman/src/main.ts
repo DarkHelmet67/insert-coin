@@ -33,7 +33,7 @@ const step = (state: GameState): GameState => {
   const controls = readControls(keyboard.poll());
   if (controls.mute) audio.toggleMute();
   const next = updateGame(state, controls);
-  playSound(next.playing.sounds, next.frame);
+  playSound(next.playing.sounds, next.frame, next.playing.demo);
   if (next.playing.hiScore > state.playing.hiScore) hiScores.save(next.playing.hiScore);
   return next;
 };

@@ -15,6 +15,11 @@ import type { Video } from './video';
 
 /** A game in progress. */
 export interface Playing {
+  /**
+   * The program plays by itself, in the attract mode ($4E00 = 1): it steers Pac-Man, scores
+   * nothing and keeps voices 2 and 3 quiet.
+   */
+  readonly demo: boolean;
   /** The level, from 1. */
   readonly level: number;
   readonly settings: LevelSettings;
@@ -63,6 +68,8 @@ export interface Playing {
    */
   readonly fruitTimer: Timer | undefined;
   readonly fruitTextTimer: Timer | undefined;
+  /** Frames counted for the blinking "1UP" ($4DCE): it starts again with each life. */
+  readonly upClock: number;
   /** The writes to the sound program's trigger bytes in this frame. */
   readonly sounds: readonly SoundWrite[];
 }
@@ -70,6 +77,7 @@ export interface Playing {
 /** The part of the game a new life or a new level starts afresh: RAM $4D00-$4DFF (task $11). */
 export type LifeState = Omit<
   Playing,
+  | 'demo'
   | 'level'
   | 'video'
   | 'houseDots'
@@ -108,12 +116,14 @@ export const newLife = (level: number): LifeState => {
     dotsAtLastMove: 0,
     death: 0,
     fruit: undefined,
+    upClock: 0,
   };
 };
 
 /** A new game at level 1, before the first life takes the field. */
 export const newPlaying = (hiScore: number): Playing => ({
   ...newLife(1),
+  demo: false,
   level: 1,
   video: gameStartVideo(hiScore, tuning.lives),
   houseDots: NEW_HOUSE_DOTS,

@@ -11,18 +11,28 @@ import { updatePacMan, type Joystick } from './pacman';
 import { withGhost, type Playing } from './playing';
 import { POINTS } from './score';
 import { addPoints, eatFruit, eatTile } from './scoring';
+import { updateAutoPacMan, type AutoMove } from './autopilot';
 import { deathSound, tickDeath } from './death';
 import { SOUND, withSounds } from './sounds';
 import { tuning } from './tuning.config';
 
-/** The game and the decisions the ghosts asked for so far in this frame. */
+/** The game and the decisions the actors asked for so far in this frame. */
 export interface FrameWork {
   readonly playing: Playing;
   readonly pending: readonly PendingDecision[];
+  /** In the demo, Pac-Man asked for his way out of the tile ahead (task $17). */
+  readonly pacmanDecides: boolean;
 }
 
+/** A frame with nothing asked yet. */
+export const newFrameWork = (playing: Playing): FrameWork => ({
+  playing,
+  pending: [],
+  pacmanDecides: false,
+});
+
 /** The work with a ghost's decision queued, if it asked for one. */
-const queue = (work: FrameWork, ghost: Ghost, decision: Decision | undefined): FrameWork =>
+export const queue = (work: FrameWork, ghost: Ghost, decision: Decision | undefined): FrameWork =>
   decision === undefined
     ? work
     : { ...work, pending: [...work.pending, { id: ghost.id, decision }] };
@@ -39,15 +49,28 @@ const moveEyes = (work: FrameWork, ghost: Ghost): FrameWork => {
   return queue({ ...work, playing: withGhost(work.playing, step.ghost) }, ghost, step.decision);
 };
 
-/** Pac-Man's move in one update ($1806); his last move remembers the dots eaten so far. */
-const movePacMan = (playing: Playing, joystick: Joystick): Playing => {
-  const move = updatePacMan(playing.pacman, joystick, playing.fright.active, playing.video.tiles);
+/**
+ * Pac-Man's move in one update ($1806), by the joystick or, in the demo, by the program; his
+ * last move remembers the dots eaten so far.
+ */
+const movePacMan = (work: FrameWork, joystick: Joystick): FrameWork => {
+  const { playing } = work;
+  const move: AutoMove = playing.demo
+    ? updateAutoPacMan(playing.pacman, playing.fright.active)
+    : {
+        ...updatePacMan(playing.pacman, joystick, playing.fright.active, playing.video.tiles),
+        decides: false,
+      };
   const moved = {
     ...playing,
     pacman: move.pacman,
     dotsAtLastMove: move.active ? playing.dotsEaten : playing.dotsAtLastMove,
   };
-  return move.canEat ? eatTile(eatFruit(moved)) : moved;
+  return {
+    ...work,
+    playing: move.canEat ? eatTile(eatFruit(moved)) : moved,
+    pacmanDecides: work.pacmanDecides || move.decides,
+  };
 };
 
 /** One ghost's move in one update; Blinky checks Cruise Elroy first ($1B40). */
@@ -118,9 +141,10 @@ const continueEating = (playing: Playing): Playing => {
 /**
  * One pass of the game's core ($1017): once a ghost has caught Pac-Man only his death goes
  * on; otherwise eyes first; then either the ghost being eaten, or the
- * collisions, Pac-Man, the four ghosts, the blue time and the house.
+ * collisions, Pac-Man, the four ghosts, and during a game the blue time and the house
+ * (`timers`, off in the attract mode's chase, $1053).
  */
-export const updateCore = (work: FrameWork, joystick: Joystick): FrameWork => {
+export const updateCore = (work: FrameWork, joystick: Joystick, timers = true): FrameWork => {
   const { playing } = work;
   if (playing.killer !== undefined) {
     const death = tickDeath(playing.death);
@@ -132,7 +156,7 @@ export const updateCore = (work: FrameWork, joystick: Joystick): FrameWork => {
   }
   const met = collision(eyes.playing);
   if (met !== undefined) return { ...eyes, playing: meet(eyes.playing, met) };
-  const afterPacMan = { ...eyes, playing: movePacMan(eyes.playing, joystick) };
+  const afterPacMan = movePacMan(eyes, joystick);
   const moved = afterPacMan.playing.ghosts.reduce(moveGhost, afterPacMan);
-  return { ...moved, playing: tickTimers(moved.playing) };
+  return timers ? { ...moved, playing: tickTimers(moved.playing) } : moved;
 };

@@ -2,11 +2,11 @@ import { isActionDown, wasActionPressed, type KeyBindings, type KeyState } from 
 import type { Joystick } from './pacman';
 
 /** The controls of the cabinet, plus the audio switch of the remake. */
-export type Action = 'up' | 'down' | 'left' | 'right' | 'coin' | 'mute';
+export type Action = 'up' | 'down' | 'left' | 'right' | 'coin' | 'start' | 'mute';
 
 /**
- * Keyboard layout: arrows or WASD for the joystick, C (or 5, as in MAME) for a coin, which also
- * starts the game, M to mute.
+ * Keyboard layout: arrows or WASD for the joystick, C (or 5, as in MAME) for a coin, Enter (or
+ * 1, as in MAME) for the start button, M to mute.
  */
 export const bindings: KeyBindings<Action> = {
   up: ['ArrowUp', 'KeyW'],
@@ -14,6 +14,7 @@ export const bindings: KeyBindings<Action> = {
   left: ['ArrowLeft', 'KeyA'],
   right: ['ArrowRight', 'KeyD'],
   coin: ['KeyC', 'Digit5'],
+  start: ['Enter', 'Digit1'],
   mute: ['KeyM'],
 };
 
@@ -21,6 +22,7 @@ export const bindings: KeyBindings<Action> = {
 export interface Controls {
   readonly joystick: Joystick;
   readonly coin: boolean;
+  readonly start: boolean;
   readonly mute: boolean;
 }
 
@@ -28,6 +30,7 @@ export interface Controls {
 export const noControls: Controls = {
   joystick: { up: false, down: false, left: false, right: false },
   coin: false,
+  start: false,
   mute: false,
 };
 
@@ -40,5 +43,6 @@ export const readControls = (keys: KeyState): Controls => ({
     right: isActionDown(keys, bindings, 'right'),
   },
   coin: wasActionPressed(keys, bindings, 'coin'),
+  start: wasActionPressed(keys, bindings, 'start'),
   mute: wasActionPressed(keys, bindings, 'mute'),
 });

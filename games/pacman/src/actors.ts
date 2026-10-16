@@ -1,7 +1,8 @@
 import { NO_FLIP } from '@arcade/tiles';
 import { deathSprite, ghostsGone } from './death';
 import { FRUIT_POSITION, type Fruit } from './fruit';
-import type { Stage } from './game';
+import type { Stage } from './stage';
+import { intermissionSprites } from './intermission-sprites';
 import { ghostPointsSprite, ghostSprite } from './ghost-sprites';
 import { PACMAN_PALETTE, pacmanSprite } from './pacman-sprite';
 import type { Playing } from './playing';
@@ -47,14 +48,18 @@ const playSprites = (playing: Playing): readonly HardwareSprite[] => {
 /**
  * The hardware sprites of a stage, in the order of the program's sprite slots: the ghosts,
  * Pac-Man, the fruit. There are none before the game starts and once a life is lost; during
- * the flashes the ghosts are gone ($09F6).
+ * the flashes the ghosts are gone ($09F6). The attract mode's chase shows them as in a game;
+ * the intermissions change some slots.
  */
 export const actorSprites = (stage: Stage, playing: Playing): readonly HardwareSprite[] => {
   switch (stage.kind) {
     case 'ready':
     case 'playing':
     case 'cleared':
+    case 'chase':
       return [...playSprites(playing), ...fruitSprites(playing.fruit)];
+    case 'intermission':
+      return intermissionSprites(playing, stage.intermission);
     case 'flashing':
       return [...pacmanSprites(playing), ...fruitSprites(playing.fruit)];
     default:

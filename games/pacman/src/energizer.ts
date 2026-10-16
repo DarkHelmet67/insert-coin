@@ -86,9 +86,12 @@ export const BLINK_PERIOD = 10;
 
 /**
  * The energizers blink (routine $0C0D): every 10 frames their color switches between the
- * maze's and black, the same for all four, eaten or not.
+ * maze's and black, the same for all four, eaten or not, following the first one.
  */
-export const blinkEnergizers = (colors: readonly number[]): readonly CellWrite[] => {
-  const value = colors[ENERGIZER_ADDRESSES[0]] === COLOR.maze ? 0 : COLOR.maze;
-  return ENERGIZER_ADDRESSES.map((address) => ({ address, value }));
+export const blinkEnergizers = (
+  colors: readonly number[],
+  addresses: readonly number[] = ENERGIZER_ADDRESSES,
+): readonly CellWrite[] => {
+  const value = colors[addresses[0] ?? 0] === COLOR.maze ? 0 : COLOR.maze;
+  return addresses.map((address) => ({ address, value }));
 };

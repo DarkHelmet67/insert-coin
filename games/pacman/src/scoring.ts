@@ -28,9 +28,10 @@ const giveExtraLife = (playing: Playing): Playing => {
 
 /**
  * Adds points to the score and shows it (routine $2A5A); then the extra life, and the high
- * score when it is beaten.
+ * score when it is beaten. The demo scores nothing.
  */
 export const addPoints = (playing: Playing, entry: number): Playing => {
+  if (playing.demo) return playing;
   const score = playing.score + pointsOf(entry);
   const hiScore = Math.max(score, playing.hiScore);
   return giveExtraLife({

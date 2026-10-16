@@ -16,9 +16,13 @@ const run = (state: GameState, frames: number, controls: Controls = noControls):
     state,
   );
 
+/** A coin, then the start button: a game has just started. */
+const newGame = (): GameState =>
+  run(run(createGame(0), 1, { ...noControls, coin: true }), 1, { ...noControls, start: true });
+
 /** The game once play has started. */
 const playing = (): GameState => {
-  const started = run(createGame(0), 260);
+  const started = run(newGame(), 260);
   expect(started.stage.kind).toBe('playing');
   return started;
 };
@@ -40,7 +44,8 @@ const caught = (lives: number): GameState => {
 
 describe('the game', () => {
   it('starts with "PLAYER ONE" and "READY!", then the actors, then play', () => {
-    const start = createGame(0);
+    const start = newGame();
+    expect(start.stage.kind).toBe('starting');
     expect(shows(start, TEXT.playerOne)).toBe(true);
     expect(shows(start, TEXT.ready)).toBe(true);
     const ready = run(start, 140);
@@ -61,13 +66,13 @@ describe('the game', () => {
     expect(next.playing.houseDots.global).toBe(0);
   });
 
-  it('ends with "GAME OVER" and starts again on a coin', () => {
+  it('ends with "GAME OVER", then goes back to the attract mode', () => {
     const over = run(caught(1), 2);
     expect(over.stage.kind).toBe('gameOver');
     expect(shows(over, TEXT.gameOver)).toBe(true);
-    const waiting = run(over, 130);
-    expect(waiting.stage.kind).toBe('over');
-    expect(run(waiting, 1, { ...noControls, coin: true }).stage.kind).toBe('starting');
+    const attract = run(over, 130);
+    expect(attract.stage.kind).toBe('intro');
+    expect(attract.playing.demo).toBe(true);
   });
 
   it('flashes the maze when the dots are gone, then starts the next level', () => {

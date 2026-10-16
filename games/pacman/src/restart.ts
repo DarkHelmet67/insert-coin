@@ -24,7 +24,7 @@ export const firstLife = (playing: Playing): Playing => {
 export const loseLife = (playing: Playing): Playing => ({
   ...playing,
   lives: playing.lives - 1,
-  livesShown: playing.livesShown - 1,
+  livesShown: Math.max(playing.livesShown - 1, 0),
 });
 
 /**
@@ -35,7 +35,13 @@ export const loseLife = (playing: Playing): Playing => ({
 export const nextLife = (playing: Playing): Playing => ({
   ...playing,
   ...newLife(playing.level),
-  video: mazeVideo(playing.video, savedDots(playing.video), roundOf(playing), playing.livesShown),
+  video: mazeVideo(
+    playing.video,
+    savedDots(playing.video),
+    roundOf(playing),
+    playing.livesShown,
+    playing.demo,
+  ),
   houseDots: { ...playing.houseDots, global: 0 },
 });
 
@@ -49,9 +55,30 @@ export const nextLevel = (playing: Playing): Playing => {
     ...playing,
     ...newLife(level),
     level,
-    video: mazeVideo(playing.video, allDots(), roundOf({ level }), playing.livesShown),
+    video: mazeVideo(
+      playing.video,
+      allDots(),
+      roundOf({ level }),
+      playing.livesShown,
+      playing.demo,
+    ),
     houseDots: NEW_HOUSE_DOTS,
     dotsEaten: 0,
     fruitsReleased: [false, false],
   };
 };
+
+/**
+ * The demo game (routines $06BE, $0879 and $0988): level 1 with all its dots, the one life
+ * the chase left, no lives shown and "GAME OVER" on the screen while the program plays.
+ */
+export const demoPlaying = (playing: Playing): Playing => ({
+  ...playing,
+  ...newLife(1),
+  demo: true,
+  level: 1,
+  video: mazeVideo(playing.video, allDots(), 0, 0, true),
+  houseDots: NEW_HOUSE_DOTS,
+  dotsEaten: 0,
+  fruitsReleased: [false, false],
+});

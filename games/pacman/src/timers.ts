@@ -42,4 +42,7 @@ export const DELAY = {
   cleared: 0x43,
   /** How long a fruit stays: 10 seconds. */
   fruit: 0x8a,
+  /** The waits of the attract mode and of the intermissions. */
+  second: 0x4a,
+  halfSecond: 0x45,
 } as const;

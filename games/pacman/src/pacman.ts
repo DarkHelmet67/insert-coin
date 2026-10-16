@@ -19,6 +19,8 @@ export interface PacMan {
   readonly position: Point;
   /** The tile he is on ($4D39). */
   readonly tile: Point;
+  /** The tile ahead, used only when the program steers him itself, in the demo ($4D12). */
+  readonly nextTile: Point;
   /** The step of his next pixel ($4D1C). */
   readonly step: Point;
   /** Where he faces ($4D30). */
@@ -50,6 +52,7 @@ export const NO_JOYSTICK: Joystick = { up: false, down: false, left: false, righ
 export const newPacMan = (speed: SpeedPattern, frightSpeed: SpeedPattern): PacMan => ({
   position: { x: 0x80, y: 0xc4 },
   tile: { x: 0x2e, y: 0x38 },
+  nextTile: { x: 0x2e, y: 0x38 },
   step: directionStep(DIRECTION.left),
   orientation: DIRECTION.left,
   wanted: DIRECTION.left,
@@ -143,6 +146,30 @@ export interface PacManMove {
   readonly active: boolean;
 }
 
+/** What the pause and the speed pattern allow in one update. */
+export interface PacManTick {
+  readonly pacman: PacMan;
+  /** He may move one pixel in this update. */
+  readonly move: boolean;
+  /** He was not pausing after a meal, so his speed was counted ($1843). */
+  readonly active: boolean;
+}
+
+/**
+ * The start of each move of Pac-Man ($1806-$1842): a pause after eating, then a bit of his
+ * speed pattern, the one for blue ghosts while an energizer lasts.
+ */
+export const tickPacMan = (pacman: PacMan, frightened: boolean): PacManTick => {
+  if (pacman.pause !== NO_PAUSE) {
+    return { pacman: { ...pacman, pause: (pacman.pause - 1) & 0xff }, move: false, active: false };
+  }
+  const tick = tickSpeed(frightened ? pacman.frightSpeed : pacman.speed);
+  const ticked = frightened
+    ? { ...pacman, frightSpeed: tick.pattern }
+    : { ...pacman, speed: tick.pattern };
+  return { pacman: ticked, move: tick.move, active: tick.move };
+};
+
 /**
  * One update of Pac-Man (routine $1806): wait out the pause after a dot, take the next bit of
  * the speed pattern, read the joystick and move one pixel.
@@ -153,22 +180,12 @@ export const updatePacMan = (
   frightened: boolean,
   tiles: readonly number[],
 ): PacManMove => {
-  if (pacman.pause !== NO_PAUSE) {
-    return {
-      pacman: { ...pacman, pause: (pacman.pause - 1) & 0xff },
-      canEat: false,
-      active: false,
-    };
-  }
-  const tick = tickSpeed(frightened ? pacman.frightSpeed : pacman.speed);
-  const ticked = frightened
-    ? { ...pacman, frightSpeed: tick.pattern }
-    : { ...pacman, speed: tick.pattern };
-  if (!tick.move) return { pacman: ticked, canEat: false, active: false };
+  const tick = tickPacMan(pacman, frightened);
+  if (!tick.move) return { pacman: tick.pacman, canEat: false, active: tick.active };
   const inTunnel = isTunnelTile(pacman.tile);
   const steered = inTunnel
-    ? { pacman: steerInTunnel(ticked, joystick), moves: true }
-    : steerInMaze(ticked, joystick, tiles);
+    ? { pacman: steerInTunnel(tick.pacman, joystick), moves: true }
+    : steerInMaze(tick.pacman, joystick, tiles);
   if (!steered.moves) return { pacman: steered.pacman, canEat: false, active: true };
   return { pacman: advance(steered.pacman), canEat: !inTunnel, active: true };
 };

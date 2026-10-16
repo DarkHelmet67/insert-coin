@@ -1,61 +1,44 @@
+import { introStage } from './attract';
+import {
+  chaseFrame,
+  inAttract,
+  insertCoin,
+  pressStart,
+  toPushStart,
+  updateIntro,
+} from './attract-flow';
 import type { Controls } from './controls';
-import { deathOver } from './death';
+import { creditWrites, upWrites } from './credits';
 import { FRUIT_TEXTS_ERASED } from './fruit';
-import { MAZE_FOOD } from './ghost-modes';
-import { updatePlaying } from './frame';
+import { updateLevel } from './level-flow';
 import { newPlaying, type Playing } from './playing';
-import { firstLife, loseLife, nextLevel, nextLife } from './restart';
-import { blankVideo, flashVideo } from './screen';
+import { HIGH_SCORE_ADDRESS, SCORE_ADDRESS, scoreWrites } from './score';
+import { applyAll } from './screen';
+import type { GameState } from './stage';
 import { TEXT, textWrites } from './texts';
-import { DELAY, tickTimer, timerDone, timerOf, type Timer } from './timers';
-import { writeVideo } from './video';
-import { SOUND, withSounds } from './sounds';
+import { tickTimer, timerDone } from './timers';
+import { filledVideo, writeVideo } from './video';
+import { TILE } from './maze';
+
+export type { GameState, Stage } from './stage';
 
 /**
- * Where the game is, after the level state of the program ($4E04): the start, "READY!", play,
- * a life lost, the end of a level with its flashes, game over.
+ * The screen at power-on (tasks at $03DC): empty, with "HIGH SCORE", the first player's score
+ * at zero and the record the browser kept, then the attract mode starts.
  */
-export type Stage =
-  /** A game has just started: maze, "PLAYER ONE" and "READY!", no actors yet ($4E03). */
-  | { readonly kind: 'starting'; readonly timer: Timer }
-  /** The actors in their places under "READY!" ($4E04 = 2 or $0A). */
-  | { readonly kind: 'ready'; readonly timer: Timer }
-  | { readonly kind: 'playing' }
-  /** The death animation is over and the life is gone ($4E04 = 4). */
-  | { readonly kind: 'lost' }
-  | { readonly kind: 'gameOver'; readonly timer: Timer }
-  /** The game is over: a coin starts another. */
-  | { readonly kind: 'over' }
-  /** All the dots eaten: everything stands still ($09D8). */
-  | { readonly kind: 'cleared'; readonly timer: Timer }
-  /** The maze flashes white and blue, 8 times ($09E8-$0A0C). */
-  | { readonly kind: 'flashing'; readonly flash: number; readonly timer: Timer }
-  /** The playfield empty before the next level ($0A0E). */
-  | { readonly kind: 'blank'; readonly timer: Timer };
-
-/** The whole game. */
-export interface GameState {
-  /** Frames since power-on: the timers count on this clock ($4C84). */
-  readonly frame: number;
-  readonly stage: Stage;
-  readonly playing: Playing;
-}
-
-/** Flashes of the maze at the end of a level: white, blue, 4 times. */
-const FLASHES = 8;
-
-/** A game that starts now. */
-const startGame = (frame: number, hiScore: number): GameState => ({
-  frame,
-  stage: { kind: 'starting', timer: timerOf(DELAY.start) },
-  playing: withSounds(newPlaying(hiScore), SOUND.startMusic),
-});
-
-/** The game at power-on, with the record saved by the browser. */
-export const createGame = (hiScore: number): GameState => startGame(0, hiScore);
-
-/** The "READY!" pause, with its own timer ($0899, $0988). */
-const ready = (): Stage => ({ kind: 'ready', timer: timerOf(DELAY.pause) });
+export const createGame = (hiScore: number): GameState => {
+  const playing = newPlaying(hiScore);
+  const video = applyAll(filledVideo(TILE.space, 0), [
+    textWrites(TEXT.highScore),
+    {
+      tiles: [
+        ...scoreWrites(0, SCORE_ADDRESS),
+        ...(hiScore > 0 ? scoreWrites(hiScore, HIGH_SCORE_ADDRESS) : []),
+      ],
+    },
+  ]);
+  return { frame: 0, credits: 0, ...introStage({ ...playing, video }) };
+};
 
 /**
  * The timed tasks of the fruit, which run in every stage ($0221): the fruit goes away after
@@ -80,100 +63,41 @@ const tickFruitTasks = (playing: Playing, frame: number): Playing => {
   };
 };
 
-/** One frame of play: the end of the level comes first, then the life lost ($08CD, $1366). */
-const play = (state: GameState, controls: Controls): GameState => {
-  if (state.playing.dotsEaten === MAZE_FOOD) {
-    return {
-      ...state,
-      playing: withSounds(state.playing, SOUND.quiet),
-      stage: { kind: 'cleared', timer: timerOf(DELAY.pause) },
-    };
-  }
-  const playing = updatePlaying(state.playing, controls.joystick);
-  return deathOver(playing.death)
-    ? { ...state, playing: loseLife(playing), stage: { kind: 'lost' } }
-    : { ...state, playing };
-};
-
-/** A life lost: "GAME OVER" if it was the last, otherwise the next one ($090D, $0940). */
-const afterDeath = (state: GameState): GameState =>
-  state.playing.lives === 0
-    ? {
-        ...state,
-        playing: {
-          ...state.playing,
-          video: writeVideo(state.playing.video, textWrites(TEXT.gameOver)),
-        },
-        stage: { kind: 'gameOver', timer: timerOf(DELAY.pause) },
-      }
-    : { ...state, playing: nextLife(state.playing), stage: ready() };
-
-/** The next flash of the maze, or the empty playfield after the last one. */
-const nextFlash = (state: GameState, flash: number): GameState =>
-  flash < FLASHES
-    ? {
-        ...state,
-        playing: { ...state.playing, video: flashVideo(state.playing.video, flash % 2 === 0) },
-        stage: { kind: 'flashing', flash, timer: timerOf(DELAY.flash) },
-      }
-    : {
-        ...state,
-        playing: { ...state.playing, video: blankVideo(state.playing.video) },
-        stage: { kind: 'blank', timer: timerOf(DELAY.cleared) },
-      };
-
-/** What happens when the stage's timer runs out. */
-const timeUp = (state: GameState): GameState => {
-  const { stage, playing } = state;
-  switch (stage.kind) {
-    case 'starting':
-      return { ...state, playing: firstLife(playing), stage: ready() };
-    case 'ready':
-      return {
-        ...state,
-        playing: { ...playing, video: writeVideo(playing.video, textWrites(TEXT.ready, true)) },
-        stage: { kind: 'playing' },
-      };
-    case 'gameOver':
-      return { ...state, stage: { kind: 'over' } };
-    case 'cleared':
-      return nextFlash(state, 0);
-    case 'flashing':
-      return nextFlash(state, stage.flash + 1);
-    case 'blank':
-      return {
-        ...state,
-        playing: withSounds(nextLevel(playing), SOUND.noSongs),
-        stage: ready(),
-      };
-    default:
-      return state;
-  }
-};
-
-/** One frame of a stage. */
+/** The stage of the machine for one frame: start screen, attract mode or game. */
 const updateStage = (state: GameState, controls: Controls): GameState => {
   const { stage } = state;
-  if (stage.kind === 'playing') return play(state, controls);
-  if (stage.kind === 'lost') return afterDeath(state);
-  if (stage.kind === 'over') {
-    if (!controls.coin) return state;
-    const started = startGame(state.frame, state.playing.hiScore);
-    return {
-      ...started,
-      playing: withSounds(started.playing, SOUND.credit),
-    };
-  }
-  const timer = tickTimer(stage.timer, state.frame);
-  return timerDone(timer) ? timeUp(state) : { ...state, stage: { ...stage, timer } };
+  if (stage.kind === 'pushStart') return controls.start ? pressStart(state) : state;
+  if (inAttract(state) && state.credits > 0) return toPushStart(state);
+  if (stage.kind === 'intro') return updateIntro(state, stage);
+  if (stage.kind === 'chase') return chaseFrame(state, stage.released);
+  return updateLevel(state, controls);
 };
 
 /**
- * One frame of the game: the machine's clock, the timed tasks, then the stage. The sound
+ * What the program writes on the score rows every frame: the "1UP" and "2UP" labels
+ * (routine $032D) and, outside a game, the credits (routine $2BA1).
+ */
+const scoreRows = (state: GameState): GameState => {
+  const inGame = !inAttract(state) && state.stage.kind !== 'pushStart';
+  const video = applyAll(state.playing.video, [
+    upWrites(inGame, state.playing.upClock),
+    ...(inGame ? [] : [creditWrites(state.credits)]),
+  ]);
+  return { ...state, playing: { ...state.playing, video } };
+};
+
+/**
+ * One frame of the machine: its clock, the timed tasks, the coins, then the stage. The sound
  * writes start empty and collect what this frame asks of the sound program.
  */
 export const updateGame = (state: GameState, controls: Controls): GameState => {
   const frame = state.frame + 1;
-  const playing = { ...tickFruitTasks(state.playing, frame), sounds: [] };
-  return updateStage({ ...state, frame, playing }, controls);
+  const playing = {
+    ...tickFruitTasks(state.playing, frame),
+    upClock: (state.playing.upClock + 1) & 0xff,
+    sounds: [],
+  };
+  const ticked = { ...state, frame, playing };
+  const coined = controls.coin ? insertCoin(ticked) : ticked;
+  return scoreRows(updateStage(coined, controls));
 };

@@ -45,6 +45,8 @@ export const SOUND = {
   /** Voices 2 and 3 quiet: Pac-Man caught ($0E72) or the level over ($09E1). */
   quietSiren: [store(effect2, 0)],
   quiet: [store(effect2, 0), store(effect3, 0)],
+  /** The intermission music: song 2 on voices 1 and 2 ($0A33). */
+  intermission: [store(song1, 2), store(song2, 2)],
   /** No song: before a new level ($0A7C). */
   noSongs: [store(song1, 0), store(song2, 0)],
 } as const;
