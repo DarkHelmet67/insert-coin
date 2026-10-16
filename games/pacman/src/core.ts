@@ -11,7 +11,8 @@ import { updatePacMan, type Joystick } from './pacman';
 import { withGhost, type Playing } from './playing';
 import { POINTS } from './score';
 import { addPoints, eatFruit, eatTile } from './scoring';
-import { tickDeath } from './death';
+import { deathSound, tickDeath } from './death';
+import { SOUND, withSounds } from './sounds';
 import { tuning } from './tuning.config';
 
 /** The game and the decisions the ghosts asked for so far in this frame. */
@@ -69,11 +70,19 @@ const moveGhost = (work: FrameWork, ghost: Ghost): FrameWork => {
   );
 };
 
-/** The blue time and the house's releases ($1059-$1062). */
+/** The blue time, with its sound when it ends, and the house's releases ($1059-$1062). */
 const tickTimers = (playing: Playing): Playing => {
   const fright = tickFright(playing.ghosts, playing.fright);
   const released = releaseByDots(fright.ghosts, playing.houseDots, playing.settings.houseDotLimits);
-  return { ...playing, fright: fright.fright, ghosts: released.ghosts, houseDots: released.dots };
+  const ticked = {
+    ...playing,
+    fright: fright.fright,
+    ghosts: released.ghosts,
+    houseDots: released.dots,
+  };
+  return playing.fright.active && !fright.fright.active
+    ? withSounds(ticked, SOUND.frightOver)
+    : ticked;
 };
 
 /**
@@ -83,9 +92,12 @@ const tickTimers = (playing: Playing): Playing => {
 const meet = (playing: Playing, id: GhostId): Playing => {
   if (!(playing.ghosts[id]?.blue ?? false)) return { ...playing, killer: id };
   const eaten = playing.fright.eaten + 1;
-  return addPoints(
-    { ...playing, eating: startEating(id), fright: { ...playing.fright, eaten } },
-    POINTS.firstGhost + eaten - 1,
+  return withSounds(
+    addPoints(
+      { ...playing, eating: startEating(id), fright: { ...playing.fright, eaten } },
+      POINTS.firstGhost + eaten - 1,
+    ),
+    SOUND.ghost,
   );
 };
 
@@ -99,7 +111,7 @@ const continueEating = (playing: Playing): Playing => {
   if (playing.eating === undefined) return playing;
   const eating = updateEating(playing.eating, tuning.ghostPointsFrames);
   return eating === undefined
-    ? makeEyes({ ...playing, eating: undefined }, playing.eating.ghost)
+    ? withSounds(makeEyes({ ...playing, eating: undefined }, playing.eating.ghost), SOUND.eyes)
     : { ...playing, eating };
 };
 
@@ -111,7 +123,8 @@ const continueEating = (playing: Playing): Playing => {
 export const updateCore = (work: FrameWork, joystick: Joystick): FrameWork => {
   const { playing } = work;
   if (playing.killer !== undefined) {
-    return { ...work, playing: { ...playing, death: tickDeath(playing.death) } };
+    const death = tickDeath(playing.death);
+    return { ...work, playing: withSounds({ ...playing, death }, deathSound(death)) };
   }
   const eyes = work.playing.ghosts.reduce(moveEyes, work);
   if (eyes.playing.eating !== undefined) {

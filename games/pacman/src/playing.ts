@@ -8,6 +8,7 @@ import { NEW_HOUSE_CLOCK, NEW_HOUSE_DOTS, type HouseDots } from './house';
 import { levelSettings, type LevelSettings } from './levels';
 import { newPacMan, type PacMan } from './pacman';
 import type { Timer } from './timers';
+import type { SoundWrite } from './sound-board';
 import { tuning } from './tuning.config';
 import { gameStartVideo } from './screen';
 import type { Video } from './video';
@@ -62,6 +63,8 @@ export interface Playing {
    */
   readonly fruitTimer: Timer | undefined;
   readonly fruitTextTimer: Timer | undefined;
+  /** The writes to the sound program's trigger bytes in this frame. */
+  readonly sounds: readonly SoundWrite[];
 }
 
 /** The part of the game a new life or a new level starts afresh: RAM $4D00-$4DFF (task $11). */
@@ -79,6 +82,7 @@ export type LifeState = Omit<
   | 'fruitsReleased'
   | 'fruitTimer'
   | 'fruitTextTimer'
+  | 'sounds'
 >;
 
 /** The actors in their places and every clock at zero, with the settings of `level`. */
@@ -122,6 +126,7 @@ export const newPlaying = (hiScore: number): Playing => ({
   fruitsReleased: [false, false],
   fruitTimer: undefined,
   fruitTextTimer: undefined,
+  sounds: [],
 });
 
 /** The level counter of the program ($4E13): one byte, 0 for the first level. */

@@ -104,10 +104,19 @@ Codice: [`fruit.ts`](../src/fruit.ts), [`lives.ts`](../src/lives.ts), [`death.ts
 
 ## 8. Suoni
 
-- **Il chip** [H]: Namco WSG, tre voci, otto forme d'onda da 32 campioni nella PROM `82s126.1m`. È il chip di _Galaga_, già emulato dal pacchetto `@arcade/wsg`.
-- **Il programma del suono** [P `2CC1`, `2D0C`]: due motori, uno per gli **effetti** (la sirena, il "wakka" dei puntini, i fantasmi blu, gli occhi, la frutta, la morte) e uno per le **melodie** (la musica d'inizio, gli intermezzi). Le tabelle sono nella ROM da `3B30` in poi.
+- **Il chip** [H]: Namco WSG, tre voci, otto forme d'onda da 32 campioni nella PROM `82s126.1m`. È il chip di _Galaga_, già emulato dal pacchetto `@arcade/wsg`. La voce 1 ha una frequenza di 20 bit; le voci 2 e 3 ne ricevono solo i 16 alti, quindi lo stesso valore suona 16 volte più alto.
+- **Il programma del suono** [P `2D0C`, `2CC1`]: gira una volta per fotogramma, nell'interruzione, dentro il processore principale. Ogni voce ha un canale per gli **effetti** e uno per le **canzoni**; ciascun canale è un byte di 8 bit di richieste, e suona quella col bit più alto. Il gioco accende e spegne i bit (`SET`, `RES`), il programma li spegne da solo quando un effetto finisce.
+- **Gli effetti** [P `2DEE`, tabelle `3B30`, `3B40`, `3B80`]: 8 byte ciascuno: forma d'onda e ottava, frequenza, scivolamento per fotogramma, durata del passo (con un bit che inverte lo scivolamento), salto di frequenza e di volume a ogni passo, numero di passi (0 per un effetto senza fine), volume e inviluppo.
+  - Voce 1: la vita extra e la moneta.
+  - Voce 2: la sirena, in 5 versioni che salgono con i puntini mangiati (116, 180, 212, 228) [P `0E6C`]; sopra di lei, sui bit più alti, i fantasmi blu e gli occhi che tornano a casa.
+  - Voce 3: il "wakka", due mezzi effetti che si alternano a ogni puntino [P `1A06`]; la frutta, il fantasma mangiato, la morte di Pac-Man e le sue due ultime note.
+- **Le canzoni** [P `2D44`, tabelle `3BC8`-`3BD0`]: una sequenza di byte di nota (3 bit di durata, da 1 a 128 fotogrammi; 5 bit di nota e ottava) e di comandi da `F0` in su (salto, forma d'onda, ottava, volume, inviluppo, fine). La canzone 1 è la musica d'inizio, la 2 quella degli intermezzi.
+- **Un difetto conservato** [P `2FAD`]: alla fine di una canzone il programma continua a leggere i byte che seguono, fino alla nota successiva. Il volume di quella nota non arriva al chip, ma la sua frequenza sì.
+- **Il ritardo** [P `009D`]: il programma copia i registri nel chip all'inizio dell'interruzione, prima di calcolare i nuovi; un suono chiesto dal gioco si sente quindi un fotogramma dopo.
+- **L'altoparlante** [N]: nel cabinato l'amplificatore arriva all'altoparlante attraverso un condensatore, che non lascia passare una tensione costante. Il remake applica un filtro passa-alto a 15 Hz, così le pause della musica, dove una voce resta ferma su un campione, sono silenzio e non scatti.
+- **Quello che resta fuori** [P `0AEB`]: il programma accende un suono per il lampeggio dei fantasmi blu e lo spegne subito dopo, nella stessa routine: non si sente mai, e il remake non lo chiede.
 
-Codice: [`sound-*.ts`](../src/).
+Codice: [`sound-channel.ts`](../src/sound-channel.ts), [`sound-effects.ts`](../src/sound-effects.ts), [`sound-songs.ts`](../src/sound-songs.ts), [`sound-board.ts`](../src/sound-board.ts), [`sounds.ts`](../src/sounds.ts), [`speaker.ts`](../src/speaker.ts).
 
 ## Lasciati fuori [N]
 

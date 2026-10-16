@@ -9,6 +9,7 @@ import type { Joystick } from './pacman';
 import { roundOf, type Playing } from './playing';
 import { fruitDue, fruitOf } from './fruit';
 import { DELAY, timerOf } from './timers';
+import { SOUND, sirenSound, withSounds } from './sounds';
 import { writeVideo } from './video';
 
 /** The idle timer of the house: a ghost leaves when Pac-Man stops eating ($13DD). */
@@ -94,8 +95,21 @@ const releaseFruit = (playing: Playing): Playing => {
 };
 
 /**
+ * The sounds that follow the state of the game: the eyes' sound stops when no eyes are left
+ * ($1101), and the siren rises with the dots eaten, silent while Pac-Man dies ($0E6C).
+ */
+const ongoingSounds = (playing: Playing): Playing => {
+  const eyes = playing.ghosts.some((ghost) => ghost.eyes !== 'alive');
+  const withEyes = eyes ? playing : withSounds(playing, SOUND.noEyes);
+  return withSounds(
+    withEyes,
+    playing.killer === undefined ? sirenSound(playing.dotsEaten) : SOUND.quietSiren,
+  );
+};
+
+/**
  * One frame of play (routine $08EB): the core runs twice, so the fastest actors move two
- * pixels; then the house, the clocks, the fruit and the decisions the ghosts asked for.
+ * pixels; then the house, the clocks, the sounds, the fruit and the decisions the ghosts asked for.
  */
 export const updatePlaying = (playing: Playing, joystick: Joystick): Playing => {
   const work = updateCore(updateCore({ playing, pending: [] }, joystick), joystick);
@@ -111,5 +125,5 @@ export const updatePlaying = (playing: Playing, joystick: Joystick): Playing => 
     elroy1: clocked.elroy.elroy1,
     tiles: clocked.video.tiles,
   });
-  return releaseFruit({ ...clocked, ghosts: decided.ghosts, seed: decided.seed });
+  return releaseFruit(ongoingSounds({ ...clocked, ghosts: decided.ghosts, seed: decided.seed }));
 };

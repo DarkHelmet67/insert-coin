@@ -9,6 +9,7 @@ import { blankVideo, flashVideo } from './screen';
 import { TEXT, textWrites } from './texts';
 import { DELAY, tickTimer, timerDone, timerOf, type Timer } from './timers';
 import { writeVideo } from './video';
+import { SOUND, withSounds } from './sounds';
 
 /**
  * Where the game is, after the level state of the program ($4E04): the start, "READY!", play,
@@ -47,7 +48,7 @@ const FLASHES = 8;
 const startGame = (frame: number, hiScore: number): GameState => ({
   frame,
   stage: { kind: 'starting', timer: timerOf(DELAY.start) },
-  playing: newPlaying(hiScore),
+  playing: withSounds(newPlaying(hiScore), SOUND.startMusic),
 });
 
 /** The game at power-on, with the record saved by the browser. */
@@ -82,7 +83,11 @@ const tickFruitTasks = (playing: Playing, frame: number): Playing => {
 /** One frame of play: the end of the level comes first, then the life lost ($08CD, $1366). */
 const play = (state: GameState, controls: Controls): GameState => {
   if (state.playing.dotsEaten === MAZE_FOOD) {
-    return { ...state, stage: { kind: 'cleared', timer: timerOf(DELAY.pause) } };
+    return {
+      ...state,
+      playing: withSounds(state.playing, SOUND.quiet),
+      stage: { kind: 'cleared', timer: timerOf(DELAY.pause) },
+    };
   }
   const playing = updatePlaying(state.playing, controls.joystick);
   return deathOver(playing.death)
@@ -136,7 +141,11 @@ const timeUp = (state: GameState): GameState => {
     case 'flashing':
       return nextFlash(state, stage.flash + 1);
     case 'blank':
-      return { ...state, playing: nextLevel(playing), stage: ready() };
+      return {
+        ...state,
+        playing: withSounds(nextLevel(playing), SOUND.noSongs),
+        stage: ready(),
+      };
     default:
       return state;
   }
@@ -148,14 +157,23 @@ const updateStage = (state: GameState, controls: Controls): GameState => {
   if (stage.kind === 'playing') return play(state, controls);
   if (stage.kind === 'lost') return afterDeath(state);
   if (stage.kind === 'over') {
-    return controls.coin ? startGame(state.frame, state.playing.hiScore) : state;
+    if (!controls.coin) return state;
+    const started = startGame(state.frame, state.playing.hiScore);
+    return {
+      ...started,
+      playing: withSounds(started.playing, SOUND.credit),
+    };
   }
   const timer = tickTimer(stage.timer, state.frame);
   return timerDone(timer) ? timeUp(state) : { ...state, stage: { ...stage, timer } };
 };
 
-/** One frame of the game: the machine's clock, the timed tasks, then the stage. */
+/**
+ * One frame of the game: the machine's clock, the timed tasks, then the stage. The sound
+ * writes start empty and collect what this frame asks of the sound program.
+ */
 export const updateGame = (state: GameState, controls: Controls): GameState => {
   const frame = state.frame + 1;
-  return updateStage({ ...state, frame, playing: tickFruitTasks(state.playing, frame) }, controls);
+  const playing = { ...tickFruitTasks(state.playing, frame), sounds: [] };
+  return updateStage({ ...state, frame, playing }, controls);
 };

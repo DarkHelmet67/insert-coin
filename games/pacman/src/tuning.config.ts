@@ -29,4 +29,6 @@ export const tuning = {
    * points (factory setting), 1 for 15 000, 2 for 20 000, 3 for none [P `2728`].
    */
   extraLifeSetting: 0,
+  /** Volume of the sound chip's three voices, from 0 to 1 [N]. */
+  soundVolume: 0.8,
 } as const;

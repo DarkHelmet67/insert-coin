@@ -4,6 +4,7 @@ import { earnsExtraLife, livesTiles } from './lives';
 import { textWrites } from './texts';
 import { DELAY, timerOf } from './timers';
 import { tuning } from './tuning.config';
+import { dotSound, SOUND, withSounds } from './sounds';
 import { startFright } from './energizer';
 import { tileAddress } from './geometry';
 import { countDot } from './house';
@@ -17,7 +18,7 @@ const giveExtraLife = (playing: Playing): Playing => {
   if (!earnsExtraLife(playing.score, tuning.extraLifeSetting, playing.extraLife)) return playing;
   const livesShown = playing.livesShown + 1;
   return {
-    ...playing,
+    ...withSounds(playing, SOUND.extraLife),
     extraLife: true,
     lives: playing.lives + 1,
     livesShown,
@@ -54,7 +55,7 @@ export const eatFruit = (playing: Playing): Playing => {
   if (fruit === undefined || !eatsFruit(fruit, playing.pacman.position)) return playing;
   const scored = addPoints(playing, fruit.kind.points);
   return {
-    ...scored,
+    ...withSounds(scored, SOUND.fruit),
     fruit: { ...fruit, shown: false },
     fruitTextTimer: timerOf(DELAY.pause),
     video: writeVideo(scored.video, textWrites(fruitPointsText(fruit.kind))),
@@ -64,12 +65,16 @@ export const eatFruit = (playing: Playing): Playing => {
 /** An energizer makes the ghosts blue ($1A03); a dot does nothing more. */
 const energize = (playing: Playing, meal: Meal): Playing => {
   if (meal.tile !== TILE.energizer) return playing;
-  return { ...playing, ...startFright(playing.ghosts, playing.settings.frightTime) };
+  return withSounds(
+    { ...playing, ...startFright(playing.ghosts, playing.settings.frightTime) },
+    SOUND.fright,
+  );
 };
 
 /**
  * Pac-Man eats what is on his tile, if anything ($19CD): the tile is cleared, the points
  * added, Pac-Man pauses, the ghost house counts the dot, and an energizer frightens the ghosts.
+ * Each one plays half of the "wakka".
  */
 export const eatTile = (playing: Playing): Playing => {
   const address = tileAddress(playing.pacman.tile);
@@ -82,5 +87,5 @@ export const eatTile = (playing: Playing): Playing => {
     pacman: { ...playing.pacman, pause: meal.pause },
     houseDots: countDot(playing.houseDots, playing.ghosts),
   };
-  return energize(addPoints(eaten, meal.points), meal);
+  return withSounds(energize(addPoints(eaten, meal.points), meal), dotSound(eaten.dotsEaten));
 };
