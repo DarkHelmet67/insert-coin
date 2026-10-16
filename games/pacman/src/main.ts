@@ -1,7 +1,7 @@
 import './style.css';
 import { createAudio } from '@arcade/audio';
 import { createGameLoop } from '@arcade/engine-core';
-import { boundKeys, createKeyboard } from '@arcade/input';
+import { boundKeys, createKeyboard, createTouchButtons, mergeKeyStates } from '@arcade/input';
 import { getCanvasContext } from '@arcade/render';
 import { createHiScoreStore } from '@arcade/storage';
 import { bindings, readControls } from './controls';
@@ -12,6 +12,7 @@ import { tuning } from './tuning.config';
 
 const ctx = getCanvasContext('#screen');
 const keyboard = createKeyboard(window, { captureKeys: boundKeys(bindings) });
+const touch = createTouchButtons(document.querySelector('#touch-panel') ?? document.body);
 const hiScores = createHiScoreStore('insert-coin/pacman/hi-score');
 const audio = createAudio();
 const playSound = createSoundOutput(audio);
@@ -26,11 +27,12 @@ const createTileLayer = (width: number, height: number): CanvasRenderingContext2
 };
 
 /**
- * One frame: read the keyboard, update the pure game state, play its sound, save the record
- * when it grows. This is the only place where logic meets input, audio and storage.
+ * One frame: read the keyboard and the touch buttons, update the pure game state, play its
+ * sound, save the record when it grows. This is the only place where logic meets input, audio
+ * and storage.
  */
 const step = (state: GameState): GameState => {
-  const controls = readControls(keyboard.poll());
+  const controls = readControls(mergeKeyStates(keyboard.poll(), touch.poll()));
   if (controls.mute) audio.toggleMute();
   const next = updateGame(state, controls);
   playSound(next.playing.sounds, next.frame, next.playing.demo);
