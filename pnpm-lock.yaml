@@ -98,6 +98,9 @@ importers:
       '@arcade/storage':
         specifier: workspace:*
         version: link:../../packages/storage
+      '@arcade/tiles':
+        specifier: workspace:*
+        version: link:../../packages/tiles
       '@arcade/wsg':
         specifier: workspace:*
         version: link:../../packages/wsg
@@ -140,6 +143,9 @@ importers:
       '@arcade/storage':
         specifier: workspace:*
         version: link:../../packages/storage
+      '@arcade/tiles':
+        specifier: workspace:*
+        version: link:../../packages/tiles
       '@arcade/wsg':
         specifier: workspace:*
         version: link:../../packages/wsg
@@ -181,6 +187,12 @@ importers:
   packages/render: {}
 
   packages/storage: {}
+
+  packages/tiles:
+    dependencies:
+      '@arcade/render':
+        specifier: workspace:*
+        version: link:../render
 
   packages/vector: {}
 

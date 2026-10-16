@@ -1,5 +1,5 @@
 import type { DrawingContext } from '@arcade/render';
-import { drawArt } from './draw-art';
+import { drawArt } from '@arcade/tiles';
 import type { GameObject, Objects } from './objects';
 import { spriteColors } from './palette';
 import { SPRITE_OFFSET_X, SPRITE_OFFSET_Y } from './playfield';

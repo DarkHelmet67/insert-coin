@@ -1,5 +1,5 @@
 import type { DrawingContext } from '@arcade/render';
-import { drawArt } from './draw-art';
+import { drawArt } from '@arcade/tiles';
 import { charColors } from './palette';
 import { charArt } from './sprite-rom';
 

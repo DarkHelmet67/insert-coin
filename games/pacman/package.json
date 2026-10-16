@@ -15,6 +15,7 @@
     "@arcade/input": "workspace:*",
     "@arcade/render": "workspace:*",
     "@arcade/storage": "workspace:*",
+    "@arcade/tiles": "workspace:*",
     "@arcade/wsg": "workspace:*"
   }
 }
