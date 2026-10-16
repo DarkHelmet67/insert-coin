@@ -2,7 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { tileAddress } from './geometry';
 import { TILE } from './maze';
 import { NO_JOYSTICK } from './pacman';
-import { newPlaying, updatePlaying, type Playing } from './playing';
+import { updatePlaying } from './frame';
+import { newPlaying, type Playing } from './playing';
 import { SCORE_ADDRESS } from './score';
 
 /** The game after `frames` frames with the joystick at rest. */

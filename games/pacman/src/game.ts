@@ -1,5 +1,6 @@
 import type { Controls } from './controls';
-import { newPlaying, updatePlaying, type Playing } from './playing';
+import { updatePlaying } from './frame';
+import { newPlaying, type Playing } from './playing';
 
 /** The whole game: for now always playing; attract mode and game over come later. */
 export interface GameState {

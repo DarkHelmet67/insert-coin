@@ -6,6 +6,7 @@ import {
   type DecisionContext,
 } from './ghost-ai';
 import type { Decision } from './ghost-move';
+import { EYES_TARGET } from './eyes';
 import type { Ghost, GhostId } from './ghosts';
 import { drawRandom } from './random';
 
@@ -36,15 +37,13 @@ export const runDecisions = (
     (state, { id, decision }) => {
       const ghost = state.ghosts[id];
       if (ghost === undefined) return state;
-      const draw = decision === 'random' ? drawRandom(state.seed) : undefined;
+      // Eyes head home; blue ghosts take the next random number (tasks $0C-$0F).
+      const eyes = ghost.eyes !== 'alive';
+      const draw = decision === 'random' && !eyes ? drawRandom(state.seed) : undefined;
+      const target = eyes ? EYES_TARGET : ghostTarget(ghost, context);
       const choice =
         draw === undefined
-          ? chooseToward(
-              ghost.nextTile,
-              ghost.nextOrientation,
-              ghostTarget(ghost, context),
-              context.tiles,
-            )
+          ? chooseToward(ghost.nextTile, ghost.nextOrientation, target, context.tiles)
           : chooseAtRandom(ghost.nextTile, ghost.nextOrientation, draw.bits, context.tiles);
       return {
         ghosts: state.ghosts.map((other) => (other.id === id ? withChoice(ghost, choice) : other)),

@@ -35,6 +35,12 @@ export interface GhostMove {
   readonly decision?: Decision;
 }
 
+/** A ghost's pixel in the maze, and the decision it asks for, if any. */
+export interface GhostStep {
+  readonly ghost: Ghost;
+  readonly decision?: Decision;
+}
+
 /** The speed pattern a ghost uses now, with a function to store it back once turned. */
 interface SpeedSlot {
   readonly pattern: SpeedPattern;
@@ -85,7 +91,7 @@ const wrapTunnel = (tile: Point): Point => {
  * tile is in a tunnel or the ghost is in a zone where it may not turn up (color $1A); turn
  * around if a reversal is pending; then enter the next tile.
  */
-const atTileCenter = (ghost: Ghost, colors: readonly number[]): Omit<GhostMove, 'elroySpeeds'> => {
+const atTileCenter = (ghost: Ghost, colors: readonly number[]): GhostStep => {
   const nextTile = wrapTunnel(ghost.nextTile);
   const decision: Decision | undefined = isTunnelTile(nextTile)
     ? undefined
@@ -117,8 +123,18 @@ const centered = (ghost: Ghost): boolean =>
   isCentered(ghost.step.y !== 0 ? ghost.position.y : ghost.position.x);
 
 /**
- * One update of a ghost out of the house (routines $1B36, $1C4B, $1D22, $1DF9): take the next
- * bit of its speed, choose at the middle of a tile, move one pixel.
+ * One pixel of a ghost in the maze ($1BD8): choose at the middle of a tile, then move. The
+ * eyes of an eaten ghost go this way at every update, without a speed pattern.
+ */
+export const stepGhost = (ghost: Ghost, colors: readonly number[]): GhostStep => {
+  const turned = centered(ghost) ? atTileCenter(ghost, colors) : { ghost };
+  const position = addPoints(turned.ghost.position, turned.ghost.step);
+  return { ...turned, ghost: { ...turned.ghost, position, tile: tileOf(position) } };
+};
+
+/**
+ * One update of a ghost roaming the maze (routines $1B36, $1C4B, $1D22, $1DF9): take the next
+ * bit of its speed and, if it says so, move one pixel.
  */
 export const updateGhost = (
   ghost: Ghost,
@@ -127,14 +143,9 @@ export const updateGhost = (
   elroySpeeds: ElroySpeeds,
 ): GhostMove => {
   const unchanged: GhostMove = { ghost, elroySpeeds };
-  if (!ghost.out) return unchanged;
+  if (ghost.house !== 'out' || ghost.eyes !== 'alive') return unchanged;
   const slot = speedSlot(ghost, colors, elroy, elroySpeeds);
   const tick = tickSpeed(slot.pattern);
   const ticked = slot.store(unchanged, tick.pattern);
-  if (!tick.move) return ticked;
-  const turned = centered(ticked.ghost)
-    ? { ...ticked, ...atTileCenter(ticked.ghost, colors) }
-    : ticked;
-  const position = addPoints(turned.ghost.position, turned.ghost.step);
-  return { ...turned, ghost: { ...turned.ghost, position, tile: tileOf(position) } };
+  return tick.move ? { ...ticked, ...stepGhost(ticked.ghost, colors) } : ticked;
 };

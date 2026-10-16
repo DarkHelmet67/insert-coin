@@ -139,6 +139,8 @@ export interface PacManMove {
   readonly pacman: PacMan;
   /** He moved inside the maze, so he may eat what is on his tile ($198E). */
   readonly canEat: boolean;
+  /** His speed let him move in this update, wall or not ($1843). */
+  readonly active: boolean;
 }
 
 /**
@@ -152,17 +154,21 @@ export const updatePacMan = (
   tiles: readonly number[],
 ): PacManMove => {
   if (pacman.pause !== NO_PAUSE) {
-    return { pacman: { ...pacman, pause: (pacman.pause - 1) & 0xff }, canEat: false };
+    return {
+      pacman: { ...pacman, pause: (pacman.pause - 1) & 0xff },
+      canEat: false,
+      active: false,
+    };
   }
   const tick = tickSpeed(frightened ? pacman.frightSpeed : pacman.speed);
   const ticked = frightened
     ? { ...pacman, frightSpeed: tick.pattern }
     : { ...pacman, speed: tick.pattern };
-  if (!tick.move) return { pacman: ticked, canEat: false };
+  if (!tick.move) return { pacman: ticked, canEat: false, active: false };
   const inTunnel = isTunnelTile(pacman.tile);
   const steered = inTunnel
     ? { pacman: steerInTunnel(ticked, joystick), moves: true }
     : steerInMaze(ticked, joystick, tiles);
-  if (!steered.moves) return { pacman: steered.pacman, canEat: false };
-  return { pacman: advance(steered.pacman), canEat: !inTunnel };
+  if (!steered.moves) return { pacman: steered.pacman, canEat: false, active: true };
+  return { pacman: advance(steered.pacman), canEat: !inTunnel, active: true };
 };

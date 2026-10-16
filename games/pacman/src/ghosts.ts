@@ -18,6 +18,18 @@ export interface GhostSpeeds {
   readonly tunnel: SpeedPattern;
 }
 
+/**
+ * Where a ghost is with respect to the house ($4DA0): waiting inside, out in the maze, or on
+ * its way out, first sideways to the door (Inky and Clyde) and then up through it.
+ */
+export type HouseState = 'home' | 'out' | 'up' | 'sideways';
+
+/**
+ * A ghost after being eaten ($4DAC): alive, or eyes going back to the door, down into the
+ * house, and for Inky and Clyde sideways to their place.
+ */
+export type EyesState = 'alive' | 'toDoor' | 'down' | 'sideways';
+
 /** A ghost as the program keeps it, in four parallel tables ($4D00-$4DAF). */
 export interface Ghost {
   readonly id: GhostId;
@@ -36,8 +48,8 @@ export interface Ghost {
   /** Where it goes ($4D28) and where it will turn ($4D2C): its eyes already look there. */
   readonly orientation: Direction;
   readonly nextOrientation: Direction;
-  /** Out of the house and free to roam ($4DA0): the house states come with the house. */
-  readonly out: boolean;
+  readonly house: HouseState;
+  readonly eyes: EyesState;
   /** Blue, after an energizer ($4DA7). */
   readonly blue: boolean;
   /** Must turn around at the middle of its next tile ($4DB1). */
@@ -75,7 +87,8 @@ export const newGhost = (id: GhostId, speeds: LevelSpeeds): Ghost => {
     nextStep: step,
     orientation: start.orientation,
     nextOrientation: start.orientation,
-    out: id === GHOST.blinky,
+    house: id === GHOST.blinky ? 'out' : 'home',
+    eyes: 'alive',
     blue: false,
     reverse: false,
     speeds: { normal: speeds.ghost, fright: speeds.ghostFright, tunnel: speeds.ghostTunnel },
