@@ -31,6 +31,7 @@ const TABLES = [
   { name: 'HOUSE_TIMERS', doc: 'frames without dots, words', address: 0x0873, length: 6 },
   { name: 'FRUITS', doc: 'sprite, color, score per level', address: 0x0efd, length: 63 },
   { name: 'EXTRA_LIFE', doc: 'thousands, BCD, per DIP switch', address: 0x2728, length: 4 },
+  { name: 'SCORE_VALUES', doc: 'points, BCD words', address: 0x2b17, length: 28 },
   { name: 'DIRECTION_STEPS', doc: 'Y, X step per direction', address: 0x32ff, length: 8 },
   { name: 'SPEEDS', doc: '42 bytes per speed entry', address: 0x330f, length: 7 * 42 },
   { name: 'MAZE_DRAWING', doc: 'compressed maze tiles', address: 0x3435, length: 381 },

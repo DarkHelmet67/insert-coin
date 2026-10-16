@@ -1,30 +1,39 @@
 import './style.css';
+import { createGameLoop } from '@arcade/engine-core';
+import { boundKeys, createKeyboard } from '@arcade/input';
 import { getCanvasContext } from '@arcade/render';
-import { NO_FLIP } from '@arcade/tiles';
-import { drawSprites } from './draw-sprites';
-import { drawVideo } from './draw-video';
-import { newMazeWrites } from './maze';
-import type { HardwareSprite } from './sprites';
-import { TEXT, textWrites } from './texts';
-import { filledVideo, writeVideo } from './video';
+import { createHiScoreStore } from '@arcade/storage';
+import { bindings, readControls } from './controls';
+import { createGame, updateGame, type GameState } from './game';
+import { createRenderer } from './renderer';
+import { tuning } from './tuning.config';
 
 const ctx = getCanvasContext('#screen');
+const keyboard = createKeyboard(window, { captureKeys: boundKeys(bindings) });
+const hiScores = createHiScoreStore('insert-coin/pacman/hi-score');
 
-// Step 2 shows the graphics decoded from the ROMs: the maze as the program draws it, the
-// messages of a new game and the five actors where the program puts them before READY!.
-const video = [TEXT.highScore, TEXT.playerOne, TEXT.ready].reduce(
-  (screen, text) => writeVideo(screen, textWrites(text)),
-  writeVideo(filledVideo(0x40, 0), newMazeWrites()),
-);
+/** A canvas outside the page, as big as the screen, for the tiles: redrawn only where they change. */
+const createTileLayer = (width: number, height: number): CanvasRenderingContext2D => {
+  const ctx = document.createElement('canvas').getContext('2d');
+  if (!ctx) throw new Error('Canvas 2D not available for the tile layer');
+  ctx.canvas.width = width;
+  ctx.canvas.height = height;
+  return ctx;
+};
 
-/** The actors at the start of a level (task $04 at $2576): code, palette and position. */
-const START_SPRITES: readonly HardwareSprite[] = [
-  { code: 0x20, palette: 1, flip: NO_FLIP, x: 0x80, y: 0x64 },
-  { code: 0x20, palette: 3, flip: NO_FLIP, x: 0x80, y: 0x7c },
-  { code: 0x20, palette: 5, flip: NO_FLIP, x: 0x90, y: 0x7c },
-  { code: 0x20, palette: 7, flip: NO_FLIP, x: 0x70, y: 0x7c },
-  { code: 0x2c, palette: 9, flip: NO_FLIP, x: 0x80, y: 0xc4 },
-];
+/**
+ * One frame: read the keyboard, update the pure game state, save the record when it grows.
+ * This is the only place where logic meets input and storage.
+ */
+const step = (state: GameState): GameState => {
+  const next = updateGame(state, readControls(keyboard.poll()));
+  if (next.playing.hiScore > state.playing.hiScore) hiScores.save(next.playing.hiScore);
+  return next;
+};
 
-drawVideo(ctx, video);
-drawSprites(ctx, START_SPRITES);
+createGameLoop({
+  initialState: createGame(hiScores.load()),
+  update: step,
+  render: createRenderer(ctx, createTileLayer(ctx.canvas.width, ctx.canvas.height)),
+  step: 1 / tuning.framesPerSecond,
+}).start();

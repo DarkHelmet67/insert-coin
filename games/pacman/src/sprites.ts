@@ -22,12 +22,12 @@ export interface ScreenPoint {
 }
 
 /**
- * Where the top-left corner of a 16 × 16 sprite lands on the vertical screen. The program
- * counts x from the right edge and y from 8 pixels below the top, and the hardware draws the
- * sprite with its center 8 pixels from that point, so an actor at the center of a tile is
- * drawn centered on it: Pac-Man at $80,$C4 sits between columns 13 and 14 of row 26.
+ * Where the top-left corner of a 16 × 16 sprite lands on the vertical screen (the interrupt
+ * at $14A4 and MAME's sprite drawing). An actor in the middle of a tile (x and y ending in 4
+ * in binary) is drawn centered on it: Pac-Man starts at $80,$C4, between columns 13 and 14 of
+ * row 26.
  */
 export const spriteScreenPosition = (sprite: Pick<HardwareSprite, 'x' | 'y'>): ScreenPoint => ({
-  x: 233 - sprite.x,
+  x: 232 - sprite.x,
   y: sprite.y + 8,
 });
