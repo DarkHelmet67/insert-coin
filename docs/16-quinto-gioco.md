@@ -151,3 +151,5 @@ All'apertura compare la presentazione dei punti, come sul cabinato. **C** (o **5
 Per vedere il caccia doppio: lasciati catturare da un Boss che picchia con il raggio, poi abbattilo **mentre scende di nuovo** in picchiata. Se lo colpisci in formazione, il tuo caccia diventa un nemico.
 
 Il percorso completo, con le decisioni e gli errori, è nel [diario AI](ai-workflow.md); le regole dell'originale, con le fonti, nella [guida delle meccaniche](../games/galaga/docs/meccaniche-originali.md).
+
+Prossima guida: [17 · Il sesto gioco: Pac-Man](17-sesto-gioco.md).

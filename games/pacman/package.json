@@ -1,6 +1,6 @@
 {
   "name": "@arcade/pacman",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "description": "Pac-Man (Namco, 1980) rebuilt on HTML5 Canvas.",

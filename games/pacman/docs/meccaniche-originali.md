@@ -30,7 +30,7 @@ Tutti i valori incerti o da regolare stanno in un solo file, [`tuning.config.ts`
 - **Le coordinate** [P `2018`]: ogni personaggio ha una posizione in pixel (due byte, chiamati Y e X nel disassemblato) e una casella. La casella si ottiene dividendo per 8 e aggiungendo `20` e `1E`; la riga sullo schermo è la Y della casella meno `1E`, la colonna è `3B` meno la X. Così una casella fuori dallo schermo (nei tunnel) ha ancora un numero.
 - **Gli sprite** [H]: 8 sprite da 16 × 16 pixel; il programma ne usa 6 (quattro fantasmi, Pac-Man, la frutta).
 
-Codice: [`playfield.ts`](../src/playfield.ts), [`video.ts`](../src/video.ts).
+Codice: [`geometry.ts`](../src/geometry.ts), [`video.ts`](../src/video.ts), [`maze.ts`](../src/maze.ts).
 
 ## 2. Velocità a bit
 
@@ -65,7 +65,7 @@ Codice: [`pacman.ts`](../src/pacman.ts).
 - **Le zone senza svolta** [P `24F7`, `1C0B`]: nelle caselle colorate `1A` (sopra la casa e sopra la partenza di Pac-Man) i fantasmi non decidono: tirano dritto, quindi non possono girare in su.
 - **I tunnel** [P `205A`]: nelle caselle colorate `1B` i fantasmi usano il modello di velocità del tunnel.
 
-Codice: [`ghost-ai.ts`](../src/ghost-ai.ts), [`ghosts.ts`](../src/ghosts.ts), [`path.ts`](../src/path.ts).
+Codice: [`ghost-ai.ts`](../src/ghost-ai.ts), [`ghosts.ts`](../src/ghosts.ts), [`ghost-move.ts`](../src/ghost-move.ts), [`ghost-modes.ts`](../src/ghost-modes.ts).
 
 ## 5. La casa dei fantasmi
 
@@ -75,7 +75,7 @@ Codice: [`ghost-ai.ts`](../src/ghost-ai.ts), [`ghosts.ts`](../src/ghosts.ts), [`
 - **Il timer** [P `13DD`, `0873`]: se Pac-Man non mangia per 4 secondi (3 dal livello 5) il primo fantasma in casa esce comunque.
 - **Gli occhi** [P `10C0`–`1232`]: un fantasma mangiato torna verso la casella sopra la porta, entra, si rigenera e riparte.
 
-Codice: [`ghost-house.ts`](../src/ghost-house.ts).
+Codice: [`house.ts`](../src/house.ts), [`eyes.ts`](../src/eyes.ts).
 
 ## 6. Le pillole energetiche
 
