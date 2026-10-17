@@ -12,6 +12,7 @@
   "dependencies": {
     "@arcade/audio": "workspace:*",
     "@arcade/collision": "workspace:*",
+    "@arcade/debug": "workspace:*",
     "@arcade/engine-core": "workspace:*",
     "@arcade/input": "workspace:*",
     "@arcade/math": "workspace:*",

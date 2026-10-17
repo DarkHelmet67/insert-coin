@@ -41,6 +41,9 @@ importers:
       '@arcade/audio':
         specifier: workspace:*
         version: link:../../packages/audio
+      '@arcade/debug':
+        specifier: workspace:*
+        version: link:../../packages/debug
       '@arcade/engine-core':
         specifier: workspace:*
         version: link:../../packages/engine-core
@@ -65,6 +68,9 @@ importers:
       '@arcade/collision':
         specifier: workspace:*
         version: link:../../packages/collision
+      '@arcade/debug':
+        specifier: workspace:*
+        version: link:../../packages/debug
       '@arcade/engine-core':
         specifier: workspace:*
         version: link:../../packages/engine-core
@@ -86,6 +92,9 @@ importers:
       '@arcade/audio':
         specifier: workspace:*
         version: link:../../packages/audio
+      '@arcade/debug':
+        specifier: workspace:*
+        version: link:../../packages/debug
       '@arcade/engine-core':
         specifier: workspace:*
         version: link:../../packages/engine-core
@@ -110,6 +119,9 @@ importers:
       '@arcade/audio':
         specifier: workspace:*
         version: link:../../packages/audio
+      '@arcade/debug':
+        specifier: workspace:*
+        version: link:../../packages/debug
       '@arcade/engine-core':
         specifier: workspace:*
         version: link:../../packages/engine-core
@@ -131,6 +143,9 @@ importers:
       '@arcade/audio':
         specifier: workspace:*
         version: link:../../packages/audio
+      '@arcade/debug':
+        specifier: workspace:*
+        version: link:../../packages/debug
       '@arcade/engine-core':
         specifier: workspace:*
         version: link:../../packages/engine-core
@@ -158,6 +173,9 @@ importers:
       '@arcade/collision':
         specifier: workspace:*
         version: link:../../packages/collision
+      '@arcade/debug':
+        specifier: workspace:*
+        version: link:../../packages/debug
       '@arcade/engine-core':
         specifier: workspace:*
         version: link:../../packages/engine-core
@@ -177,6 +195,12 @@ importers:
   packages/audio: {}
 
   packages/collision: {}
+
+  packages/debug:
+    dependencies:
+      '@arcade/storage':
+        specifier: workspace:*
+        version: link:../storage
 
   packages/engine-core: {}
 
