@@ -20,6 +20,10 @@ pnpm dev:pacman   # dalla root del monorepo
 pnpm build        # output in games/pacman/dist: index.html + game.css + game.js
 ```
 
+## Modalità debug
+
+Per provare i livelli avanzati, in [`src/tuning.config.ts`](src/tuning.config.ts) c'è la sezione `debug`. Con `enabled: true` le sue opzioni valgono: con `startLevel` si parte dal livello scelto (fino al 256, lo schermo spezzato), con `godMode` i fantasmi non blu attraversano Pac-Man, con `skipIntermissions` i livelli si susseguono senza intermezzi. Con il debug acceso compare la scritta DEBUG e il record non viene salvato; nelle anteprime delle pull request è acceso da solo. Da rimettere a `false` prima di pubblicare: un test lo controlla. Tutti i dettagli nella [guida 18](../../docs/18-modalita-debug.md).
+
 ## Guide del gioco
 
 - [Le meccaniche dell'originale](docs/meccaniche-originali.md): labirinto, velocità, fantasmi, casa, pillole, frutta, livelli, suoni, demo e intermezzi, ricostruiti dalla ROM, con le fonti.

@@ -91,6 +91,7 @@ insert-coin/
 │   ├── tiles/            grafica a tile Namco: ASCII art, specchiature, colori dalle PROM
 │   ├── collision/        AABB e collisione pixel-perfect
 │   ├── storage/          record salvato nel browser
+│   ├── debug/            modalità debug: interruttore, scritta DEBUG, record non salvato
 │   └── math/             vettori, clamp, random con seed
 ├── games/
 │   ├── space-invaders/   un gioco = un'app Vite che usa i pacchetti @arcade/*
@@ -141,6 +142,7 @@ Il codice è scritto per essere letto da persone (_code for humans, not for AI_)
 | [15 · Il chip sonoro Namco](docs/15-chip-sonoro-namco.md)                        | Forme d'onda, programma del suono dalla ROM, campioni in coda                 |
 | [16 · Un quinto gioco: Galaga](docs/16-quinto-gioco.md)                          | Tre processori, interprete dei voli, dati generati, suono emulato             |
 | [17 · Il sesto gioco: Pac-Man](docs/17-sesto-gioco.md)                           | Memoria video, fantasmi dalla ROM, tile condivisi, demo e intermezzi          |
+| [18 · Modalità debug](docs/18-modalita-debug.md)                                 | Livello di partenza, immortalità e facilitazioni da tuning.config.ts          |
 | [Space Invaders · meccaniche](games/space-invaders/docs/meccaniche-originali.md) | Marcia, bombe, bunker, UFO: come funzionava l'originale                       |
 | [Breakout · meccaniche](games/breakout/docs/meccaniche-originali.md)             | Mattoni, pallina, suoni: il circuito senza processore                         |
 | [Asteroids · meccaniche](games/asteroids/docs/meccaniche-originali.md)           | Nave, asteroidi, dischi volanti: il programma 6502 letto riga per riga        |

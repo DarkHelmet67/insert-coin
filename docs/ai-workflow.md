@@ -724,3 +724,20 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 **Soluzione:** lo stesso schema dei due giochi vettoriali, senza codice nuovo: `enterFullscreenOnTouch` al primo tocco e `showFullscreenButton` per un pulsante SCHERMO INTERO accanto a MONETA e AUDIO, visibile solo dove il browser lo permette. Per iPhone il manifesto (`display: fullscreen`, senza orientamento fisso: Pac-Man si gioca anche in verticale), le icone con lo sprite di Pac-Man e i meta `apple-mobile-web-app-*`.
 
 **Verifica:** su un telefono simulato, in verticale e in orizzontale, il pulsante compare accanto agli altri comandi senza coprire lo schermo.
+
+## 2026-10-17 · Modalità debug per tutti i giochi
+
+**Richiesta (Luca):** per verificare che i giochi funzionino anche nei livelli più avanzati, una modalità di debug per ogni gioco, attivata dal suo `tuning.config.ts`: livello di partenza, immortalità e altre facilitazioni a seconda del gioco, come il carburante infinito di Lunar Lander. Uno sviluppo a sé, sul suo branch. Approvata la proposta ("alcuni flag non mi erano nemmeno venuti in mente"), i passi sono stati eseguiti di fila.
+
+**Decisioni dell'AI:**
+
+- **Una forma uguale per tutti:** `enabled`, `startLevel`, `godMode` più le facilitazioni del gioco (`noShieldDamage`, `fullPaddle`, `startHits`, `safeHyperspace`, `infiniteFuel`, `noCapture`, `startDual`, `skipIntermissions`). `startLevel` è un numero anche dove il "livello" è una missione (Lunar Lander) o un muro (Breakout).
+- **Un interruttore solo, decidere una volta:** ogni gioco ha un `debug.ts` che con `activeDebug` del nuovo pacchetto `@arcade/debug` sceglie fra le opzioni del file e `DEBUG_OFF`, il gioco normale. Le regole leggono valori semplici, come parametri con valore predefinito: il gioco le chiama come prima, i test provano i due casi.
+- **Le protezioni:** la scritta DEBUG sulla pagina (non sul canvas, così nessun renderer cambia), il record che non si salva, un test per gioco che fa fallire la CI se `enabled` resta `true`.
+- **Il debug nelle anteprime (scelta di Luca):** le anteprime delle PR sono costruite con `VITE_ARCADE_DEBUG=on`, per provare i livelli avanzati dal telefono; il sito di `main` mai. Per questo nei file pubblicati `godMode` (e `infiniteFuel`) sono già `true`.
+- **Breakout:** il vecchio `debug: true` (racchetta larga quanto lo schermo) è diventato l'opzione `fullPaddle`.
+- **Space Invaders** non aveva un `tuning.config.ts`: è nato con la sola sezione `debug`.
+
+**Scelte che il codice ha imposto:** in Pac-Man un fantasma ignorato dopo l'incontro avrebbe fermato il nucleo del gioco a ogni passo, quindi in god mode un fantasma non blu non conta proprio come incontro (la demo resta quella vera); in Space Invaders gli invasori arrivati al cannone ricominciano l'ondata invece di scendere fuori dallo schermo; in Galaga lo splash aumenta lo stage prima di ognuno, quindi la partita parte da `startLevel − 1`.
+
+**Verifica:** 912 test (un `debug.test.ts` per gioco e per il pacchetto), typecheck, lint, Prettier e build; il sito costruito con il debug acceso e aperto in un browser senza schermo: la scritta DEBUG in tutti e sei i giochi, nessun errore. Guida [18 · Modalità debug](18-modalita-debug.md). Versioni: ogni gioco 1.1.0, root 1.6.0.

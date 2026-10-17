@@ -20,6 +20,10 @@ pnpm dev:galaga   # dalla root del monorepo
 pnpm build        # output in games/galaga/dist: index.html + game.css + game.js
 ```
 
+## Modalità debug
+
+Per provare i livelli avanzati, in [`src/tuning.config.ts`](src/tuning.config.ts) c'è la sezione `debug`. Con `enabled: true` le sue opzioni valgono: con `startLevel` si parte dallo stage scelto (3, 7, 11... sono stage bonus), con `godMode` bombe e alieni non distruggono il caccia, con `noCapture` il raggio traente non cattura, con `startDual` ogni nuovo caccia è doppio. Con il debug acceso compare la scritta DEBUG e il record non viene salvato; nelle anteprime delle pull request è acceso da solo. Da rimettere a `false` prima di pubblicare: un test lo controlla. Tutti i dettagli nella [guida 18](../../docs/18-modalita-debug.md).
+
 ## Guide del gioco
 
 - [Le meccaniche dell'originale](docs/meccaniche-originali.md): voli, formazione, picchiate, raggio traente, stage bonus e suoni, ricostruiti dal sorgente Z80 commentato e dalle ROM, con le fonti.
