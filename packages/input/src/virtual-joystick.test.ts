@@ -77,6 +77,14 @@ describe('createVirtualJoystick', () => {
     expect(style.get('--stick-x')).toBe('0.000');
   });
 
+  it('springs back when the browser drops the capture without a lift', () => {
+    const { zone, stick } = setup();
+
+    zone.dispatchEvent(pointerEvent('pointerdown', 1, 30, 100));
+    zone.dispatchEvent(pointerEvent('lostpointercapture', 1));
+    expect(isDown(stick.poll(), 'ArrowLeft')).toBe(false);
+  });
+
   it('ignores a second finger while the first holds the stick', () => {
     const { zone, stick } = setup();
 

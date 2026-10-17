@@ -65,7 +65,7 @@ Come `createTouchButtons`, tiene lo stato in una closure e si interroga con `pol
 
 - **pointer capture**: al `pointerdown` il joystick chiama `setPointerCapture(id)`. Da quel momento tutti gli eventi di quel dito arrivano al joystick, ovunque sia il dito sullo schermo: è questo che risolve il problema del paragrafo 1;
 - **un solo dito**: il primo dito prende il joystick; un secondo dito nella stessa area si ignora, così il pollice che spara non lo disturba;
-- **ritorno al centro**: al `pointerup` (o `pointercancel`) la manopola torna in mezzo e i tasti si rilasciano;
+- **ritorno al centro**: al `pointerup`, al `pointercancel` o alla perdita della cattura (`lostpointercapture`, per esempio se il joystick viene nascosto durante il tocco) la manopola torna in mezzo e i tasti si rilasciano;
 - **i tasti cambiano solo quando cambia la direzione**: il passaggio da sinistra a giù senza staccare il dito produce un `released` di `ArrowLeft` e un `pressed` di `ArrowDown`, con lo stesso `keyChanges` dei pulsanti.
 
 La manopola si disegna con due proprietà CSS, `--stick-x` e `--stick-y` (da -1 a 1), scritte con `style.setProperty`; il CSS la sposta con un `transform`. Nei giochi a due direzioni la manopola si muove solo in orizzontale (`shownOffset`).

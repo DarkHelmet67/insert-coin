@@ -89,7 +89,11 @@ export const createVirtualJoystick = (
     const pointer = event as PointerEvent;
     if (pointer.pointerId === finger) follow(pointer);
   };
-  /** The finger lifts (or the system takes it over): the stick springs back to the centre. */
+  /**
+   * The finger lifts, the system takes it over, or the browser drops the capture (e.g. the
+   * joystick is hidden mid-touch): the stick springs back to the centre. After a normal lift
+   * `lostpointercapture` follows `pointerup`, and the second call finds no finger and does nothing.
+   */
   const onUp = (event: Event): void => {
     if ((event as PointerEvent).pointerId !== finger) return;
     finger = undefined;
@@ -105,6 +109,7 @@ export const createVirtualJoystick = (
     ['pointermove', onMove],
     ['pointerup', onUp],
     ['pointercancel', onUp],
+    ['lostpointercapture', onUp],
     ['contextmenu', onContextMenu],
   ];
   listeners.forEach(([type, listener]) => {
