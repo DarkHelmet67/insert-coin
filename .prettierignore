@@ -3,3 +3,6 @@ _site
 # Generated from the Galaga ROMs (ASCII art and byte tables): kept as the generators write them.
 games/galaga/src/art
 games/galaga/src/rom
+# Generated from the Pac-Man ROMs: kept as the generators write them.
+games/pacman/src/art
+games/pacman/src/rom

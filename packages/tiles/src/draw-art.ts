@@ -1,5 +1,5 @@
 import { drawSprite, type DrawingContext } from '@arcade/render';
-import type { TileColors } from './palette';
+import type { TileColors } from './colors';
 import type { PixelArt } from './pixel-art';
 
 /** Draws a tile with its top-left corner at (`x`, `y`), one layer per color. */

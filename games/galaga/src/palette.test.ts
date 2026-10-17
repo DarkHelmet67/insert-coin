@@ -1,15 +1,6 @@
+import { promColor } from '@arcade/tiles';
 import { describe, expect, it } from 'vitest';
-import { charColors, promColor, spriteColors } from './palette';
-
-describe('promColor', () => {
-  it('decodes BBGGGRRR with the resistor weights', () => {
-    expect(promColor(0x00)).toBe('#000000');
-    expect(promColor(0xff)).toBe('#ffffff');
-    expect(promColor(0x07)).toBe('#ff0000');
-    expect(promColor(0x38)).toBe('#00ff00');
-    expect(promColor(0xc0)).toBe('#0000ff');
-  });
-});
+import { charColors, spriteColors } from './palette';
 
 describe('spriteColors', () => {
   it('gives the fighter (palette 9) its red, blue and white', () => {

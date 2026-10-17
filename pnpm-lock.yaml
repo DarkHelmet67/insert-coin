@@ -98,6 +98,9 @@ importers:
       '@arcade/storage':
         specifier: workspace:*
         version: link:../../packages/storage
+      '@arcade/tiles':
+        specifier: workspace:*
+        version: link:../../packages/tiles
       '@arcade/wsg':
         specifier: workspace:*
         version: link:../../packages/wsg
@@ -122,6 +125,30 @@ importers:
       '@arcade/vector':
         specifier: workspace:*
         version: link:../../packages/vector
+
+  games/pacman:
+    dependencies:
+      '@arcade/audio':
+        specifier: workspace:*
+        version: link:../../packages/audio
+      '@arcade/engine-core':
+        specifier: workspace:*
+        version: link:../../packages/engine-core
+      '@arcade/input':
+        specifier: workspace:*
+        version: link:../../packages/input
+      '@arcade/render':
+        specifier: workspace:*
+        version: link:../../packages/render
+      '@arcade/storage':
+        specifier: workspace:*
+        version: link:../../packages/storage
+      '@arcade/tiles':
+        specifier: workspace:*
+        version: link:../../packages/tiles
+      '@arcade/wsg':
+        specifier: workspace:*
+        version: link:../../packages/wsg
 
   games/space-invaders:
     dependencies:
@@ -160,6 +187,12 @@ importers:
   packages/render: {}
 
   packages/storage: {}
+
+  packages/tiles:
+    dependencies:
+      '@arcade/render':
+        specifier: workspace:*
+        version: link:../render
 
   packages/vector: {}
 

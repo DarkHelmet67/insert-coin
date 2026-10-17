@@ -697,3 +697,30 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 - **Documenti**: il caccia catturato vale 500 in formazione e 1000 in volo; la schermata attract è [P], non [S]; il set MAME è `galagamw`; tolto il link alle note di ricerca, che non sono nel repository; il logo "namco" manca perché le tessere provate non lo disegnano (la ROM dei caratteri è la stessa del set Namco); i punti del bonus sono in centinaia.
 
 **Una segnalazione scartata:** un agente sosteneva che il suono a impulsi restasse acceso nella schermata attract; due simulazioni realistiche (600 fotogrammi ciascuna) l'hanno smentito.
+
+## 2026-10-16 · Pac-Man: un sesto gioco in undici passi
+
+**Richiesta (Luca):** "ora che abbiamo anche Namco a bordo", il coin-op per antonomasia, _Pac-Man_ (Namco, 1980), con il solito metodo di Galaga: tutte le informazioni sull'originale a cominciare dalle ROM, una checklist da approvare, l'intero progetto su un nuovo feature branch, la PR con il gioco nell'area delle anteprime. Approvata la checklist ("mi piace, partiamo!"), gli undici passi sono stati eseguiti di fila.
+
+**Decisioni dell'AI:**
+
+- **Le fonti:** non esiste un sorgente originale pubblicato, quindi la verità è la ROM, letta con un disassemblatore Z80. Il disassemblato commentato di Ms. Pac-Man dà i nomi alla RAM e alle routine; dove Ms. Pac-Man è stato modificato vale la ROM di Pac-Man. Il _Pac-Man Dossier_ serve da controllo: le velocità lette dalle tabelle danno esattamente le sue percentuali. [P] cita l'indirizzo della routine, che si ritrova nel codice.
+- **La memoria video come stato:** il programma originale legge lo schermo per sapere dove sono muri, puntini, tunnel e zone senza svolta. Il remake tiene le stesse due griglie (codici e colori) in un oggetto immutabile, così le routine si portano quasi riga per riga; il labirinto è decompresso dalla ROM con le routine `2419`, `2448` e `24D7`.
+- **Un nuovo pacchetto, `@arcade/tiles`:** le funzioni di Galaga per la grafica a tile Namco (ASCII art, specchiature, colori delle PROM, disegno) escono dal gioco e diventano condivise, con i loro test; Galaga le importa da lì. Restano nei giochi solo le disposizioni dei bit nelle ROM.
+- **La ROM resta fuori dal repository:** due script in `scripts/pacman/` generano grafica, tabelle, messaggi e dati del suono. Del generatore casuale dei fantasmi blu, che legge byte del programma, lo script copia solo i 2 bit usati.
+- **La presentazione, la demo e gli intermezzi sono il gioco:** il nucleo vero gira in un corridoio di muri invisibili, Pac-Man guidato dal programma usa la routine di scelta dei fantasmi, gli intermezzi sono tabelle di passi. Il remake porta le tabelle, non "scene" disegnate a mano.
+- **Il suono** è il programma della ROM, una volta per fotogramma, su `@arcade/wsg` e `audio.stream` di Galaga, senza toccare i pacchetti. Un filtro passa-alto a 15 Hz [N] imita il condensatore dell'altoparlante e toglie gli scatti nelle pause della musica.
+- **Gettoni e crediti come sul cabinato** (in Galaga la moneta avviava la partita): C inserisce, Invio avvia. Un solo giocatore [N].
+- **Il pannello touch** ha una croce a quattro direzioni su cui il dito può scivolare, START rotondo e giallo; in orizzontale i comandi passano ai lati.
+
+**Errori corretti lungo la strada:** la riga dello schermo di una casella (Y meno `1E`, non `1D`, verificato sulla routine `202D`); la disposizione dei pixel degli sprite, diversa da Galaga; lo scostamento orizzontale degli sprite (232, non 233); un fantasma mangiato che veniva "mangiato di nuovo" perché diventava occhi solo al passo dopo; i suoni che si accumulavano da un fotogramma all'altro; un test degli intermezzi che usava il labirinto vero, i cui muri deviavano Pac-Man.
+
+**Verifica:** 877 test alla consegna, typecheck, lint, build e Prettier; ogni passo guardato in un browser senza schermo (labirinto, fantasmi in fuga e in casa, morte, lampeggio di fine livello, livello 256, presentazione, inseguimento, demo, i tre intermezzi); la sequenza dei suoni controllata sui campioni generati; su un telefono simulato, in verticale e in orizzontale, MONETA e START avviano la partita. Guida [17 · Il sesto gioco: Pac-Man](17-sesto-gioco.md). Versioni: Pac-Man 1.0.0, root 1.5.0; i tag li crea Luca dopo l'unione.
+
+## 2026-10-16 · Pac-Man: schermo intero sul telefono
+
+**Richiesta (Luca, dopo la prova dell'anteprima):** "Lavoro fantastico, come sempre!", e da smartphone la modalità a schermo intero, utile soprattutto giocando in orizzontale, come per Asteroids e Lunar Lander.
+
+**Soluzione:** lo stesso schema dei due giochi vettoriali, senza codice nuovo: `enterFullscreenOnTouch` al primo tocco e `showFullscreenButton` per un pulsante SCHERMO INTERO accanto a MONETA e AUDIO, visibile solo dove il browser lo permette. Per iPhone il manifesto (`display: fullscreen`, senza orientamento fisso: Pac-Man si gioca anche in verticale), le icone con lo sprite di Pac-Man e i meta `apple-mobile-web-app-*`.
+
+**Verifica:** su un telefono simulato, in verticale e in orizzontale, il pulsante compare accanto agli altri comandi senza coprire lo schermo.

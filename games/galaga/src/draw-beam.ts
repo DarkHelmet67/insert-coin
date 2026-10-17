@@ -4,7 +4,7 @@
  */
 import type { DrawingContext } from '@arcade/render';
 import { BEAM_ROWS, type Capture } from './capture-state';
-import { drawArt } from './draw-art';
+import { drawArt } from '@arcade/tiles';
 import { charColors } from './palette';
 import { BEAM_TILES } from './rom/main-rom';
 import { charArt } from './sprite-rom';

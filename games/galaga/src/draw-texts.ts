@@ -1,5 +1,5 @@
 import type { DrawingContext } from '@arcade/render';
-import { drawArt } from './draw-art';
+import { drawArt } from '@arcade/tiles';
 import { badgeColumns, BADGES_RIGHT, stageFlags } from './badges';
 import type { Message } from './messages';
 import { charColors } from './palette';

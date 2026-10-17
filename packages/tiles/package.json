@@ -1,0 +1,13 @@
+{
+  "name": "@arcade/tiles",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Namco 2-bit tiles and color PROMs: ASCII-art graphics, palettes and drawing.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@arcade/render": "workspace:*"
+  }
+}

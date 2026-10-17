@@ -18,7 +18,7 @@ import { sprites60 } from './art/sprites-60';
 import { sprites68 } from './art/sprites-68';
 import { sprites70 } from './art/sprites-70';
 import { sprites78 } from './art/sprites-78';
-import { flipArt, joinArt, parseArt, type ArtRows, type Flip, type PixelArt } from './pixel-art';
+import { flipArt, joinArt, parseArt, type ArtRows, type Flip, type PixelArt } from '@arcade/tiles';
 
 /** The 128 sprites of the ROMs, indexed by their code. */
 const SPRITE_ROWS: readonly ArtRows[] = [
