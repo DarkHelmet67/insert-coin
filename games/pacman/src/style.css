@@ -62,7 +62,13 @@ body {
    */
   #screen {
     grid-area: screen;
-    height: min(100dvh - var(--panel-height), 100vw * 288 / 224);
+    /* The body's padding (safe areas, at least 0.5rem) is left out, or the maze would be cut. */
+    height: min(
+      100dvh - var(--panel-height) - env(safe-area-inset-top) -
+        max(env(safe-area-inset-bottom), 0.5rem),
+      (100vw - max(env(safe-area-inset-left), 0.5rem) - max(env(safe-area-inset-right), 0.5rem)) *
+        288 / 224
+    );
   }
 
   /* The pads sit directly in the page grid, so they can move to the sides in landscape. */
@@ -176,7 +182,14 @@ body {
   }
 
   #screen {
-    height: min(100dvh, (100vw - 2 * var(--side-width)) * 288 / 224);
+    height: min(
+      100dvh - env(safe-area-inset-top) - max(env(safe-area-inset-bottom), 0.5rem),
+      (
+          100vw - 2 * var(--side-width) - max(env(safe-area-inset-left), 0.5rem) -
+            max(env(safe-area-inset-right), 0.5rem)
+        ) *
+        288 / 224
+    );
   }
 
   .pad-system {

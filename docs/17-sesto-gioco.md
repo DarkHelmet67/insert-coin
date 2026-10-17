@@ -36,7 +36,7 @@ Tutto è nella [guida delle meccaniche](../games/pacman/docs/meccaniche-original
 | Pacchetto             | In Pac-Man                                                                           |
 | --------------------- | ------------------------------------------------------------------------------------ |
 | `@arcade/engine-core` | lo stesso game loop, al passo del cabinato (60,6 fotogrammi al secondo)              |
-| `@arcade/render`      | `getCanvasContext` e `clearScreen`                                                   |
+| `@arcade/render`      | `getCanvasContext`, `clearScreen`, `enterFullscreenOnTouch` e `showFullscreenButton` |
 | `@arcade/tiles`       | **nuovo**: tile in _ASCII art_, specchiature, colori delle PROM, disegno (sezione 4) |
 | `@arcade/input`       | tastiera, `createTouchButtons` e `mergeKeyStates`, senza modifiche                   |
 | `@arcade/audio`       | `stream`, la coda dei campioni nata con Galaga                                       |

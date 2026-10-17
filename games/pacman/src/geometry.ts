@@ -53,7 +53,7 @@ export const tileAddress = (tile: Point): number =>
 /** Whether a coordinate is at the middle of its tile, where actors can turn. */
 export const isCentered = (coordinate: number): boolean => (coordinate & 7) === 4;
 
-/** Whether a tile is in one of the two tunnels, beyond the columns of the maze. */
+/** Whether a tile is in one of the two tunnels: the outermost column on each side, or beyond it ($1852). */
 export const isTunnelTile = (tile: Point): boolean => tile.x < 0x21 || tile.x >= 0x3b;
 
 /** The same points: positions are compared byte by byte. */

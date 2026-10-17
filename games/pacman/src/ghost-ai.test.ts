@@ -46,11 +46,13 @@ describe('chooseToward', () => {
   });
 
   it('prefers up, then left, then down on a tie', () => {
-    // At the crossing on row 14, column 6 (tile $35,$2C), a target straight below-left.
-    const tile = { x: 0x35, y: 0x2c };
-    const target = { x: tile.x + 10, y: tile.y + 10 };
-    const way = chooseToward(tile, DIRECTION.down, target, tiles);
-    expect([DIRECTION.left, DIRECTION.down]).toContain(way.direction);
+    // At the crossing on row 8, column 6 (tile $35,$26), going left: a target up-left ties
+    // up and left, one down-left ties left and down.
+    const tile = { x: 0x35, y: 0x26 };
+    const upLeft = { x: 0x36, y: 0x25 };
+    const downLeft = { x: 0x36, y: 0x27 };
+    expect(chooseToward(tile, DIRECTION.left, upLeft, tiles).direction).toBe(DIRECTION.up);
+    expect(chooseToward(tile, DIRECTION.left, downLeft, tiles).direction).toBe(DIRECTION.left);
   });
 });
 
@@ -63,10 +65,11 @@ describe('chooseAtRandom', () => {
   });
 
   it('tries the next directions clockwise when it is closed or backwards', () => {
-    // Up is a wall at column 13 of row 26, right would turn back: down is a wall too, so left.
-    expect(chooseAtRandom(PACMAN_TILE, DIRECTION.left, DIRECTION.up, tiles).direction).toBe(
-      DIRECTION.left,
-    );
+    // At column 9 of row 26 (tile $32,$38) going left, up is a wall and right turns back:
+    // clockwise the next open way is down (counter-clockwise it would be left).
+    expect(
+      chooseAtRandom({ x: 0x32, y: 0x38 }, DIRECTION.left, DIRECTION.up, tiles).direction,
+    ).toBe(DIRECTION.down);
   });
 });
 

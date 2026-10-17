@@ -1,17 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { DIRECTION } from './geometry';
 import { GHOST, GHOST_IDS, newGhost, type Ghost } from './ghosts';
-import {
-  countDot,
-  moveInHouse,
-  NEW_HOUSE_CLOCK,
-  NEW_HOUSE_DOTS,
-  release,
-  releaseByDots,
-  releaseByTimer,
-  tickHouseClock,
-  type HouseDots,
-} from './house';
+import { moveInHouse, NEW_HOUSE_CLOCK, release, releaseByTimer, tickHouseClock } from './house';
+import { countDot, NEW_HOUSE_DOTS, releaseByDots, type HouseDots } from './house-dots';
 import { levelSettings } from './levels';
 
 const speeds = levelSettings(1).speeds;

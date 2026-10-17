@@ -7,7 +7,10 @@ export interface Meal {
   readonly tile: number;
   /** The entry of the points table. */
   readonly points: number;
-  /** Updates Pac-Man stands still while swallowing: 1 frame for a dot, 3 for an energizer. */
+  /**
+   * The pause counter it sets ($4D9D): Pac-Man skips one update more than this, 2 for a dot
+   * (1 frame) and 7 for an energizer (3.5 frames).
+   */
   readonly pause: number;
 }
 

@@ -27,7 +27,7 @@ export interface IntroStep {
   readonly wait: number;
 }
 
-/** A second for a picture or a name, half a second for a nickname ($0585, $0593). */
+/** A second after a picture, half a second after a nickname and after the first three names ($0585, $0593). */
 const LONG = DELAY.second;
 const SHORT = DELAY.halfSecond;
 

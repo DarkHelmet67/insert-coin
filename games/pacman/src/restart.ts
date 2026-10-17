@@ -1,4 +1,4 @@
-import { NEW_HOUSE_DOTS } from './house';
+import { NEW_HOUSE_DOTS } from './house-dots';
 import { livesTiles } from './lives';
 import { newLife, roundOf, type Playing } from './playing';
 import { allDots, mazeVideo, savedDots } from './screen';

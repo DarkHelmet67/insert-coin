@@ -12,7 +12,7 @@ import {
   type VideoWrites,
 } from './video';
 
-/** "1UP" over the score: tiles '1', 'U', 'P' from right to left at $3DA-$3D8 (routine $0369). */
+/** "1UP" over the score: tiles '1', 'U', 'P' from left to right at $3DA-$3D8 (routine $0369). */
 const ONE_UP: readonly CellWrite[] = [
   { address: 0x3da, value: 0x31 },
   { address: 0x3d9, value: 0x55 },

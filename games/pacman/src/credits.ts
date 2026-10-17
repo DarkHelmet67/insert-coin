@@ -23,7 +23,7 @@ export const creditWrites = (credits: number): VideoWrites => {
   return { ...text, tiles: [...(text.tiles ?? []), ...digits] };
 };
 
-/** "1UP" and "2UP" over the scores: tiles '1'/'2', 'U', 'P' from right to left (routine $0369). */
+/** "1UP" and "2UP" over the scores: tiles '1'/'2', 'U', 'P' from left to right (routine $0369). */
 const upLabel = (address: number, player: number, shown: boolean): readonly CellWrite[] =>
   [0x50, 0x55, player].map((tile, i) => ({ address: address + i, value: shown ? tile : 0x40 }));
 

@@ -7,7 +7,7 @@ import { tuning } from './tuning.config';
 import { dotSound, SOUND, withSounds } from './sounds';
 import { startFright } from './energizer';
 import { tileAddress } from './geometry';
-import { countDot } from './house';
+import { countDot } from './house-dots';
 import { TILE } from './maze';
 import type { Playing } from './playing';
 import { HIGH_SCORE_ADDRESS, pointsOf, SCORE_ADDRESS, scoreWrites } from './score';

@@ -4,7 +4,7 @@ import { paintEyes } from './energizer';
 import { runCore, runFrameDecisions, tickBlink, tickPoints, tickWave } from './frame';
 import { directionStep, oppositeDirection } from './geometry';
 import { GHOST, GHOST_IDS, type Ghost, type GhostId } from './ghosts';
-import { NEW_HOUSE_DOTS } from './house';
+import { NEW_HOUSE_DOTS } from './house-dots';
 import { TILE } from './maze';
 import { NO_JOYSTICK } from './pacman';
 import { newLife, withGhost, type Playing } from './playing';

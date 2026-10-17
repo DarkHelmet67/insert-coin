@@ -6,7 +6,7 @@ import type { PendingDecision } from './ghost-decisions';
 import { updateElroy } from './ghost-modes';
 import { updateGhost, type Decision } from './ghost-move';
 import { GHOST, type Ghost, type GhostId } from './ghosts';
-import { releaseByDots } from './house';
+import { releaseByDots } from './house-dots';
 import { updatePacMan, type Joystick } from './pacman';
 import { withGhost, type Playing } from './playing';
 import { POINTS } from './score';

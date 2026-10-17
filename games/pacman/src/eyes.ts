@@ -46,7 +46,7 @@ const goDown = (ghost: Ghost): Ghost => {
     : { ...moved, eyes: 'sideways' };
 };
 
-/** Inky to the right side, Clyde to the left ($118F, $11FC). */
+/** Inky to his place on the left of the house, Clyde to the right ($118F, $11FC). */
 const goAside = (ghost: Ghost): Ghost => {
   const place = SIDE_PLACES[ghost.id];
   if (place === undefined) return ghost;

@@ -125,7 +125,7 @@ Codice: [`stage-setup.ts`](../src/stage-setup.ts), [`attack-waves.ts`](../src/at
 
 Il remake non copia la ROM nel repository (è di Namco): lo script [`scripts/galaga/extract-rom-art.js`](../../../scripts/galaga/extract-rom-art.js) legge le ROM del set MAME e scrive in [`src/art/`](../src/art/) ogni tessera come _ASCII art_ (`.` trasparente, `1`, `2`, `3` i tre colori) e le PROM dei colori byte per byte. Il disegno usa lo `Sprite` monocromatico condiviso: ogni tessera diventa tre sprite, uno per colore, disegnati uno sull'altro. Le stelle non fanno girare il registro 65.536 volte a fotogramma: le 256 stelle si trovano una volta sola, poi si calcola dove cade ciascuna.
 
-Codice: [`pixel-art.ts`](../src/pixel-art.ts), [`sprite-rom.ts`](../src/sprite-rom.ts), [`palette.ts`](../src/palette.ts), [`text.ts`](../src/text.ts), [`stars.ts`](../src/stars.ts).
+Codice: [`pixel-art.ts`](../../../packages/tiles/src/pixel-art.ts) (in `@arcade/tiles`), [`sprite-rom.ts`](../src/sprite-rom.ts), [`palette.ts`](../src/palette.ts), [`text.ts`](../src/text.ts), [`stars.ts`](../src/stars.ts).
 
 ## 11. I suoni
 
