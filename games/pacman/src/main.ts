@@ -1,10 +1,12 @@
 import './style.css';
 import { createAudio } from '@arcade/audio';
+import { debugSafeHiScores, showDebugMark } from '@arcade/debug';
 import { createGameLoop } from '@arcade/engine-core';
 import { boundKeys, createKeyboard, createTouchButtons, mergeKeyStates } from '@arcade/input';
 import { enterFullscreenOnTouch, getCanvasContext, showFullscreenButton } from '@arcade/render';
 import { createHiScoreStore } from '@arcade/storage';
 import { bindings, readControls } from './controls';
+import { debug } from './debug';
 import { createGame, updateGame, type GameState } from './game';
 import { createRenderer } from './renderer';
 import { createSoundOutput } from './sound-output';
@@ -17,7 +19,12 @@ const touch = createTouchButtons(document.querySelector('#touch-panel') ?? docum
 // the button brings the full screen back after leaving it.
 enterFullscreenOnTouch();
 showFullscreenButton(document.querySelector('#fullscreen'));
-const hiScores = createHiScoreStore('insert-coin/pacman/hi-score');
+// In debug mode the DEBUG mark is shown and new records are not saved.
+showDebugMark(debug.enabled);
+const hiScores = debugSafeHiScores(
+  createHiScoreStore('insert-coin/pacman/hi-score'),
+  debug.enabled,
+);
 const audio = createAudio();
 const playSound = createSoundOutput(audio);
 

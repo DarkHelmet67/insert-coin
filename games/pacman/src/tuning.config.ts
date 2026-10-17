@@ -9,7 +9,26 @@
  * - [N] our choice, where the sources say nothing or the browser asks for something else.
  * See docs/meccaniche-originali.md for the details.
  */
+import type { PacManDebug } from './debug';
+
+/**
+ * Debug mode [N], to test the fast levels, the ghosts that no longer turn blue and the split
+ * screen of level 256 without playing well. Turn it on with `enabled: true`; while it is on, the
+ * DEBUG mark is shown and the hi-score is not saved. Keep `enabled: false` in the published
+ * game: a test fails otherwise. See docs/18-modalita-debug.md.
+ */
+const debug: PacManDebug = {
+  enabled: false,
+  /** The first level, 1 to 256: from the 21st the settings stop changing, 256 is the split screen. */
+  startLevel: 1,
+  /** The ghosts pass through Pac-Man instead of catching him (blue ghosts are still eaten). */
+  godMode: true,
+  /** The levels follow one another without the intermissions. */
+  skipIntermissions: false,
+};
+
 export const tuning = {
+  debug,
   /**
    * Frames per second of the cabinet: the video clock of 6.144 MHz draws 384 × 264 pixels per
    * frame, 60.606 frames a second [H `pacman.cpp`].

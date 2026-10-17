@@ -80,10 +80,11 @@ export const mazeVideo = (
 
 /**
  * The screen when a game starts (routine $0674): the maze with all its dots, "PLAYER ONE",
- * "READY!", the scores, the first fruit and all the lives.
+ * "READY!", the scores, the fruits of `round` (the first one, unless debug mode chose another
+ * level) and all the lives.
  */
-export const gameStartVideo = (hiScore: number, lives: number): Video =>
-  applyAll(mazeVideo(filledVideo(TILE.space, 0), allDots(), 0, lives), [
+export const gameStartVideo = (hiScore: number, lives: number, round = 0): Video =>
+  applyAll(mazeVideo(filledVideo(TILE.space, 0), allDots(), round, lives), [
     textWrites(TEXT.highScore),
     textWrites(TEXT.playerOne),
     {
