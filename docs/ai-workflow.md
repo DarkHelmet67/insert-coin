@@ -724,3 +724,21 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 **Soluzione:** lo stesso schema dei due giochi vettoriali, senza codice nuovo: `enterFullscreenOnTouch` al primo tocco e `showFullscreenButton` per un pulsante SCHERMO INTERO accanto a MONETA e AUDIO, visibile solo dove il browser lo permette. Per iPhone il manifesto (`display: fullscreen`, senza orientamento fisso: Pac-Man si gioca anche in verticale), le icone con lo sprite di Pac-Man e i meta `apple-mobile-web-app-*`.
 
 **Verifica:** su un telefono simulato, in verticale e in orizzontale, il pulsante compare accanto agli altri comandi senza coprire lo schermo.
+
+## 2026-10-17 · Joystick virtuale su smartphone
+
+**Richiesta (Luca):** sul telefono le frecce sinistra/destra sono scomode, perché non si guarda dove sono le dita e capita spesso di toccare fuori dalle frecce. La soluzione è un joystick virtuale come in tanti giochi mobile, fisso dove sono ora le frecce: a quattro direzioni per Pac-Man, sinistra e destra negli altri giochi, Breakout escluso. Joystick o frecce si scelgono in `tuning.config.ts`. Lo sviluppo ha un suo branch, separato dalla modalità debug chiesta nello stesso messaggio. Alle due domande della checklist Luca ha risposto: joystick come valore predefinito, e sì all'area sensibile più grande della base disegnata.
+
+**Decisioni dell'AI:**
+
+- **Il joystick produce tasti freccia**, come i pulsanti della guida 08: i giochi non cambiano, e tastiera, pulsanti e joystick si uniscono con `mergeKeyStates`.
+- **Pointer capture**: il primo dito prende il joystick e lo tiene finché non si stacca, anche fuori dalla base. È la vera cura del problema; la base fissa e l'area grande fanno il resto.
+- **Quattro direzioni come la "gate" del cabinato**: vince l'asse più spinto, mai due frecce insieme. Una zona morta di 0,3 del raggio [N] evita movimenti con il pollice appoggiato; è in `tuning.config.ts` con la scelta joystick/frecce.
+- **I pulsanti ignorano le dita del joystick**: senza, il pollice che attraversa il pannello premeva i pulsanti sotto di sé (`createTouchButtons` trova il pulsante con `elementFromPoint`).
+- **Uno stile per tutti**: `joystick.css` sta nel pacchetto `@arcade/input` ed entra nel CSS di ogni gioco al momento della build; ogni gioco sceglie solo misura e colore. `:has()` trova il gruppo delle frecce qualunque sia la sua classe.
+- **Space Invaders ha ora un `tuning.config.ts`**, con la sola impostazione del touch: la modalità debug, sviluppata in parallelo, lo userà anche lei.
+- **La guida è la 19**, perché la 18 è riservata alla modalità debug.
+
+**Errori corretti lungo la strada:** l'area sensibile restava alta quanto la base, perché il gruppo ereditava `align-items: center` dallo stile del gioco; nella feritoia orizzontale la manopola arrivava sopra il bordo, corsa ridotta da 0,3 a 0,27 della base.
+
+**Verifica:** test di `stick-direction`, `virtual-joystick`, `touch-controls` e `touch-buttons`; typecheck, lint, build; su un telefono simulato (iPhone 13, verticale e orizzontale) i cinque giochi mostrano il joystick al posto delle frecce, l'area sensibile copre tutta la cella del pannello, e trascinando il dito oltre la base la manopola resta sul bordo con il tasto tenuto.

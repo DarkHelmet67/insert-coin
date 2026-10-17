@@ -1,3 +1,5 @@
+import type { TouchControlsSettings } from '@arcade/input';
+
 /**
  * The values of the remake that the sources do not fix for certain, or that the cabinet lets
  * the owner choose, in one place so they are easy to change and to test. Each value says where
@@ -31,4 +33,10 @@ export const tuning = {
   extraLifeSetting: 0,
   /** Volume of the sound chip's three voices, from 0 to 1 [N]. */
   soundVolume: 0.8,
+  /**
+   * The controls on touch screens [N]: `movement` is `'joystick'` (a virtual joystick where the
+   * arrow buttons were, moving Pac-Man (4 ways, like the cabinet stick)) or `'arrows'` (the arrow buttons). `deadZone` is
+   * the part of the joystick's push, from 0 to 1, that does not move anything yet.
+   */
+  touchControls: { movement: 'joystick', deadZone: 0.3 } satisfies TouchControlsSettings,
 } as const;

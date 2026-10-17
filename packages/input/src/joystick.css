@@ -1,0 +1,64 @@
+/*
+ * The virtual joystick (see virtual-joystick.ts), shared by every game. A game imports this file
+ * and sets its colours and size with custom properties:
+ *   --stick-color   ring of the base and knob (default white);
+ *   --stick-fill    inside of the knob;
+ *   --stick-size    width of the base.
+ * The joystick sits inside the pad of the arrow buttons. main.ts writes the player's choice on
+ * the panel (data-touch-controls), and the stylesheet shows the joystick or the arrows.
+ */
+
+[data-joystick] {
+  display: none;
+}
+
+/* The pad of the joystick fills its whole cell of the page grid: that is the touch zone. */
+[data-touch-controls='joystick'] .pad:has(> [data-joystick]) {
+  display: grid;
+  grid-template: 1fr / 1fr;
+  place-self: stretch;
+  place-items: stretch;
+}
+
+[data-touch-controls='joystick'] .pad:has(> [data-joystick]) > :not([data-joystick]) {
+  display: none;
+}
+
+[data-touch-controls='joystick'] [data-joystick] {
+  display: grid;
+  place-items: center;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* The base: round for a 4-way stick, a slot for a sideways one. */
+.stick-base {
+  --stick-travel: calc(var(--stick-size, 8rem) * 0.27);
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  width: var(--stick-size, 8rem);
+  aspect-ratio: 1;
+  border: 3px solid var(--stick-color, #fff);
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.06);
+}
+
+[data-joystick='left-right'] .stick-base {
+  aspect-ratio: 2;
+  border-radius: 999px;
+}
+
+/* The knob follows the finger; --stick-x and --stick-y (-1 to 1) are set by the script. */
+.stick-knob {
+  width: calc(var(--stick-size, 8rem) * 0.4);
+  aspect-ratio: 1;
+  border: 3px solid var(--stick-color, #fff);
+  border-radius: 50%;
+  background: var(--stick-fill, #444);
+  transform: translate(
+    calc(var(--stick-x, 0) * var(--stick-travel)),
+    calc(var(--stick-y, 0) * var(--stick-travel))
+  );
+}

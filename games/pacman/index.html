@@ -21,6 +21,10 @@
     <!-- Cabinet control panel: visible only on touch screens (see style.css). -->
     <div id="touch-panel" class="panel">
       <div class="pad pad-stick">
+        <!-- The virtual joystick: shown instead of the arrows when tuning.config.ts asks for it. -->
+        <div class="stick" data-joystick="four-way" aria-hidden="true">
+          <div class="stick-base"><div class="stick-knob"></div></div>
+        </div>
         <button type="button" class="key key-arrow key-up" data-key="ArrowUp" aria-label="Su">
           ▲
         </button>

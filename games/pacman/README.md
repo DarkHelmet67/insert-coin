@@ -2,7 +2,7 @@
 
 Remake di _Pac-Man_ (Namco, 1980) su HTML5 Canvas, costruito sui pacchetti condivisi `@arcade/*`.
 
-Stato: **completo** (versione 1.0.0). Le regole vengono dal programma della ROM originale, letto con un disassemblatore Z80 e con il disassemblato commentato di Ms. Pac-Man: le velocità a bit delle tabelle dei livelli, il movimento di Pac-Man con le curve anticipate, i bersagli dei quattro fantasmi (con l'errore di Pinky verso l'alto), le fasi scatter e chase, Cruise Elroy, la casa dei fantasmi con i suoi contatori, le pillole e i fantasmi blu, la frutta, la vita extra, la fine del livello e lo schermo diviso del livello 256. Il labirinto, i messaggi e la grafica sono decodificati dalle ROM; le melodie e gli effetti sono suonati dal programma del suono della ROM su un emulatore del chip Namco. Ci sono anche la presentazione dei fantasmi, l'inseguimento, la demo, i gettoni e i tre intermezzi. Il record è salvato nel browser. Su telefoni e tablet compare il pannello del cabinato sotto lo schermo.
+Stato: **completo** (versione 1.1.0). Le regole vengono dal programma della ROM originale, letto con un disassemblatore Z80 e con il disassemblato commentato di Ms. Pac-Man: le velocità a bit delle tabelle dei livelli, il movimento di Pac-Man con le curve anticipate, i bersagli dei quattro fantasmi (con l'errore di Pinky verso l'alto), le fasi scatter e chase, Cruise Elroy, la casa dei fantasmi con i suoi contatori, le pillole e i fantasmi blu, la frutta, la vita extra, la fine del livello e lo schermo diviso del livello 256. Il labirinto, i messaggi e la grafica sono decodificati dalle ROM; le melodie e gli effetti sono suonati dal programma del suono della ROM su un emulatore del chip Namco. Ci sono anche la presentazione dei fantasmi, l'inseguimento, la demo, i gettoni e i tre intermezzi. Il record è salvato nel browser. Su telefoni e tablet compare il pannello del cabinato sotto lo schermo.
 
 | Comando              | Azione                       |
 | -------------------- | ---------------------------- |
@@ -11,7 +11,7 @@ Stato: **completo** (versione 1.0.0). Le regole vengono dal programma della ROM 
 | Frecce o **W A S D** | Muove Pac-Man                |
 | **M**                | Audio sì/no                  |
 
-Su telefoni e tablet: la croce del joystick a sinistra, MONETA e AUDIO al centro, START a destra; in orizzontale i comandi passano ai lati dello schermo. Il primo tocco porta la pagina a schermo intero, e il pulsante SCHERMO INTERO la riporta lì se ne esci; su iPhone, dove Safari non lo permette, si usa Condividi → Aggiungi alla schermata Home.
+Su telefoni e tablet: il joystick virtuale a quattro direzioni a sinistra (o la croce di frecce, a scelta in `src/tuning.config.ts`), MONETA e AUDIO al centro, START a destra; in orizzontale i comandi passano ai lati dello schermo. Il primo tocco porta la pagina a schermo intero, e il pulsante SCHERMO INTERO la riporta lì se ne esci; su iPhone, dove Safari non lo permette, si usa Condividi → Aggiungi alla schermata Home.
 
 I valori incerti o da scegliere (vite, soglia della vita extra, volume, durata dei punti di un fantasma) sono tutti in [`src/tuning.config.ts`](src/tuning.config.ts).
 

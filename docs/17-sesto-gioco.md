@@ -144,3 +144,5 @@ All'apertura compare la presentazione dei fantasmi, poi l'inseguimento e la demo
 Per vedere il primo intermezzo: finisci il secondo livello. Per vedere il livello 256 servono un po' di pazienza, oppure i test di `fruit.test.ts` e `screen.test.ts`.
 
 Il percorso completo, con le decisioni e gli errori, è nel [diario AI](ai-workflow.md); le regole dell'originale, con le fonti, nella [guida delle meccaniche](../games/pacman/docs/meccaniche-originali.md).
+
+Prossima guida: [19 · Joystick virtuale](19-joystick-virtuale.md).

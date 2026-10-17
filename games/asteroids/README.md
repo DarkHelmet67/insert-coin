@@ -2,7 +2,7 @@
 
 Remake di _Asteroids_ (Atari, 1979) su HTML5 Canvas, costruito sui pacchetti condivisi `@arcade/*`.
 
-Stato: **completo** (versione 1.0.0). La partita è quella del cabinato: nave, colpi, asteroidi che si dividono, ondate da 4 a 11, dischi volanti grandi e piccoli, tre vite con una in più ogni 10.000 punti, iperspazio, fine partita e record salvato nel browser. Ci sono anche i suoni del cabinato e la schermata di attesa. Su telefoni e tablet compare il pannello del cabinato: in orizzontale ai lati dello schermo, in verticale sotto; toccare lo schermo equivale a START e porta il gioco a schermo intero (su iPhone serve "Aggiungi alla schermata Home").
+Stato: **completo** (versione 1.1.0). La partita è quella del cabinato: nave, colpi, asteroidi che si dividono, ondate da 4 a 11, dischi volanti grandi e piccoli, tre vite con una in più ogni 10.000 punti, iperspazio, fine partita e record salvato nel browser. Ci sono anche i suoni del cabinato e la schermata di attesa. Su telefoni e tablet compare il pannello del cabinato: in orizzontale ai lati dello schermo, in verticale sotto; toccare lo schermo equivale a START e porta il gioco a schermo intero (su iPhone serve "Aggiungi alla schermata Home").
 
 | Comando                  | Azione        |
 | ------------------------ | ------------- |
@@ -13,7 +13,7 @@ Stato: **completo** (versione 1.0.0). La partita è quella del cabinato: nave, c
 | **Invio** o **1**        | Nuova partita |
 | **M**                    | Audio sì/no   |
 
-Su telefoni e tablet: ⟲ ⟳ ruotano, SPINTA, FUOCO e IPER sono per il pollice destro, AUDIO e SCHERMO INTERO in alto; toccare lo schermo avvia la partita.
+Su telefoni e tablet: il joystick virtuale ruota la nave (o i pulsanti ⟲ ⟳, a scelta in `src/tuning.config.ts`), SPINTA, FUOCO e IPER sono per il pollice destro, AUDIO e SCHERMO INTERO in alto; toccare lo schermo avvia la partita.
 
 I valori incerti (l'aspetto del fascio, il numero di vite iniziali, i suoni) sono tutti in [`src/tuning.config.ts`](src/tuning.config.ts).
 

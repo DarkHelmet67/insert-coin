@@ -198,3 +198,10 @@ body {
     padding-top: 0.5rem;
   }
 }
+
+/* The virtual joystick (shared style in @arcade/input/joystick.css): its size on this cabinet. */
+.stick {
+  --stick-size: 8.5rem;
+  --stick-color: #2121ff;
+  --stick-fill: #222;
+}

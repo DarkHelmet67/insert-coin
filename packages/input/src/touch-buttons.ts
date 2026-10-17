@@ -17,6 +17,8 @@ export type KeyAt = (event: PointerEvent) => KeyCode | undefined;
 export interface TouchButtonsOptions {
   /** How to find the button under a finger; replaced by a fake in tests. */
   readonly keyAt?: KeyAt;
+  /** Which pointers belong to someone else (by default, a virtual joystick); replaced in tests. */
+  readonly ignores?: (event: Event) => boolean;
 }
 
 /** Live on-screen buttons, polled like a keyboard. */
@@ -38,6 +40,17 @@ const keyUnderPointer: KeyAt = ({ clientX, clientY }) => {
 };
 
 /**
+ * Whether the pointer belongs to a virtual joystick, which reads it by itself
+ * (see `virtual-joystick.ts`). The joystick captures its finger, so the event target stays the
+ * joystick even when the finger slides over another button: without this check, a thumb
+ * pushing the stick across the panel would also press the buttons under it.
+ */
+const onJoystick = ({ target }: Event): boolean =>
+  typeof Element !== 'undefined' &&
+  target instanceof Element &&
+  target.closest('[data-joystick]') !== null;
+
+/**
  * Turns on-screen buttons into "virtual keys": each button has a `data-key` attribute
  * (e.g. `data-key="Space"`) and produces the same key state as the physical key,
  * so the game reads touch and keyboard with the same code.
@@ -45,7 +58,7 @@ const keyUnderPointer: KeyAt = ({ clientX, clientY }) => {
  */
 export const createTouchButtons = (
   target: TouchTarget,
-  { keyAt = keyUnderPointer }: TouchButtonsOptions = {},
+  { keyAt = keyUnderPointer, ignores = onJoystick }: TouchButtonsOptions = {},
 ): TouchButtons => {
   let pointers: PointerKeys = noPointers;
   let state: KeyState = emptyKeyState;
@@ -59,13 +72,15 @@ export const createTouchButtons = (
   /** A finger touches the panel: block the browser's own gestures (zoom, selection, menus). */
   const onDown = (event: Event): void => {
     event.preventDefault();
+    if (ignores(event)) return;
     const pointer = event as PointerEvent;
     update(movePointer(pointers, pointer.pointerId, keyAt(pointer)));
   };
   /** A finger slides, maybe onto another button. A mouse just hovering (no button held) does not count. */
   const onMove = (event: Event): void => {
     const pointer = event as PointerEvent;
-    if (pointer.buttons !== 0) update(movePointer(pointers, pointer.pointerId, keyAt(pointer)));
+    if (pointer.buttons !== 0 && !ignores(event))
+      update(movePointer(pointers, pointer.pointerId, keyAt(pointer)));
   };
   /** A finger leaves the screen, or the system takes it over (`pointercancel`). */
   const onUp = (event: Event): void => {

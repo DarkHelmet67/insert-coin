@@ -43,3 +43,25 @@ export {
   type PointerSnapshot,
   type PointerTarget,
 } from './pointer-position';
+export {
+  centered,
+  shownOffset,
+  stickKeys,
+  stickOffset,
+  type StickDirections,
+  type StickOffset,
+  type StickPoint,
+} from './stick-direction';
+export {
+  createVirtualJoystick,
+  type JoystickElements,
+  type JoystickZone,
+  type VirtualJoystickOptions,
+} from './virtual-joystick';
+export {
+  createTouchControls,
+  findJoystick,
+  type TouchControlsSettings,
+  type TouchMovement,
+  type TouchPanel,
+} from './touch-controls';
