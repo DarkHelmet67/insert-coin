@@ -1,3 +1,5 @@
+import type { TouchControlsSettings } from '@arcade/input';
+
 /**
  * The values of the remake that the sources do not fix for certain, in one place so they are
  * easy to change and to test. Each value says where it comes from:
@@ -71,4 +73,10 @@ export const tuning = {
     /** The extra ship [H, P $7BA9]: a 3 kHz beep, 4 frames on and 4 off, 11 times. */
     extraLife: { frequency: 3000, beeps: 11, volume: 0.04 },
   },
+  /**
+   * The controls on touch screens [N]: `movement` is `'joystick'` (a virtual joystick where the
+   * arrow buttons were, moving the ship (it rotates it)) or `'arrows'` (the arrow buttons). `deadZone` is
+   * the part of the joystick's push, from 0 to 1, that does not move anything yet.
+   */
+  touchControls: { movement: 'joystick', deadZone: 0.3 } satisfies TouchControlsSettings,
 } as const;

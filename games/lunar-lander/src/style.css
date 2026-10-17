@@ -272,3 +272,8 @@ body {
     display: none;
   }
 }
+
+/* The virtual joystick (shared style in @arcade/input/joystick.css): its size on this cabinet. */
+.stick {
+  --stick-size: 8rem;
+}

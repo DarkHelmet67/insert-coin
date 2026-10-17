@@ -126,4 +126,6 @@ Sul telefono: premi MONETA, tieni ◀ con un pollice e spara con l'altro, poi fa
 
 Un errore da evitare: la proprietà `grid-area: screen` va dichiarata solo dentro la media query, dove esiste la griglia con l'area `screen`. Scritta fuori, su desktop il nome è sconosciuto e il browser aggiunge colonne implicite: il gioco finisce spostato a destra.
 
+Le frecce hanno poi un'alternativa: il joystick virtuale della [guida 19](19-joystick-virtuale.md), oggi il comando predefinito sui telefoni.
+
 Prossima guida: [09 · Record salvato](09-record-salvato.md).
