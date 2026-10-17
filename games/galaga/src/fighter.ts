@@ -30,6 +30,13 @@ export const placeFighter = (objects: Objects): Objects =>
     wide: false,
   }));
 
+/** Debug mode: the objects with a double fighter at the start position, the second on the right. */
+export const placeDualFighter = (objects: Objects): Objects => {
+  const placed = placeFighter(objects);
+  const main = objectAt(placed, FIGHTER);
+  return updateObject(placed, FIGHTER_2, () => ({ ...main, x: main.x + DUAL_SPACING }));
+};
+
 /** Result of one frame of fighter movement. */
 export interface FighterMove {
   readonly objects: Objects;

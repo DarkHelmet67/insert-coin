@@ -12,9 +12,29 @@
  */
 import type { NoiseSound } from '@arcade/audio';
 import type { TouchControlsSettings } from '@arcade/input';
+import type { GalagaDebug } from './debug';
 import { RANK, type Rank } from './stage-setup';
 
+/**
+ * Debug mode [N], to test the late stages and the challenging stages without playing well.
+ * Turn it on with `enabled: true`; while it is on, the DEBUG mark is shown and the hi-score is
+ * not saved. Keep `enabled: false` in the published game: a test fails otherwise. See
+ * docs/18-modalita-debug.md.
+ */
+const debug: GalagaDebug = {
+  enabled: false,
+  /** The first stage: 3, 7, 11... are challenging stages; past stage 26 the last four repeat. */
+  startLevel: 1,
+  /** Bombs and aliens do not destroy the fighter (aliens that touch it still explode). */
+  godMode: true,
+  /** The tractor beam never catches the fighter. */
+  noCapture: false,
+  /** Every new fighter arrives as a double fighter, which no Boss can capture. */
+  startDual: false,
+};
+
 export const tuning = {
+  debug,
   /**
    * The difficulty (DIP switches): A is the factory setting [W manual], the easiest; B, C and D
    * make the aliens dive and bomb more [P `bmbr_stg_cfg_dat`].

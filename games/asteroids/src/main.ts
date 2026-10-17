@@ -1,11 +1,13 @@
 import '@arcade/input/joystick.css';
 import './style.css';
 import { createAudio } from '@arcade/audio';
+import { debugSafeHiScores, showDebugMark } from '@arcade/debug';
 import { createGameLoop } from '@arcade/engine-core';
 import { boundKeys, createKeyboard, createTouchControls, mergeKeyStates } from '@arcade/input';
 import { enterFullscreenOnTouch, getCanvasContext, showFullscreenButton } from '@arcade/render';
 import { createHiScoreStore } from '@arcade/storage';
 import { bindings, readControls } from './controls';
+import { debug } from './debug';
 import { createAttractState, updateGame, type GameState } from './game';
 import { seedRandom } from './random';
 import { renderGame } from './render';
@@ -19,7 +21,12 @@ const touch = createTouchControls(document.body, tuning.touchControls, 'left-rig
 // On phones and tablets the first touch hides the browser's bars, where the browser allows it.
 enterFullscreenOnTouch();
 showFullscreenButton(document.querySelector('#fullscreen'));
-const hiScores = createHiScoreStore('insert-coin/asteroids/hi-score');
+// In debug mode the DEBUG mark is shown and new records are not saved.
+showDebugMark(debug.enabled);
+const hiScores = debugSafeHiScores(
+  createHiScoreStore('insert-coin/asteroids/hi-score'),
+  debug.enabled,
+);
 const audio = createAudio();
 
 /**

@@ -1,10 +1,12 @@
 import './style.css';
 import { createAudio } from '@arcade/audio';
+import { debugSafeHiScores, showDebugMark } from '@arcade/debug';
 import { createGameLoop } from '@arcade/engine-core';
 import { boundKeys, createKeyboard, createPointerPosition } from '@arcade/input';
 import { getCanvasContext } from '@arcade/render';
 import { createHiScoreStore } from '@arcade/storage';
 import { bindings, readControls } from './controls';
+import { debug } from './debug';
 import { initialGameState, updateGame, type GameState } from './game';
 import { SCREEN_WIDTH } from './playfield';
 import { renderGame } from './render';
@@ -19,7 +21,12 @@ const pointer = createPointerPosition({
   logicalWidth: SCREEN_WIDTH,
 });
 const audio = createAudio();
-const hiScores = createHiScoreStore('insert-coin/breakout/hi-score');
+// In debug mode the DEBUG mark is shown and new records are not saved.
+showDebugMark(debug.enabled);
+const hiScores = debugSafeHiScores(
+  createHiScoreStore('insert-coin/breakout/hi-score'),
+  debug.enabled,
+);
 
 /**
  * One frame: read the controls, update the pure game state, then play the sounds that the

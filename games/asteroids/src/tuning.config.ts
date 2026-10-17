@@ -11,7 +11,26 @@ import type { TouchControlsSettings } from '@arcade/input';
  * See docs/meccaniche-originali.md for the details. Values that are certain (the ROM drawings,
  * their sizes) live in shapes.ts and ship-shapes.ts instead.
  */
+import type { AsteroidsDebug } from './debug';
+
+/**
+ * Debug mode [N], to test the crowded waves without playing well. Turn it on with
+ * `enabled: true`; while it is on, the DEBUG mark is shown and the hi-score is not saved.
+ * Keep `enabled: false` in the published game: a test fails otherwise. See
+ * docs/18-modalita-debug.md.
+ */
+const debug: AsteroidsDebug = {
+  enabled: false,
+  /** The first wave: 4 large rocks, then 2 more at each wave up to 11 (from the 5th). */
+  startLevel: 1,
+  /** Nothing touches the ship: rocks, saucers and shots go through it. */
+  godMode: true,
+  /** A hyperspace jump never destroys the ship. */
+  safeHyperspace: false,
+};
+
 export const tuning = {
+  debug,
   /**
    * Frames per second of the game loop, and so the unit of every speed ("per frame").
    * The program ran at 61.5 [P $7B73, H]; the remake uses 60 [N], one step per image on the

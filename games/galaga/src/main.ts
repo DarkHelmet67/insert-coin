@@ -1,11 +1,13 @@
 import '@arcade/input/joystick.css';
 import './style.css';
 import { createAudio } from '@arcade/audio';
+import { debugSafeHiScores, showDebugMark } from '@arcade/debug';
 import { createGameLoop } from '@arcade/engine-core';
 import { boundKeys, createKeyboard, createTouchControls, mergeKeyStates } from '@arcade/input';
 import { getCanvasContext } from '@arcade/render';
 import { createHiScoreStore } from '@arcade/storage';
 import { bindings, readControls } from './controls';
+import { debug } from './debug';
 import { createGame, updateGame, type GameState } from './game';
 import { renderGame } from './render';
 import { NO_SOUND_COMMANDS, soundCommands } from './sound-commands';
@@ -21,7 +23,12 @@ const touch = createTouchControls(
 );
 const audio = createAudio();
 const playSound = createSoundOutput(audio);
-const hiScores = createHiScoreStore('insert-coin/galaga/hi-score');
+// In debug mode the DEBUG mark is shown and new records are not saved.
+showDebugMark(debug.enabled);
+const hiScores = debugSafeHiScores(
+  createHiScoreStore('insert-coin/galaga/hi-score'),
+  debug.enabled,
+);
 
 /**
  * One frame: read keyboard and touch buttons, update the pure game state, play the frame's

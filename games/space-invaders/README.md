@@ -23,6 +23,10 @@ pnpm dev     # dalla root del monorepo
 pnpm build   # output in games/space-invaders/dist: index.html + game.css + game.js
 ```
 
+## Modalità debug
+
+Per provare i livelli avanzati, in [`src/tuning.config.ts`](src/tuning.config.ts) c'è la sezione `debug`. Con `enabled: true` le sue opzioni valgono: con `startLevel` si parte dall'ondata scelta, con `godMode` le bombe non distruggono il cannone e gli invasori arrivati in fondo ricominciano l'ondata, con `noShieldDamage` gli scudi non si rompono. Con il debug acceso compare la scritta DEBUG e il record non viene salvato; nelle anteprime delle pull request è acceso da solo. Da rimettere a `false` prima di pubblicare: un test lo controlla. Tutti i dettagli nella [guida 18](../../docs/18-modalita-debug.md).
+
 ## Guide del gioco
 
 - [Le meccaniche dell'originale](docs/meccaniche-originali.md): marcia degli alieni, bombe, bunker, UFO e il trucco del 23° colpo, con le fonti.

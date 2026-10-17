@@ -8,7 +8,8 @@ import { buildAttackWaves } from './attack-waves';
 import { newAttacks } from './attacks';
 import { stageFlags } from './badges';
 import { setTimer } from './clock';
-import { placeFighter } from './fighter';
+import { debug } from './debug';
+import { placeDualFighter, placeFighter } from './fighter';
 import { initialFormation } from './formation';
 import { scriptLines, startWait, waitOver, type ScriptName } from './endings';
 import { eraseRow, MESSAGES, show, shownAt, stageMessage } from './messages';
@@ -135,13 +136,29 @@ const startRespawn = (state: PlayingState): PlayingState => ({
   phase: { step: 'respawn' },
 });
 
+/**
+ * The new fighter at the start position. With the `startDual` debug option it is a double
+ * fighter, and no Boss may try to capture it, as after a rescue.
+ */
+export const placeFighters = (
+  state: PlayingState,
+  startDual: boolean = debug.startDual,
+): PlayingState =>
+  startDual
+    ? {
+        ...state,
+        objects: placeDualFighter(state.objects),
+        dual: true,
+        capture: { ...state.capture, busy: true },
+      }
+    : { ...state, objects: placeFighter(state.objects) };
+
 /** `c_133A`: when nothing flies, the new fighter appears and the stars start moving. */
 const respawn = (state: PlayingState): PlayingState => {
   if (flyingCount(state) !== 0) return state;
   const timer2 = Math.min(state.timers[2] + 0x1e, 0x78);
   return {
-    ...state,
-    objects: placeFighter(state.objects),
+    ...placeFighters(state),
     starControl: { ...state.starControl, shipOnScreen: true },
     tasks: { ...state.tasks, fighterHits: true },
     restart: false,

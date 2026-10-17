@@ -1,5 +1,6 @@
 import { newAttract, updateAttract, type Attract } from './attract';
 import type { Controls } from './controls';
+import { debug } from './debug';
 import { emptyPlayingState, type PlayingState } from './playing';
 import { startIntro } from './program';
 import { updatePlaying } from './update-playing';
@@ -24,8 +25,12 @@ export const createGame = (hiScore: number): GameState => ({
   hiScore,
 });
 
-/** A new game, at the "PLAYER 1" screen. */
-const newGame = (): PlayingState => startIntro(emptyPlayingState({ step: 'intro' }));
+/**
+ * A new game, at the "PLAYER 1" screen. The stage counter goes up by one before each stage, so
+ * it starts one below the first stage: 1, or the one chosen in debug mode.
+ */
+export const newGame = (startStage: number = debug.startLevel): PlayingState =>
+  startIntro({ ...emptyPlayingState({ step: 'intro' }), stage: startStage - 1 });
 
 /** The game one frame later. A coin on the attract screen starts a game. */
 export const updateGame = (state: GameState, controls: Controls): GameState => {

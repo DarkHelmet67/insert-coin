@@ -1,11 +1,13 @@
 import '@arcade/input/joystick.css';
 import './style.css';
 import { createAudio } from '@arcade/audio';
+import { debugSafeHiScores, showDebugMark } from '@arcade/debug';
 import { createGameLoop } from '@arcade/engine-core';
 import { boundKeys, createKeyboard, createTouchControls, mergeKeyStates } from '@arcade/input';
 import { getCanvasContext } from '@arcade/render';
 import { createHiScoreStore } from '@arcade/storage';
 import { bindings, readControls } from './controls';
+import { debug } from './debug';
 import { initialGameState, updateGame, type GameState } from './game';
 import { renderGame } from './render';
 import { sounds, soundsFor } from './sounds';
@@ -19,7 +21,12 @@ const touch = createTouchControls(
   'left-right',
 );
 const audio = createAudio();
-const hiScores = createHiScoreStore('insert-coin/space-invaders/hi-score');
+// In debug mode the DEBUG mark is shown and new records are not saved.
+showDebugMark(debug.enabled);
+const hiScores = debugSafeHiScores(
+  createHiScoreStore('insert-coin/space-invaders/hi-score'),
+  debug.enabled,
+);
 
 /**
  * One simulation step: read the controls, update the pure game state, then play the sounds

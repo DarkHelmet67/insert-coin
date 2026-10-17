@@ -1,3 +1,4 @@
+import { debug } from './debug';
 import type { Point } from './position';
 import { nextRandom, nextRandomAfter, type Rng } from './random';
 import { EXPLOSION_START, rockCount, type RockSlot } from './rocks';
@@ -98,11 +99,18 @@ export const hyperspaceLanding = (from: Point, rocks: readonly RockSlot[], rng: 
   };
 };
 
-/** The ship leaves the screen for hyperspace: it stops and moves to where it will land. */
+/**
+ * The ship leaves the screen for hyperspace: it stops and moves to where it will land.
+ * @param player - the player before the jump.
+ * @param rocks - the rocks on screen, which decide the risk.
+ * @param rng - the random generator.
+ * @param safe - debug mode: the jump is never fatal.
+ */
 export const jumpIntoHyperspace = (
   player: PlayerState,
   rocks: readonly RockSlot[],
   rng: Rng,
+  safe: boolean = debug.safeHyperspace,
 ): { readonly player: PlayerState; readonly rng: Rng } => {
   const landing = hyperspaceLanding(player.ship.position, rocks, rng);
   return {
@@ -112,7 +120,7 @@ export const jumpIntoHyperspace = (
       life: {
         kind: 'hidden',
         timer: HYPERSPACE_TIME,
-        reason: landing.fatal ? 'fatal-jump' : 'jump',
+        reason: landing.fatal && !safe ? 'fatal-jump' : 'jump',
       },
     },
     rng: landing.rng,

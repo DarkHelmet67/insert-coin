@@ -78,3 +78,6 @@ export const MISSION_ORDER: readonly Mission[] = ['training', 'cadet', 'prime', 
 /** The mission after `mission`, as one press of SELECT gives it. */
 export const nextMission = (mission: Mission): Mission =>
   MISSION_ORDER[(MISSION_ORDER.indexOf(mission) + 1) % MISSION_ORDER.length] ?? 'training';
+
+/** The mission of a new game: `level` 1 to 4 in SELECT order (TRAINING first), as debug mode picks it. */
+export const missionForLevel = (level: number): Mission => MISSION_ORDER[level - 1] ?? 'training';

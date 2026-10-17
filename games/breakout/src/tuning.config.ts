@@ -7,13 +7,28 @@
  * See docs/meccaniche-originali.md for the details. Values that are certain (the size of the
  * bricks, the points per row) live in playfield.ts and bricks.ts instead.
  */
+import type { BreakoutDebug } from './debug';
+
+/**
+ * Debug mode [N], to watch the speed-ups and the second wall without playing well. Turn it on
+ * with `enabled: true`; while it is on, the DEBUG mark is shown and the hi-score is not saved.
+ * Keep `enabled: false` in the published game: a test fails otherwise. See
+ * docs/18-modalita-debug.md.
+ */
+const debug: BreakoutDebug = {
+  enabled: false,
+  /** The first wall: 1, or 2 to start on the second (and last) wall, with its 448 points. */
+  startLevel: 1,
+  /** The ball bounces off the bottom of the screen instead of being lost. */
+  godMode: true,
+  /** The paddle spans the whole screen, as the original cabinet did in its attract mode. */
+  fullPaddle: false,
+  /** Paddle hits already counted at every serve: 4 and 12 are the speed-ups, 8 the flatter angle. */
+  startHits: 0,
+};
+
 export const tuning = {
-  /**
-   * Debug mode [N]: the paddle spans the whole screen, so the ball can never be lost. Useful
-   * to watch the speed-ups and the second wall without playing well. The original cabinet did
-   * the same in its attract mode. Keep it `false` in the published game.
-   */
-  debug: false,
+  debug,
 
   /**
    * Frames per second of the game loop, and so the unit of every speed below ("per frame").

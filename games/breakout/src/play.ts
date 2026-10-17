@@ -1,4 +1,5 @@
 import {
+  bounceOffFloor,
   bounceOffPaddle,
   bounceOffWalls,
   isLost,
@@ -8,6 +9,7 @@ import {
 } from './ball';
 import { hitBrick } from './brick-hit';
 import { fullWall, WALL_POINTS, type Wall } from './bricks';
+import { debug } from './debug';
 import type { Paddle } from './paddle';
 import { serveDelay, servedBall } from './serve';
 import { tuning } from './tuning.config';
@@ -32,15 +34,23 @@ export interface Round {
   readonly refilled: boolean;
 }
 
-/** A new game: full wall, no points, first ball waiting for SERVE. */
-export const newRound = (): Round => ({
+/**
+ * A new game: full wall, no points, first ball waiting for SERVE.
+ * @param startWall - 1, or 2 to start on the second wall (debug mode): its points already
+ * scored, and no third wall to come.
+ */
+export const newRound = (startWall: number = debug.startLevel): Round => ({
   play: { phase: 'ready' },
   wall: fullWall(),
-  score: 0,
+  score: startWall === 2 ? WALL_POINTS : 0,
   ball: 1,
   shrunk: false,
-  refilled: false,
+  refilled: startWall === 2,
 });
+
+/** The ball after the bottom of the screen: lost, or bounced back up in god mode. */
+export const saveInGodMode = (ball: Ball, godMode: boolean = debug.godMode): Ball =>
+  godMode && isLost(ball) ? bounceOffFloor(ball) : ball;
 
 /** After a lost ball: the next one, or the end of the game after the last. */
 const loseBall = (round: Round): Round =>
@@ -73,7 +83,8 @@ const updateBall = (round: Round, ball: Ball, paddle: Paddle): Round => {
     shrunk: round.shrunk || touchesTopWall(moved),
     refilled: round.refilled || refill,
   };
-  return isLost(hit.ball) ? loseBall(next) : { ...next, play: { phase: 'inPlay', ball: hit.ball } };
+  const after = saveInGodMode(hit.ball);
+  return isLost(after) ? loseBall(next) : { ...next, play: { phase: 'inPlay', ball: after } };
 };
 
 /**

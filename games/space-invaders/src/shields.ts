@@ -1,4 +1,5 @@
 import { bitmapsOverlap, eraseBitmap, type Bitmap, type PlacedBitmap } from '@arcade/collision';
+import { debug } from './debug';
 import { shieldSprite } from './sprites';
 
 /** One shield: its position and its current, possibly damaged, shape. */
@@ -29,8 +30,19 @@ export const findHitShield = (
   object: PlacedBitmap,
 ): Shield | undefined => shields.find((shield) => bitmapsOverlap(shield, object));
 
-/** Carves `brush` out of every shield it touches: shields crumble a little at every hit. */
-export const damageShields = (shields: readonly Shield[], brush: PlacedBitmap): readonly Shield[] =>
-  shields.map((shield) =>
-    bitmapsOverlap(shield, brush) ? { ...shield, bitmap: eraseBitmap(shield, brush) } : shield,
-  );
+/**
+ * Carves `brush` out of every shield it touches: shields crumble a little at every hit.
+ * @param shields - the shields before the hit.
+ * @param brush - the shape that hits them.
+ * @param indestructible - debug mode: the shields stay intact.
+ */
+export const damageShields = (
+  shields: readonly Shield[],
+  brush: PlacedBitmap,
+  indestructible: boolean = debug.noShieldDamage,
+): readonly Shield[] =>
+  indestructible
+    ? shields
+    : shields.map((shield) =>
+        bitmapsOverlap(shield, brush) ? { ...shield, bitmap: eraseBitmap(shield, brush) } : shield,
+      );

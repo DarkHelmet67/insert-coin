@@ -1,3 +1,4 @@
+import { debug } from './debug';
 import { burnFuel, engineBurn, isEmpty, type Tank } from './fuel';
 import {
   isFrictionFrame,
@@ -42,6 +43,12 @@ export interface FlightFrame {
 /**
  * One frame of flight. With an empty tank the engine and the rotate buttons stop working
  * [P THRLVL, ROTSHP: only with credit], but gravity does not.
+ * @param flight - the module and its tank.
+ * @param commands - what the player asks.
+ * @param rules - the rules of the mission.
+ * @param view - the zoom of the camera.
+ * @param frame - the frame counter.
+ * @param infiniteFuel - debug mode: the tank never empties.
  */
 export const flyFrame = (
   flight: Flight,
@@ -49,6 +56,7 @@ export const flyFrame = (
   rules: MissionRules,
   view: View,
   frame: number,
+  infiniteFuel: boolean = debug.infiniteFuel,
 ): FlightFrame => {
   const slowed = rules.friction && isFrictionFrame(frame) ? slowDown(flight.lander) : flight.lander;
   const hasFuel = !isEmpty(flight.tank);
@@ -60,7 +68,8 @@ export const flyFrame = (
     : { rotation: slowed.rotation, fuel: 0 };
   const afterTurn = turned.fuel > 0 ? burnFuel(flight.tank, turned.fuel) : flight.tank;
   const burn = engineBurn(thrust, rules);
-  const tank = burn > 0 ? burnFuel(afterTurn, burn) : afterTurn;
+  const burned = burn > 0 ? burnFuel(afterTurn, burn) : afterTurn;
+  const tank = infiniteFuel ? flight.tank : burned;
   const lander = moveLander({ ...slowed, rotation: turned.rotation }, push, rules, view);
   return { flight: { lander, tank }, thrust };
 };

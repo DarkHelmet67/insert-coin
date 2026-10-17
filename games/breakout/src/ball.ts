@@ -87,3 +87,11 @@ export const bounceOffPaddle = (ball: Ball, paddle: Paddle): Ball => {
 
 /** Whether the ball has left the bottom of the screen. */
 export const isLost = (ball: Ball): boolean => ball.y >= SCREEN_HEIGHT;
+
+/** Debug mode: the ball bounces off the bottom of the screen as off a wall, instead of being lost. */
+export const bounceOffFloor = (ball: Ball): Ball => ({
+  ...ball,
+  y: SCREEN_HEIGHT - BALL_HEIGHT,
+  dirY: -1,
+  canHitBrick: true,
+});

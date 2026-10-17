@@ -2,6 +2,7 @@ import { bitmapsOverlap, type PlacedBitmap } from '@arcade/collision';
 import { ALIEN_POINTS, type Alien } from './aliens';
 import { removeBombs, type Bomb } from './bombs';
 import { CANNON_EXPLOSION_FRAMES, CANNON_Y } from './cannon';
+import { debug } from './debug';
 import { createEffect, explodeAlien } from './effects';
 import { removeAlien } from './fleet';
 import { GROUND_Y } from './playfield';
@@ -116,11 +117,18 @@ export const shotHitsShield = (state: PlayingState): PlayingState => {
   return { ...state, shot: undefined, shields: damageShields(state.shields, shotSplash(shot)) };
 };
 
-/** A bomb hits the cannon: one life lost, and the game pauses while the cannon explodes. */
-export const bombsHitCannon = (state: PlayingState): PlayingState => {
+/**
+ * A bomb hits the cannon: one life lost, and the game pauses while the cannon explodes.
+ * In god mode the bomb just disappears.
+ */
+export const bombsHitCannon = (
+  state: PlayingState,
+  godMode: boolean = debug.godMode,
+): PlayingState => {
   const cannon = { bitmap: cannonSprite, x: state.cannon.x, y: CANNON_Y };
   const bomb = state.bombs.active.find((b) => bitmapsOverlap(placedBomb(b), cannon));
   if (!bomb) return state;
+  if (godMode) return { ...state, bombs: removeBombs(state.bombs, [bomb]) };
   return {
     ...state,
     lives: state.lives - 1,
