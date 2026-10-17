@@ -1,8 +1,9 @@
+import '@arcade/input/joystick.css';
 import './style.css';
 import { createAudio } from '@arcade/audio';
 import { debugSafeHiScores, showDebugMark } from '@arcade/debug';
 import { createGameLoop } from '@arcade/engine-core';
-import { boundKeys, createKeyboard, createTouchButtons, mergeKeyStates } from '@arcade/input';
+import { boundKeys, createKeyboard, createTouchControls, mergeKeyStates } from '@arcade/input';
 import {
   clearScreen,
   enterFullscreenOnTouch,
@@ -24,7 +25,7 @@ import { tuning } from './tuning.config';
 const ctx = getCanvasContext('#screen');
 const keyboard = createKeyboard(window, { captureKeys: boundKeys(bindings) });
 // The whole page listens to fingers: the panel's buttons, the lamps and the screen (START).
-const touch = createTouchButtons(document.body);
+const touch = createTouchControls(document.body, tuning.touchControls, 'left-right');
 const lever = createLeverTouch(document.querySelector<HTMLElement>('#lever'));
 // On phones and tablets the first touch hides the browser's bars, where the browser allows it.
 enterFullscreenOnTouch();

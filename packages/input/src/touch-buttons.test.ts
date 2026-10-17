@@ -73,6 +73,17 @@ describe('createTouchButtons', () => {
     expect(menu.defaultPrevented).toBe(true);
   });
 
+  it('leaves the fingers of a virtual joystick alone', () => {
+    const panel = new EventTarget();
+    const buttons = createTouchButtons(panel, { keyAt, ignores: () => true });
+    const down = pointerEvent('pointerdown', 1, 'Space');
+
+    panel.dispatchEvent(down);
+    panel.dispatchEvent(pointerEvent('pointermove', 1, 'ArrowLeft'));
+    expect(buttons.poll().down.size).toBe(0);
+    expect(down.defaultPrevented).toBe(true);
+  });
+
   it('stops listening after dispose', () => {
     const { panel, buttons } = setup();
 

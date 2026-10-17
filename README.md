@@ -143,6 +143,7 @@ Il codice è scritto per essere letto da persone (_code for humans, not for AI_)
 | [16 · Un quinto gioco: Galaga](docs/16-quinto-gioco.md)                          | Tre processori, interprete dei voli, dati generati, suono emulato             |
 | [17 · Il sesto gioco: Pac-Man](docs/17-sesto-gioco.md)                           | Memoria video, fantasmi dalla ROM, tile condivisi, demo e intermezzi          |
 | [18 · Modalità debug](docs/18-modalita-debug.md)                                 | Livello di partenza, immortalità e facilitazioni da tuning.config.ts          |
+| [19 · Joystick virtuale](docs/19-joystick-virtuale.md)                           | Joystick fisso al posto delle frecce, pointer capture, scelta nel file tuning |
 | [Space Invaders · meccaniche](games/space-invaders/docs/meccaniche-originali.md) | Marcia, bombe, bunker, UFO: come funzionava l'originale                       |
 | [Breakout · meccaniche](games/breakout/docs/meccaniche-originali.md)             | Mattoni, pallina, suoni: il circuito senza processore                         |
 | [Asteroids · meccaniche](games/asteroids/docs/meccaniche-originali.md)           | Nave, asteroidi, dischi volanti: il programma 6502 letto riga per riga        |

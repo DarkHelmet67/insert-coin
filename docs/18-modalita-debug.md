@@ -17,7 +17,7 @@ const debug: PacManDebug = {
 
 Per provare il livello 256 di Pac-Man basta scrivere `enabled: true` e `startLevel: 256`, poi lanciare `pnpm dev:pacman`. Le altre opzioni restano scritte nel file anche a debug spento, così chi lo riaccende ritrova le ultime scelte.
 
-Space Invaders non aveva un `tuning.config.ts`: è nato con questa sezione.
+In Space Invaders la sezione `debug` si affianca a `touchControls`, la scelta fra joystick virtuale e frecce della [guida 19](19-joystick-virtuale.md).
 
 ## 2. Le opzioni di ogni gioco
 

@@ -11,6 +11,7 @@
  * See docs/meccaniche-originali.md for the details.
  */
 import type { NoiseSound } from '@arcade/audio';
+import type { TouchControlsSettings } from '@arcade/input';
 import type { GalagaDebug } from './debug';
 import { RANK, type Rank } from './stage-setup';
 
@@ -65,4 +66,10 @@ export const tuning = {
     hold: 0.05,
     fade: 'linear',
   } satisfies NoiseSound,
+  /**
+   * The controls on touch screens [N]: `movement` is `'joystick'` (a virtual joystick where the
+   * arrow buttons were, moving the fighter) or `'arrows'` (the arrow buttons). `deadZone` is
+   * the part of the joystick's push, from 0 to 1, that does not move anything yet.
+   */
+  touchControls: { movement: 'joystick', deadZone: 0.3 } satisfies TouchControlsSettings,
 } as const;

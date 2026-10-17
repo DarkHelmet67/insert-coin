@@ -725,6 +725,24 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 
 **Verifica:** su un telefono simulato, in verticale e in orizzontale, il pulsante compare accanto agli altri comandi senza coprire lo schermo.
 
+## 2026-10-17 · Joystick virtuale su smartphone
+
+**Richiesta (Luca):** sul telefono le frecce sinistra/destra sono scomode, perché non si guarda dove sono le dita e capita spesso di toccare fuori dalle frecce. La soluzione è un joystick virtuale come in tanti giochi mobile, fisso dove sono ora le frecce: a quattro direzioni per Pac-Man, sinistra e destra negli altri giochi, Breakout escluso. Joystick o frecce si scelgono in `tuning.config.ts`. Lo sviluppo ha un suo branch, separato dalla modalità debug chiesta nello stesso messaggio. Alle due domande della checklist Luca ha risposto: joystick come valore predefinito, e sì all'area sensibile più grande della base disegnata.
+
+**Decisioni dell'AI:**
+
+- **Il joystick produce tasti freccia**, come i pulsanti della guida 08: i giochi non cambiano, e tastiera, pulsanti e joystick si uniscono con `mergeKeyStates`.
+- **Pointer capture**: il primo dito prende il joystick e lo tiene finché non si stacca, anche fuori dalla base. È la vera cura del problema; la base fissa e l'area grande fanno il resto.
+- **Quattro direzioni come la "gate" del cabinato**: vince l'asse più spinto, mai due frecce insieme. Una zona morta di 0,3 del raggio [N] evita movimenti con il pollice appoggiato; è in `tuning.config.ts` con la scelta joystick/frecce.
+- **I pulsanti ignorano le dita del joystick**: senza, il pollice che attraversa il pannello premeva i pulsanti sotto di sé (`createTouchButtons` trova il pulsante con `elementFromPoint`).
+- **Uno stile per tutti**: `joystick.css` sta nel pacchetto `@arcade/input` ed entra nel CSS di ogni gioco al momento della build; ogni gioco sceglie solo misura e colore. `:has()` trova il gruppo delle frecce qualunque sia la sua classe.
+- **Space Invaders ha ora un `tuning.config.ts`**, con la sola impostazione del touch: la modalità debug, sviluppata in parallelo, lo userà anche lei.
+- **La guida è la 19**, perché la 18 è riservata alla modalità debug.
+
+**Errori corretti lungo la strada:** l'area sensibile restava alta quanto la base, perché il gruppo ereditava `align-items: center` dallo stile del gioco; nella feritoia orizzontale la manopola arrivava sopra il bordo, corsa ridotta da 0,3 a 0,27 della base.
+
+**Verifica:** test di `stick-direction`, `virtual-joystick`, `touch-controls` e `touch-buttons`; typecheck, lint, build; su un telefono simulato (iPhone 13, verticale e orizzontale) i cinque giochi mostrano il joystick al posto delle frecce, l'area sensibile copre tutta la cella del pannello, e trascinando il dito oltre la base la manopola resta sul bordo con il tasto tenuto.
+
 ## 2026-10-17 · Modalità debug per tutti i giochi
 
 **Richiesta (Luca):** per verificare che i giochi funzionino anche nei livelli più avanzati, una modalità di debug per ogni gioco, attivata dal suo `tuning.config.ts`: livello di partenza, immortalità e altre facilitazioni a seconda del gioco, come il carburante infinito di Lunar Lander. Uno sviluppo a sé, sul suo branch. Approvata la proposta ("alcuni flag non mi erano nemmeno venuti in mente"), i passi sono stati eseguiti di fila.
@@ -736,8 +754,8 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 - **Le protezioni:** la scritta DEBUG sulla pagina (non sul canvas, così nessun renderer cambia), il record che non si salva, un test per gioco che fa fallire la CI se `enabled` resta `true`.
 - **Il debug nelle anteprime (scelta di Luca):** le anteprime delle PR sono costruite con `VITE_ARCADE_DEBUG=on`, per provare i livelli avanzati dal telefono; il sito di `main` mai. Per questo nei file pubblicati `godMode` (e `infiniteFuel`) sono già `true`.
 - **Breakout:** il vecchio `debug: true` (racchetta larga quanto lo schermo) è diventato l'opzione `fullPaddle`.
-- **Space Invaders** non aveva un `tuning.config.ts`: è nato con la sola sezione `debug`.
+- **Space Invaders** ha avuto il suo `tuning.config.ts` dal joystick virtuale, sviluppato in parallelo: unendo i due branch, la sezione `debug` si è affiancata a `touchControls`.
 
 **Scelte che il codice ha imposto:** in Pac-Man un fantasma ignorato dopo l'incontro avrebbe fermato il nucleo del gioco a ogni passo, quindi in god mode un fantasma non blu non conta proprio come incontro (la demo resta quella vera); in Space Invaders gli invasori arrivati al cannone ricominciano l'ondata invece di scendere fuori dallo schermo; in Galaga lo splash aumenta lo stage prima di ognuno, quindi la partita parte da `startLevel − 1`.
 
-**Verifica:** 912 test (un `debug.test.ts` per gioco e per il pacchetto), typecheck, lint, Prettier e build; il sito costruito con il debug acceso e aperto in un browser senza schermo: la scritta DEBUG in tutti e sei i giochi, nessun errore. Guida [18 · Modalità debug](18-modalita-debug.md). Versioni: ogni gioco 1.1.0, root 1.6.0.
+**Verifica:** 934 test dopo l'unione con il joystick virtuale (un `debug.test.ts` per gioco e per il pacchetto), typecheck, lint, Prettier e build; il sito costruito con il debug acceso e aperto in un browser senza schermo: la scritta DEBUG in tutti e sei i giochi, nessun errore. Guida [18 · Modalità debug](18-modalita-debug.md). Versioni: Breakout 1.1.0, gli altri giochi 1.2.0, root 1.7.0.

@@ -1,8 +1,9 @@
+import '@arcade/input/joystick.css';
 import './style.css';
 import { createAudio } from '@arcade/audio';
 import { debugSafeHiScores, showDebugMark } from '@arcade/debug';
 import { createGameLoop } from '@arcade/engine-core';
-import { boundKeys, createKeyboard, createTouchButtons, mergeKeyStates } from '@arcade/input';
+import { boundKeys, createKeyboard, createTouchControls, mergeKeyStates } from '@arcade/input';
 import { getCanvasContext } from '@arcade/render';
 import { createHiScoreStore } from '@arcade/storage';
 import { bindings, readControls } from './controls';
@@ -10,10 +11,15 @@ import { debug } from './debug';
 import { initialGameState, updateGame, type GameState } from './game';
 import { renderGame } from './render';
 import { sounds, soundsFor } from './sounds';
+import { tuning } from './tuning.config';
 
 const ctx = getCanvasContext('#screen');
 const keyboard = createKeyboard(window, { captureKeys: boundKeys(bindings) });
-const touch = createTouchButtons(document.querySelector('#touch-panel') ?? document.body);
+const touch = createTouchControls(
+  document.querySelector('#touch-panel') ?? document.body,
+  tuning.touchControls,
+  'left-right',
+);
 const audio = createAudio();
 // In debug mode the DEBUG mark is shown and new records are not saved.
 showDebugMark(debug.enabled);

@@ -2,7 +2,7 @@
 
 Remake di _Lunar Lander_ (Atari, 1979) su HTML5 Canvas, costruito sui pacchetti condivisi `@arcade/*`.
 
-Stato: **completo** (versione 1.0.0). Le regole vengono dal codice sorgente originale di Atari: la fisica del modulo con la leva della spinta, le quattro missioni (TRAINING, CADET, PRIME, COMMAND), il terreno con la vista lontana e lo zoom vicino al suolo, le 15 piazzole con il loro moltiplicatore, l'atterraggio buono, duro o lo schianto con i messaggi originali, l'ABORT, il carburante con la sua penale, i tre suoni del cabinato e la schermata di attesa. Il record è salvato nel browser. Su telefoni e tablet compaiono i comandi del cabinato; il primo tocco porta il gioco a schermo intero.
+Stato: **completo** (versione 1.1.0). Le regole vengono dal codice sorgente originale di Atari: la fisica del modulo con la leva della spinta, le quattro missioni (TRAINING, CADET, PRIME, COMMAND), il terreno con la vista lontana e lo zoom vicino al suolo, le 15 piazzole con il loro moltiplicatore, l'atterraggio buono, duro o lo schianto con i messaggi originali, l'ABORT, il carburante con la sua penale, i tre suoni del cabinato e la schermata di attesa. Il record è salvato nel browser. Su telefoni e tablet compaiono i comandi del cabinato; il primo tocco porta il gioco a schermo intero.
 
 | Comando                  | Azione                                         |
 | ------------------------ | ---------------------------------------------- |
@@ -14,7 +14,7 @@ Stato: **completo** (versione 1.0.0). Le regole vengono dal codice sorgente orig
 | **Spazio**               | ABORT: raddrizza il modulo e spinge al massimo |
 | **M**                    | Audio sì/no                                    |
 
-Su telefoni e tablet (meglio in orizzontale): ⟲ ⟳ e ABORT per il pollice sinistro, la leva della spinta per il destro; sotto lo schermo le lampade delle missioni (toccarle passa alla successiva), START e MONETA; AUDIO e SCHERMO INTERO in alto. Su iPhone, per lo schermo intero: Condividi → Aggiungi alla schermata Home.
+Su telefoni e tablet (meglio in orizzontale): il joystick virtuale che ruota il modulo (o i pulsanti ⟲ ⟳, a scelta in `src/tuning.config.ts`) e ABORT per il pollice sinistro, la leva della spinta per il destro; sotto lo schermo le lampade delle missioni (toccarle passa alla successiva), START e MONETA; AUDIO e SCHERMO INTERO in alto. Su iPhone, per lo schermo intero: Condividi → Aggiungi alla schermata Home.
 
 I valori incerti (la corsa della leva da tastiera, il carburante per moneta, i suoni, l'aspetto del fascio) sono tutti in [`src/tuning.config.ts`](src/tuning.config.ts).
 

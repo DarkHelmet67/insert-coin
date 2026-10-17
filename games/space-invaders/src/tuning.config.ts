@@ -1,12 +1,16 @@
-/**
- * The values of the remake that are meant to be changed by hand, in one place so they are easy
- * to find. Values that are certain (the ROM drawings, the start heights of the rounds) live in
- * the modules that use them instead.
- */
+import type { TouchControlsSettings } from '@arcade/input';
 import type { SpaceInvadersDebug } from './debug';
 
 /**
- * Debug mode, to test the advanced rounds without playing well. Turn it on with
+ * The values of the remake that are a choice rather than a fact of the original, in one place
+ * so they are easy to change and to test. The colours have their own file, colors.config.ts;
+ * values that are certain (the ROM drawings, the start heights of the rounds) live in the
+ * modules that use them.
+ * - [N] our choice, where the sources say nothing or the browser asks for something else.
+ */
+
+/**
+ * Debug mode [N], to test the advanced rounds without playing well. Turn it on with
  * `enabled: true`; while it is on, the DEBUG mark is shown and the hi-score is not saved.
  * Keep `enabled: false` in the published game: a test fails otherwise. See
  * docs/18-modalita-debug.md.
@@ -21,4 +25,12 @@ const debug: SpaceInvadersDebug = {
   noShieldDamage: false,
 };
 
-export const tuning = { debug } as const;
+export const tuning = {
+  debug,
+  /**
+   * The controls on touch screens [N]: `movement` is `'joystick'` (a virtual joystick where the
+   * arrow buttons were, moving the cannon) or `'arrows'` (the arrow buttons). `deadZone` is
+   * the part of the joystick's push, from 0 to 1, that does not move anything yet.
+   */
+  touchControls: { movement: 'joystick', deadZone: 0.3 } satisfies TouchControlsSettings,
+} as const;

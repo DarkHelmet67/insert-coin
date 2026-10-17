@@ -1,6 +1,6 @@
 {
   "name": "@arcade/galaga",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": true,
   "type": "module",
   "description": "Galaga (Namco, 1981) rebuilt on HTML5 Canvas.",

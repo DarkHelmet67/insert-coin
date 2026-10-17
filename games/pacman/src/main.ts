@@ -1,8 +1,9 @@
+import '@arcade/input/joystick.css';
 import './style.css';
 import { createAudio } from '@arcade/audio';
 import { debugSafeHiScores, showDebugMark } from '@arcade/debug';
 import { createGameLoop } from '@arcade/engine-core';
-import { boundKeys, createKeyboard, createTouchButtons, mergeKeyStates } from '@arcade/input';
+import { boundKeys, createKeyboard, createTouchControls, mergeKeyStates } from '@arcade/input';
 import { enterFullscreenOnTouch, getCanvasContext, showFullscreenButton } from '@arcade/render';
 import { createHiScoreStore } from '@arcade/storage';
 import { bindings, readControls } from './controls';
@@ -14,7 +15,11 @@ import { tuning } from './tuning.config';
 
 const ctx = getCanvasContext('#screen');
 const keyboard = createKeyboard(window, { captureKeys: boundKeys(bindings) });
-const touch = createTouchButtons(document.querySelector('#touch-panel') ?? document.body);
+const touch = createTouchControls(
+  document.querySelector('#touch-panel') ?? document.body,
+  tuning.touchControls,
+  'four-way',
+);
 // On phones and tablets the first touch hides the browser's bars, where the browser allows it;
 // the button brings the full screen back after leaving it.
 enterFullscreenOnTouch();
