@@ -15,6 +15,19 @@ pnpm build
 # games/space-invaders/dist/game.js     ~22 kB (circa 8 kB compresso)
 ```
 
+In fondo `pnpm build` stampa quanto ha impiegato ogni gioco, la loro somma e il tempo totale reale:
+
+```
+Build times
+  games/asteroids       0.58 s
+  games/breakout        0.24 s
+  ...
+  sum of projects       2.08 s
+  total (wall clock)    2.29 s
+```
+
+Lo fa [`scripts/build.js`](../scripts/build.js): lancia `pnpm -r --filter "./games/*" build`, ne inoltra l'output e usa il prefisso che pnpm mette a ogni riga (`games/pacman build: ...`) per sapere quale gioco ha scritto e quando. Il tempo di un gioco va dalla sua prima riga all'ultima; le funzioni pure che lo calcolano sono in [`scripts/build-times.js`](../scripts/build-times.js), con i test accanto. La somma e il totale non coincidono: pnpm costruisce più giochi in parallelo, e il tempo di ogni gioco non conta l'avvio di Node e di Vite.
+
 Tutto il gioco (logica, grafica, font e suoni) sta in un solo modulo JavaScript di una ventina di KB: gli sprite sono testo e i suoni sono generati al volo, quindi non ci sono immagini né file audio da scaricare.
 
 Un dettaglio della configurazione conta molto per il deploy:

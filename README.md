@@ -64,7 +64,7 @@ pnpm dev:asteroids # avvia Asteroids
 pnpm dev:lunar-lander # avvia Lunar Lander
 pnpm dev:galaga  # avvia Galaga
 pnpm dev:pacman  # avvia Pac-Man
-pnpm build    # build di produzione di tutti i giochi (games/*/dist)
+pnpm build    # build di produzione di tutti i giochi (games/*/dist), con i tempi in fondo
 pnpm build:site  # build + sito completo in _site/, come su GitHub Pages
 ```
 

@@ -742,3 +742,15 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 **Errori corretti lungo la strada:** l'area sensibile restava alta quanto la base, perché il gruppo ereditava `align-items: center` dallo stile del gioco; nella feritoia orizzontale la manopola arrivava sopra il bordo, corsa ridotta da 0,3 a 0,27 della base.
 
 **Verifica:** test di `stick-direction`, `virtual-joystick`, `touch-controls` e `touch-buttons`; typecheck, lint, build; su un telefono simulato (iPhone 13, verticale e orizzontale) i cinque giochi mostrano il joystick al posto delle frecce, l'area sensibile copre tutta la cella del pannello, e trascinando il dito oltre la base la manopola resta sul bordo con il tasto tenuto.
+
+## 2026-10-19 · Tempi della build
+
+**Richiesta (Luca):** che `pnpm build` mostri in fondo il tempo totale impiegato dai vari progetti.
+
+**Decisioni dell'AI:**
+
+- **Uno script Node invece del comando `pnpm -r` diretto**: [`scripts/build.js`](../scripts/build.js) lancia la stessa build, ne inoltra l'output e alla fine stampa il tempo di ogni gioco, la somma e il totale reale. La somma da sola ingannerebbe, perché pnpm costruisce più giochi in parallelo.
+- **Il tempo di un gioco si misura dalle sue righe**, grazie al prefisso `games/<nome> build:` di pnpm, invece di leggere il "built in" di Vite: così vale anche per la parte di build che Vite non conta, e lo script non dipende dal testo di Vite.
+- **Funzioni pure a parte** in `scripts/build-times.js`, con i test Vitest; `vitest.config.ts` ora include anche `scripts/**/*.test.js`.
+
+**Verifica:** `pnpm build` stampa la tabella dei sei giochi ed esce con il codice della build; typecheck, lint, test.
