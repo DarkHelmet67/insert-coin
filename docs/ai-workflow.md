@@ -759,3 +759,15 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 **Scelte che il codice ha imposto:** in Pac-Man un fantasma ignorato dopo l'incontro avrebbe fermato il nucleo del gioco a ogni passo, quindi in god mode un fantasma non blu non conta proprio come incontro (la demo resta quella vera); in Space Invaders gli invasori arrivati al cannone ricominciano l'ondata invece di scendere fuori dallo schermo; in Galaga lo splash aumenta lo stage prima di ognuno, quindi la partita parte da `startLevel − 1`.
 
 **Verifica:** 934 test dopo l'unione con il joystick virtuale (un `debug.test.ts` per gioco e per il pacchetto), typecheck, lint, Prettier e build; il sito costruito con il debug acceso e aperto in un browser senza schermo: la scritta DEBUG in tutti e sei i giochi, nessun errore. Guida [18 · Modalità debug](18-modalita-debug.md). Versioni: Breakout 1.1.0, gli altri giochi 1.2.0, root 1.7.0.
+
+## 2026-10-19 · Tempi della build
+
+**Richiesta (Luca):** che `pnpm build` mostri in fondo il tempo totale impiegato dai vari progetti.
+
+**Decisioni dell'AI:**
+
+- **Uno script Node invece del comando `pnpm -r` diretto**: [`scripts/build.js`](../scripts/build.js) lancia la stessa build, ne inoltra l'output e alla fine stampa il tempo di ogni gioco, la somma e il totale reale. La somma da sola ingannerebbe, perché pnpm costruisce più giochi in parallelo.
+- **Il tempo di un gioco si misura dalle sue righe**, grazie al prefisso `games/<nome> build:` di pnpm, invece di leggere il "built in" di Vite: così vale anche per la parte di build che Vite non conta, e lo script non dipende dal testo di Vite.
+- **Funzioni pure a parte** in `scripts/build-times.js`, con i test Vitest; `vitest.config.ts` ora include anche `scripts/**/*.test.js`.
+
+**Verifica:** `pnpm build` stampa la tabella dei sei giochi ed esce con il codice della build; typecheck, lint, test.

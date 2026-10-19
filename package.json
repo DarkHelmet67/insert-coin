@@ -9,7 +9,7 @@
     "node": "^22.13.0 || ^24.0.0 || >=26.0.0"
   },
   "scripts": {
-    "build": "pnpm -r --filter \"./games/*\" build",
+    "build": "node scripts/build.js",
     "build:site": "pnpm build && node scripts/assemble-site.js",
     "clean": "rm -rf node_modules packages/*/node_modules games/*/node_modules",
     "clean:all": "pnpm clean && rm -f pnpm-lock.yaml",
