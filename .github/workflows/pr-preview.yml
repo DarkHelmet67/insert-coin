@@ -27,7 +27,11 @@ jobs:
     steps:
       - uses: actions/checkout@v5 # the pull request merged into main: the site after the merge
       - uses: ./.github/actions/checks # a red pull request gets no preview
+      # Previews are built with debug mode on (see packages/debug), so the advanced levels can be
+      # tested on a phone without changing tuning.config.ts; the site of main never is.
       - run: pnpm build:site
+        env:
+          VITE_ARCADE_DEBUG: 'on'
       - name: Pack the preview
         run: |
           mkdir preview

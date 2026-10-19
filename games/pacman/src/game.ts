@@ -27,7 +27,7 @@ export type { GameState, Stage } from './stage';
  * at zero and the record the browser kept, then the attract mode starts.
  */
 export const createGame = (hiScore: number): GameState => {
-  const playing = newPlaying(hiScore);
+  const playing = newPlaying(hiScore, 1);
   const video = applyAll(filledVideo(TILE.space, 0), [
     textWrites(TEXT.highScore),
     {

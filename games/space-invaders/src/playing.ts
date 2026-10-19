@@ -19,6 +19,7 @@ import {
   shotHitsUfo,
 } from './collisions';
 import type { Controls } from './controls';
+import { debug } from './debug';
 import { stepEffects, type Effect } from './effects';
 import { createFleet, fleetBottom, stepFleet, type FleetState } from './fleet';
 import { FRAME } from './playfield';
@@ -50,9 +51,12 @@ export interface PlayingState {
 /** Cannons at the start of a game. */
 export const STARTING_LIVES = 3;
 
-/** A new game: three cannons, the first round's formation, four intact shields. */
-export const initialPlayingState = (): PlayingState => ({
-  round: 1,
+/**
+ * A new game: three cannons, the first round's formation, four intact shields.
+ * @param round - the first round: 1, or the one chosen in debug mode.
+ */
+export const initialPlayingState = (round: number = debug.startLevel): PlayingState => ({
+  round,
   score: 0,
   lives: STARTING_LIVES,
   extraLifeAwarded: false,
@@ -60,7 +64,7 @@ export const initialPlayingState = (): PlayingState => ({
   cannon: initialCannonState,
   cannonExplosion: undefined,
   shot: undefined,
-  fleet: createFleet(1),
+  fleet: createFleet(round),
   bombs: initialBombsState,
   shields: createShields(),
   ufo: initialUfoState,
@@ -106,6 +110,18 @@ const nextRoundIfCleared = (state: PlayingState): PlayingState =>
         shot: undefined,
       };
 
+/**
+ * In god mode, invaders that reach the cannon start their round again from the top instead of
+ * ending the game.
+ */
+export const godModeLanding = (
+  state: PlayingState,
+  godMode: boolean = debug.godMode,
+): PlayingState =>
+  godMode && fleetBottom(state.fleet) >= CANNON_Y
+    ? { ...state, fleet: createFleet(state.round) }
+    : state;
+
 /** One frame while the cannon explodes: everything else waits, then a new cannon arrives. */
 const stepCannonExplosion = (state: PlayingState, framesLeft: number): PlayingState => {
   if (framesLeft > 1)
@@ -131,6 +147,7 @@ const COLLISION_RULES: readonly ((state: PlayingState) => PlayingState)[] = [
   aliensCrushShields,
   awardExtraLife,
   nextRoundIfCleared,
+  godModeLanding,
 ];
 
 /**

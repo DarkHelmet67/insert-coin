@@ -1,6 +1,7 @@
 import { followLander, toScreen } from './camera';
 import { altitudeOf, hitsSurface, isTouchingDown } from './collision';
 import { moveLever, noControls, type Controls } from './controls';
+import { debug } from './debug';
 import { explosionFor, type Explosion } from './explosion';
 import { addFuel, burnFuel, HUNDREDTHS, isEmpty, tankWith, type Tank } from './fuel';
 import {
@@ -8,10 +9,11 @@ import {
   GOOD_LANDING_FUEL,
   judgeLanding,
   landingPoints,
+  spareInGodMode,
   type Outcome,
 } from './landing';
 import { landerOrientation, landerPosition, moveLander, type Lander } from './lander';
-import { MISSIONS, nextMission, type Mission } from './missions';
+import { missionForLevel, MISSIONS, nextMission, type Mission } from './missions';
 import { changeMission, landerProbes, startFlight, updateFlight, type FlightState } from './play';
 import { rotationAt } from './rotation';
 import { multiplierAt } from './sites';
@@ -131,9 +133,10 @@ const insertCoin = (state: GameState): GameState => {
       mode: { ...mode, flight: { ...mode.flight, flight: { ...mode.flight.flight, tank } } },
     };
   }
-  // A new game: TRAINING, score cleared [P DOGAME 10$].
+  // A new game: TRAINING (or the mission chosen in debug mode), score cleared [P DOGAME 10$].
+  const mission = missionForLevel(debug.startLevel);
   return mode.kind === 'attract'
-    ? { ...state, tank, mode: { kind: 'ready' }, mission: 'training', score: 0, fuelLoss: null }
+    ? { ...state, tank, mode: { kind: 'ready' }, mission, score: 0, fuelLoss: null }
     : { ...state, tank };
 };
 
@@ -228,10 +231,11 @@ const updateFlying = (
 ): GameState => {
   const { state: next, event } = updateFlight(flight, controls, state.frame, state.lever);
   if (event === 'flewOff') return flewOff(state, next);
-  if (event === 'crash') return touchDown(state, next, 'crash');
+  if (event === 'crash') return touchDown(state, next, spareInGodMode('crash'));
   if (event === 'touchdown') {
     const { lander } = next.flight;
-    return touchDown(state, next, judgeLanding(landerOrientation(lander), lander.vx, lander.vy));
+    const outcome = judgeLanding(landerOrientation(lander), lander.vx, lander.vy);
+    return touchDown(state, next, spareInGodMode(outcome));
   }
   const empty = isEmpty(next.flight.tank) ? emptyFrames + 1 : 0;
   if (empty >= EMPTY_TANK_SECONDS * tuning.framesPerSecond) return gameOver(state);

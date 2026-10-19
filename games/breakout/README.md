@@ -30,4 +30,4 @@ pnpm build          # output in games/breakout/dist: index.html + game.css + gam
 
 ## Modalità debug
 
-In [`src/tuning.config.ts`](src/tuning.config.ts) c'è `debug: false`. Con `true` la racchetta occupa tutto lo spazio fra i muri e la pallina non si perde mai: si possono osservare le accelerazioni e il secondo muro senza dover giocare bene. È lo stesso trucco della schermata di attesa. Da rimettere a `false` prima di pubblicare.
+Per provare i livelli avanzati, in [`src/tuning.config.ts`](src/tuning.config.ts) c'è la sezione `debug`. Con `enabled: true` le sue opzioni valgono: con `startLevel: 2` si parte dal secondo muro, con `godMode` la pallina rimbalza sul fondo, con `fullPaddle` la racchetta occupa tutto lo spazio fra i muri (lo stesso trucco della schermata di attesa), con `startHits` ogni battuta parte con dei colpi già contati, per vedere subito le accelerazioni. Con il debug acceso compare la scritta DEBUG e il record non viene salvato; nelle anteprime delle pull request è acceso da solo. Da rimettere a `false` prima di pubblicare: un test lo controlla. Tutti i dettagli nella [guida 18](../../docs/18-modalita-debug.md).

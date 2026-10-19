@@ -10,7 +10,26 @@ import type { TouchControlsSettings } from '@arcade/input';
  * - [N] our choice, where the sources say nothing or the browser asks for something else.
  * See docs/meccaniche-originali.md for the details.
  */
+import type { LunarLanderDebug } from './debug';
+
+/**
+ * Debug mode [N], to try every mission and every landing site without running out of fuel.
+ * Turn it on with `enabled: true`; while it is on, the DEBUG mark is shown and the hi-score is
+ * not saved. Keep `enabled: false` in the published game: a test fails otherwise. See
+ * docs/18-modalita-debug.md.
+ */
+const debug: LunarLanderDebug = {
+  enabled: false,
+  /** The mission of a new game: 1 TRAINING, 2 CADET, 3 PRIME, 4 COMMAND. */
+  startLevel: 1,
+  /** No crashes: a contact that would be a crash counts as a hard landing, with no fuel lost. */
+  godMode: true,
+  /** The engine and the rotation burn no fuel. */
+  infiniteFuel: true,
+};
+
 export const tuning = {
+  debug,
   /**
    * Frames per second of the game loop, and so the unit of every speed ("per frame").
    * The program steps once every 24 ms [P FRMECNT, H]: 41.67 frames a second. The remake keeps

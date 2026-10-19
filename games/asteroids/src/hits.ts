@@ -6,6 +6,7 @@ import {
   SHIP_SIZE,
   TARGET_SIZE,
 } from './collisions';
+import { debug } from './debug';
 import { killShip, type PlayerState } from './player';
 import type { Point } from './position';
 import type { Rng } from './random';
@@ -39,9 +40,14 @@ export const rockHitBy = (at: Point, reach: number, rocks: readonly RockSlot[]):
   return hit(rocks.length - 1);
 };
 
-/** Whether an object at `at` touches the flying ship. */
-const hitsShip = (state: HitState, at: Point, reach: number): boolean =>
-  state.life.kind === 'flying' && collides(state.ship.position, at, SHIP_SIZE + reach);
+/** Whether an object at `at` touches the flying ship; in god mode nothing does. */
+export const hitsShip = (
+  state: HitState,
+  at: Point,
+  reach: number,
+  godMode: boolean = debug.godMode,
+): boolean =>
+  !godMode && state.life.kind === 'flying' && collides(state.ship.position, at, SHIP_SIZE + reach);
 
 /** Whether a shot at `at` touches the flying saucer. */
 const hitsSaucer = (state: HitState, at: Point): boolean =>
@@ -122,9 +128,12 @@ const resolveSaucer = (state: HitState): HitState => {
   return target < 0 ? state : breakRock(explodeSaucer(state, false), target, false);
 };
 
-/** The ship against the rocks [P $6B1E]: both are destroyed, and the rock still scores. */
-const resolveShip = (state: HitState): HitState => {
-  if (state.life.kind !== 'flying') return state;
+/**
+ * The ship against the rocks [P $6B1E]: both are destroyed, and the rock still scores. In god
+ * mode the rocks go through the ship.
+ */
+export const resolveShip = (state: HitState, godMode: boolean = debug.godMode): HitState => {
+  if (godMode || state.life.kind !== 'flying') return state;
   const target = rockHitBy(state.ship.position, SHIP_REACH, state.rocks);
   return target < 0 ? state : breakRock({ ...state, ...killShip(state) }, target, true);
 };

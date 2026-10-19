@@ -1,3 +1,4 @@
+import { debug } from './debug';
 import { HUNDREDTHS, type Tank } from './fuel';
 import type { Orientation } from './module-view';
 
@@ -27,6 +28,10 @@ export const judgeLanding = (orientation: Orientation, vx: number, vy: number): 
 
 /** Points of each outcome, before the site multiplier [P POINTS]. */
 export const OUTCOME_POINTS: Readonly<Record<Outcome, number>> = { good: 50, hard: 15, crash: 5 };
+
+/** In god mode there are no crashes: what would be one counts as a hard landing. */
+export const spareInGodMode = (outcome: Outcome, godMode: boolean = debug.godMode): Outcome =>
+  godMode && outcome === 'crash' ? 'hard' : outcome;
 
 /** Points of a landing on a site with `multiplier` (1 outside the sites) [P LNDADR]. */
 export const landingPoints = (outcome: Outcome, multiplier: number): number =>

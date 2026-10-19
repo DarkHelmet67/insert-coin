@@ -1,4 +1,5 @@
 import type { Ball } from './ball';
+import { debug } from './debug';
 import { BALL_WIDTH, RIGHT_WALL_X, SIDE_WALL_WIDTH } from './playfield';
 import { tuning } from './tuning.config';
 
@@ -19,13 +20,15 @@ const SERVE_RANGE = RIGHT_WALL_X - SIDE_WALL_WIDTH - BALL_WIDTH;
  * The ball as it appears after a serve, going down towards the paddle at the slowest speed.
  * Its position and sideways direction were whatever the hidden ball had at that moment: the
  * remake derives them from the frame counter at the press, which is just as unpredictable.
+ * @param pressedAt - the frame counter when SERVE was pressed.
+ * @param startHits - paddle hits already counted: 0, or the `startHits` debug option.
  */
-export const servedBall = (pressedAt: number): Ball => ({
+export const servedBall = (pressedAt: number, startHits: number = debug.startHits): Ball => ({
   x: SIDE_WALL_WIDTH + (pressedAt % SERVE_RANGE),
   y: tuning.serve.appearY,
   dirX: pressedAt % 2 === 0 ? 1 : -1,
   dirY: 1,
-  hits: 0,
+  hits: startHits,
   fast: false,
   outer: pressedAt % 4 >= 2,
   canHitBrick: true,

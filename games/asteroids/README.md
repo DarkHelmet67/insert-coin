@@ -22,6 +22,10 @@ pnpm dev:asteroids  # dalla root del monorepo
 pnpm build          # output in games/asteroids/dist: index.html + game.css + game.js
 ```
 
+## Modalità debug
+
+Per provare i livelli avanzati, in [`src/tuning.config.ts`](src/tuning.config.ts) c'è la sezione `debug`. Con `enabled: true` le sue opzioni valgono: con `startLevel` si parte dall'ondata scelta (fino a 11 asteroidi), con `godMode` niente tocca la nave, con `safeHyperspace` l'iperspazio non la distrugge mai. Con il debug acceso compare la scritta DEBUG e il record non viene salvato; nelle anteprime delle pull request è acceso da solo. Da rimettere a `false` prima di pubblicare: un test lo controlla. Tutti i dettagli nella [guida 18](../../docs/18-modalita-debug.md).
+
 ## Guide del gioco
 
 - [Le meccaniche dell'originale](docs/meccaniche-originali.md): schermo vettoriale, nave, asteroidi, dischi volanti, iperspazio e suoni, ricavati dal programma originale.

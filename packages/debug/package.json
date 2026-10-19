@@ -1,0 +1,13 @@
+{
+  "name": "@arcade/debug",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Debug mode shared by the games: switch, on-screen mark, hi-score left untouched.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@arcade/storage": "workspace:*"
+  }
+}

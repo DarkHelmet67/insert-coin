@@ -13,6 +13,7 @@ import { POINTS } from './score';
 import { addPoints, eatFruit, eatTile } from './scoring';
 import { updateAutoPacMan, type AutoMove } from './autopilot';
 import { deathSound, tickDeath } from './death';
+import { debug } from './debug';
 import { SOUND, withSounds } from './sounds';
 import { tuning } from './tuning.config';
 
@@ -124,10 +125,23 @@ const meet = (playing: Playing, id: GhostId): Playing => {
   );
 };
 
+/**
+ * In god mode a ghost that is not blue passes through Pac-Man. The demo of the attract mode
+ * plays as on the cabinet.
+ */
+export const passesThrough = (
+  playing: Playing,
+  id: GhostId,
+  godMode: boolean = debug.godMode,
+): boolean => godMode && !playing.demo && !(playing.ghosts[id]?.blue ?? false);
+
 /** The ghost Pac-Man meets in this update, by tile, or by pixels while energized ($171D, $1789). */
-const collision = (playing: Playing): GhostId | undefined =>
-  ghostOnTile(playing.pacman, playing.ghosts) ??
-  (playing.fright.active ? ghostNearby(playing.pacman, playing.ghosts) : undefined);
+const collision = (playing: Playing): GhostId | undefined => {
+  const met =
+    ghostOnTile(playing.pacman, playing.ghosts) ??
+    (playing.fright.active ? ghostNearby(playing.pacman, playing.ghosts) : undefined);
+  return met === undefined || passesThrough(playing, met) ? undefined : met;
+};
 
 /** Shows the points of the ghost being eaten, then lets it go as eyes ($1235). */
 const continueEating = (playing: Playing): Playing => {

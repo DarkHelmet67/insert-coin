@@ -10,6 +10,7 @@ import { levelSettings, type LevelSettings } from './levels';
 import { newPacMan, type PacMan } from './pacman';
 import type { Timer } from './timers';
 import type { SoundWrite } from './sound-board';
+import { debug } from './debug';
 import { tuning } from './tuning.config';
 import { gameStartVideo } from './screen';
 import type { Video } from './video';
@@ -122,11 +123,11 @@ export const newLife = (level: number): LifeState => {
 };
 
 /** A new game at level 1, before the first life takes the field. */
-export const newPlaying = (hiScore: number): Playing => ({
-  ...newLife(1),
+export const newPlaying = (hiScore: number, level: number = debug.startLevel): Playing => ({
+  ...newLife(level),
   demo: false,
-  level: 1,
-  video: gameStartVideo(hiScore, tuning.lives),
+  level,
+  video: gameStartVideo(hiScore, tuning.lives, roundOf({ level })),
   houseDots: NEW_HOUSE_DOTS,
   dotsEaten: 0,
   score: 0,

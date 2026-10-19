@@ -25,7 +25,7 @@ export interface GameState extends Round {
  * `main.ts` replaces `hiScore` with the record saved in the browser.
  */
 export const initialGameState: GameState = {
-  ...newRound(),
+  ...newRound(1),
   attract: true,
   colorMode: 'color',
   paddle: attractPaddle,

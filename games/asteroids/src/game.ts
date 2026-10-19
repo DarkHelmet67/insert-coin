@@ -1,4 +1,5 @@
 import type { Controls } from './controls';
+import { debug } from './debug';
 import { resolveHits } from './hits';
 import {
   jumpIntoHyperspace,
@@ -56,13 +57,34 @@ export const WAVE_PAUSE = 0x7f;
 /** Frames of "PLAYER 1" before the ship appears [P $68F0]: about 2 seconds. */
 export const START_DELAY = 0x80;
 
+/** Most rocks that still let an early saucer in [P $717A]. */
+const MAX_SAUCER_ROCK_LIMIT = 10;
+
+/**
+ * What the waves before `wave` leave behind, so a game can start from it in debug mode: the
+ * size of the last wave (the next has two more rocks) and how early the saucers may come.
+ */
+export const wavesBefore = (wave: number): Pick<GameState, 'waveSize' | 'saucerRockLimit'> => ({
+  waveSize: Math.min(11, 2 * wave),
+  saucerRockLimit: Math.min(MAX_SAUCER_ROCK_LIMIT, noSaucer.saucerRockLimit + wave - 1),
+});
+
 /**
  * A new game: no rocks yet, the first wave of 4 coming after the pause, the ship waiting for the
  * end of "PLAYER 1". `rng` should differ from game to game: on the cabinet the generator kept
  * running between games, so no two games started alike. The ship keeps the direction of the
  * last game, because the program never resets it.
+ * @param rng - the random generator.
+ * @param hiScore - the best score so far.
+ * @param ship - the ship of the last game.
+ * @param startWave - 1, or the wave chosen in debug mode.
  */
-export const createGameState = (rng: Rng, hiScore = 0, ship: Ship = newShip): GameState => ({
+export const createGameState = (
+  rng: Rng,
+  hiScore = 0,
+  ship: Ship = newShip,
+  startWave: number = debug.startLevel,
+): GameState => ({
   frame: 0,
   rng,
   ship: { ...newShip, direction: ship.direction },
@@ -72,11 +94,11 @@ export const createGameState = (rng: Rng, hiScore = 0, ship: Ship = newShip): Ga
   rocks: noRocks,
   score: 0,
   hiScore,
-  waveSize: 2,
   waveTimer: WAVE_PAUSE,
   delay: START_DELAY,
   phase: 'playing',
   ...noSaucer,
+  ...wavesBefore(startWave),
   thump: newThump,
 });
 
@@ -85,14 +107,11 @@ export const createGameState = (rng: Rng, hiScore = 0, ship: Ship = newShip): Ga
  * on by themselves, "PUSH START" blinks, and the start button begins a new game.
  */
 export const createAttractState = (rng: Rng, hiScore = 0): GameState => ({
-  ...createGameState(rng, hiScore),
+  ...createGameState(rng, hiScore, newShip, 1),
   phase: 'attract',
   lives: 0,
   delay: 0,
 });
-
-/** Most rocks that still let an early saucer in [P $717A]. */
-const MAX_SAUCER_ROCK_LIMIT = 10;
 
 /**
  * A new wave when the pause is over and nothing is left on screen, saucer included

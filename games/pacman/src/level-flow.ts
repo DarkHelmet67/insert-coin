@@ -1,9 +1,11 @@
 import { startAttract } from './attract';
 import type { Controls } from './controls';
 import { deathOver } from './death';
+import { debug } from './debug';
 import { updatePlaying } from './frame';
 import { MAZE_FOOD } from './ghost-modes';
 import { newIntermission, sceneAfter, updateIntermission } from './intermission';
+import type { Scene } from './intermission-scenes';
 import { intermissionPlaying } from './intermission-moves';
 import { newPlaying, roundOf, type Playing } from './playing';
 import { firstLife, loseLife, nextLevel, nextLife } from './restart';
@@ -82,9 +84,17 @@ const toNextLevel = (state: GameState, playing: Playing): GameState => ({
   stage: readyStage(),
 });
 
+/**
+ * The intermission due after `round`, if any; none with the `skipIntermissions` debug option.
+ */
+export const intermissionAfter = (
+  round: number,
+  skip: boolean = debug.skipIntermissions,
+): Scene | undefined => (skip ? undefined : sceneAfter(round));
+
 /** After the empty playfield: the intermission due after this level, or the next level ($0A2C). */
 const afterBlank = (state: GameState): GameState => {
-  const scene = sceneAfter(roundOf(state.playing));
+  const scene = intermissionAfter(roundOf(state.playing));
   return scene === undefined
     ? toNextLevel(state, state.playing)
     : {

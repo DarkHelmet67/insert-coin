@@ -743,6 +743,23 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 
 **Verifica:** test di `stick-direction`, `virtual-joystick`, `touch-controls` e `touch-buttons`; typecheck, lint, build; su un telefono simulato (iPhone 13, verticale e orizzontale) i cinque giochi mostrano il joystick al posto delle frecce, l'area sensibile copre tutta la cella del pannello, e trascinando il dito oltre la base la manopola resta sul bordo con il tasto tenuto.
 
+## 2026-10-17 · Modalità debug per tutti i giochi
+
+**Richiesta (Luca):** per verificare che i giochi funzionino anche nei livelli più avanzati, una modalità di debug per ogni gioco, attivata dal suo `tuning.config.ts`: livello di partenza, immortalità e altre facilitazioni a seconda del gioco, come il carburante infinito di Lunar Lander. Uno sviluppo a sé, sul suo branch. Approvata la proposta ("alcuni flag non mi erano nemmeno venuti in mente"), i passi sono stati eseguiti di fila.
+
+**Decisioni dell'AI:**
+
+- **Una forma uguale per tutti:** `enabled`, `startLevel`, `godMode` più le facilitazioni del gioco (`noShieldDamage`, `fullPaddle`, `startHits`, `safeHyperspace`, `infiniteFuel`, `noCapture`, `startDual`, `skipIntermissions`). `startLevel` è un numero anche dove il "livello" è una missione (Lunar Lander) o un muro (Breakout).
+- **Un interruttore solo, decidere una volta:** ogni gioco ha un `debug.ts` che con `activeDebug` del nuovo pacchetto `@arcade/debug` sceglie fra le opzioni del file e `DEBUG_OFF`, il gioco normale. Le regole leggono valori semplici, come parametri con valore predefinito: il gioco le chiama come prima, i test provano i due casi.
+- **Le protezioni:** la scritta DEBUG sulla pagina (non sul canvas, così nessun renderer cambia), il record che non si salva, un test per gioco che fa fallire la CI se `enabled` resta `true`.
+- **Il debug nelle anteprime (scelta di Luca):** le anteprime delle PR sono costruite con `VITE_ARCADE_DEBUG=on`, per provare i livelli avanzati dal telefono; il sito di `main` mai. Per questo nei file pubblicati `godMode` (e `infiniteFuel`) sono già `true`.
+- **Breakout:** il vecchio `debug: true` (racchetta larga quanto lo schermo) è diventato l'opzione `fullPaddle`.
+- **Space Invaders** ha avuto il suo `tuning.config.ts` dal joystick virtuale, sviluppato in parallelo: unendo i due branch, la sezione `debug` si è affiancata a `touchControls`.
+
+**Scelte che il codice ha imposto:** in Pac-Man un fantasma ignorato dopo l'incontro avrebbe fermato il nucleo del gioco a ogni passo, quindi in god mode un fantasma non blu non conta proprio come incontro (la demo resta quella vera); in Space Invaders gli invasori arrivati al cannone ricominciano l'ondata invece di scendere fuori dallo schermo; in Galaga lo splash aumenta lo stage prima di ognuno, quindi la partita parte da `startLevel − 1`.
+
+**Verifica:** 934 test dopo l'unione con il joystick virtuale (un `debug.test.ts` per gioco e per il pacchetto), typecheck, lint, Prettier e build; il sito costruito con il debug acceso e aperto in un browser senza schermo: la scritta DEBUG in tutti e sei i giochi, nessun errore. Guida [18 · Modalità debug](18-modalita-debug.md). Versioni: Breakout 1.1.0, gli altri giochi 1.2.0, root 1.7.0.
+
 ## 2026-10-19 · Tempi della build
 
 **Richiesta (Luca):** che `pnpm build` mostri in fondo il tempo totale impiegato dai vari progetti.

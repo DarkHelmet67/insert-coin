@@ -23,6 +23,10 @@ pnpm dev:lunar-lander  # dalla root del monorepo
 pnpm build             # output in games/lunar-lander/dist: index.html + game.css + game.js
 ```
 
+## Modalità debug
+
+Per provare i livelli avanzati, in [`src/tuning.config.ts`](src/tuning.config.ts) c'è la sezione `debug`. Con `enabled: true` le sue opzioni valgono: con `startLevel` si sceglie la missione della nuova partita (1 TRAINING, 4 COMMAND), con `godMode` uno schianto conta come atterraggio duro, con `infiniteFuel` il carburante non cala. Con il debug acceso compare la scritta DEBUG e il record non viene salvato; nelle anteprime delle pull request è acceso da solo. Da rimettere a `false` prima di pubblicare: un test lo controlla. Tutti i dettagli nella [guida 18](../../docs/18-modalita-debug.md).
+
 ## Guide del gioco
 
 - [Le meccaniche dell'originale](docs/meccaniche-originali.md): schermo, terreno e zoom, modulo, missioni, carburante, atterraggio, piazzole, ABORT e suoni, ricavati dal sorgente originale di Atari.

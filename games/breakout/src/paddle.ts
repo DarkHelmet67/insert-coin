@@ -1,5 +1,6 @@
 import { clamp } from '@arcade/math';
 import type { Controls } from './controls';
+import { debug } from './debug';
 import { RIGHT_WALL_X, SIDE_WALL_WIDTH } from './playfield';
 import { tuning } from './tuning.config';
 
@@ -17,10 +18,10 @@ export const FULL_ROW_WIDTH = RIGHT_WALL_X - SIDE_WALL_WIDTH;
 
 /**
  * The paddle's width: full, or half after a breakout until the next serve; the whole screen
- * in debug mode (see `tuning.debug`).
+ * with the `fullPaddle` debug option.
  */
-export const paddleWidth = (shrunk: boolean, debug: boolean = tuning.debug): number =>
-  debug ? FULL_ROW_WIDTH : shrunk ? HALF_PADDLE_WIDTH : PADDLE_WIDTH;
+export const paddleWidth = (shrunk: boolean, full: boolean = debug.fullPaddle): number =>
+  full ? FULL_ROW_WIDTH : shrunk ? HALF_PADDLE_WIDTH : PADDLE_WIDTH;
 
 /** The paddle: its left edge and its width. It always sits on the paddle row (`PADDLE_Y`). */
 export interface Paddle {

@@ -8,6 +8,7 @@ import { runAttacks } from './attacks';
 import { bomberSettings, continuousBombing, type BomberSettings } from './bomber-timers';
 import { moveBombs } from './bombs';
 import { setTimer } from './clock';
+import { debug } from './debug';
 import { detectHits, explodeFighter, startExplosions, type HitWorld } from './hits';
 import { FIGHTER, FIGHTER_2, objectAt, updateObject } from './objects';
 import { flyingCount, play, type PlayingState } from './playing';
@@ -130,8 +131,11 @@ const loseFighters = (state: PlayingState, hits: readonly number[]): PlayingStat
         'fighterExplosion',
       );
 
-/** One frame of collisions; the hits are turned into points at once. */
-export const collide = (state: PlayingState): PlayingState => {
+/**
+ * One frame of collisions; the hits are turned into points at once. In god mode the fighters
+ * hit are not lost.
+ */
+export const collide = (state: PlayingState, godMode: boolean = debug.godMode): PlayingState => {
   const world = detectHits(
     hitWorld(state),
     {
@@ -156,5 +160,6 @@ export const collide = (state: PlayingState): PlayingState => {
     timers:
       world.quietTimer === undefined ? state.timers : setTimer(state.timers, 1, world.quietTimer),
   };
-  return loseFighters(addPoints(updated, hitPoints(world.hitCounts)), world.fightersHit);
+  const scored = addPoints(updated, hitPoints(world.hitCounts));
+  return godMode ? scored : loseFighters(scored, world.fightersHit);
 };

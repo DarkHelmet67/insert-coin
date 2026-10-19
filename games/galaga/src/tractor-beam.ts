@@ -6,6 +6,7 @@
  */
 import { ATTACK_PROGRAM } from './attacks';
 import { setBeamRow, withTasks, type Capture } from './capture-state';
+import { debug } from './debug';
 import type { FlightSlot } from './flight-slot';
 import { DISPOSITION, FIGHTER, objectAt } from './objects';
 import type { PlayingState } from './playing';
@@ -126,11 +127,15 @@ const beamStep = (state: PlayingState): PlayingState => {
 
 /**
  * `l_233D`: while the beam is fully open, a fighter within 27 pixels of its center is caught.
- * The joystick and the collisions stop, the stars run backwards.
+ * The joystick and the collisions stop, the stars run backwards. With the `noCapture` debug
+ * option the beam opens and closes, but never catches.
  */
-const tryToCatch = (state: PlayingState): PlayingState => {
+export const tryToCatch = (
+  state: PlayingState,
+  noCapture: boolean = debug.noCapture,
+): PlayingState => {
   const { capture } = state;
-  if (capture.step !== 0x40) return state;
+  if (noCapture || capture.step !== 0x40) return state;
   const distance = (capture.beamX - objectAt(state.objects, FIGHTER).x + 0x1b) & 0xff;
   if (distance >= 0x36 || !state.tasks.stick || state.restart) return state;
   return {

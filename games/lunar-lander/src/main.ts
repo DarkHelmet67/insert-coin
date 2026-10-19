@@ -1,6 +1,7 @@
 import '@arcade/input/joystick.css';
 import './style.css';
 import { createAudio } from '@arcade/audio';
+import { debugSafeHiScores, showDebugMark } from '@arcade/debug';
 import { createGameLoop } from '@arcade/engine-core';
 import { boundKeys, createKeyboard, createTouchControls, mergeKeyStates } from '@arcade/input';
 import {
@@ -13,6 +14,7 @@ import { createHiScoreStore } from '@arcade/storage';
 import { drawBeamLines, syncScreen } from '@arcade/vector';
 import { findPanel, panelView, showPanel } from './cabinet-panel';
 import { bindings, readControls } from './controls';
+import { debug } from './debug';
 import { createGame, updateGame, type GameState } from './game';
 import { createLeverTouch } from './lever-touch';
 import { VIEWPORT } from './playfield';
@@ -29,7 +31,12 @@ const lever = createLeverTouch(document.querySelector<HTMLElement>('#lever'));
 enterFullscreenOnTouch();
 showFullscreenButton(document.querySelector('#fullscreen'));
 const audio = createAudio();
-const hiScores = createHiScoreStore('insert-coin/lunar-lander/hi-score');
+// In debug mode the DEBUG mark is shown and new records are not saved.
+showDebugMark(debug.enabled);
+const hiScores = debugSafeHiScores(
+  createHiScoreStore('insert-coin/lunar-lander/hi-score'),
+  debug.enabled,
+);
 const panel = findPanel(document);
 
 /**
