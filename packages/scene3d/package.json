@@ -1,0 +1,17 @@
+{
+  "name": "@arcade/scene3d",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "The 3D stage of the 2.5D remasters, on Three.js: renderer, camera rig, reflective environment, voxel meshes.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@arcade/math": "workspace:*",
+    "three": "^0.186.1"
+  },
+  "devDependencies": {
+    "@types/three": "^0.186.0"
+  }
+}
