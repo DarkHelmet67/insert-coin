@@ -3,7 +3,7 @@ import { cameraPosition, cameraTarget, playfieldAngles, viewLean } from './camer
 import { attractGame, LEFTMOST, playingGame, RIGHTMOST } from './test-fixtures';
 import { tuning } from './tuning.config';
 
-const { camera, playfield } = tuning;
+const { camera } = tuning;
 
 describe('viewLean', () => {
   it('leans all the way to the side where the cannon is', () => {
