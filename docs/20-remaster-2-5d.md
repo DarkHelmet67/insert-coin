@@ -62,15 +62,22 @@ Un metallo che non ha nulla da riflettere sembra plastica nera. `createGradientE
 
 I tre colori stanno in un solo posto, la sezione `sky` di `tuning.config.ts`: `paintSky` li passa al CSS come proprietà personalizzate (`--ground`, `--horizon`, `--sky`), così sfondo e riflessi non possono divergere.
 
-## 6. La telecamera che segue il cannone
+## 6. La visuale che segue il cannone
 
-Tre funzioni pure in `camera.ts` e in `@arcade/scene3d`:
+La telecamera sta ferma davanti al campo, un po' più in alto. A muoversi è il **campo di gioco**, che oltre a essere inclinato all'indietro (asse X) ruota su due assi, ognuno con il suo massimo in `tuning.config.ts`:
 
-- **`targetYaw`**: l'angolo che la telecamera vuole raggiungere, proporzionale alla posizione del cannone (da `-maxYaw` a `+maxYaw`). Nella schermata di attesa la telecamera oscilla da sola.
+- **`maxRoll`**, asse Z: il piano gira in senso orario o antiorario. Dà il senso del movimento, ma se è troppo fa venire il mal di mare.
+- **`maxTurn`**, asse Y: il piano si gira verso sinistra o verso destra e mostra i fianchi di invasori e scudi.
+
+La prima versione faceva invece girare la telecamera intorno al campo inclinato. Luca, provandola, ha visto quasi solo una rotazione sull'asse Z, e troppo ampia: con il campo inclinato, un'orbita della telecamera si vede soprattutto come rotazione del piano (circa 12° sul pavimento a fine corsa). Ora le due rotazioni sono separate e regolabili, entrambe a 6°. `orientPlayfield` di `@arcade/scene3d` le applica in ordine (X, poi Z, poi Y) intorno agli assi del mondo, così ognuna mantiene il suo significato.
+
+Le funzioni pure sono in `camera.ts` e in `@arcade/scene3d`:
+
+- **`viewLean`**: quanto la visuale pende verso un lato, da -1 (cannone tutto a sinistra) a 1 (tutto a destra). Nella schermata di attesa oscilla da sola. `playfieldAngles` lo traduce nei due angoli.
 - **`smoothTowards`**: lo smorzamento esponenziale. A ogni frame si copre una parte della distanza che dipende dal tempo trascorso, `1 - e^(-rate·dt)`, quindi il movimento è uguale a 30, 60 o 144 fotogrammi al secondo. Un "10% a frame" andrebbe al doppio della velocità su uno schermo a 120 Hz.
 - **`fitDistance`**: la distanza a cui l'intero campo sta nell'inquadratura, che sia la finestra larga di un PC o lo schermo stretto di un telefono.
 
-Se il sistema chiede **meno movimento** (`prefers-reduced-motion`), la telecamera si muove solo per un quarto.
+Se il sistema chiede **meno movimento** (`prefers-reduced-motion`), il campo ruota solo per un quarto.
 
 ## 7. Esplosioni di particelle
 

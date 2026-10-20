@@ -1,6 +1,7 @@
 import type { TouchControlsSettings } from '@arcade/input';
 import type { BurstSettings } from '@arcade/particles';
 import type { GradientSky, LightSettings, MetalSettings, StageSettings } from '@arcade/scene3d';
+import type { PlayfieldSettings } from './camera';
 
 /**
  * The look of the remaster, in one place so it is easy to change and to test. The rules of the
@@ -20,26 +21,34 @@ const sky: GradientSky = {
 const camera = {
   /** Vertical field of view: a narrow lens keeps the perspective gentle. */
   fov: 30,
-  /** Furthest turn to each side, reached when the cannon is at the edge of the screen. */
-  maxYaw: 24,
   /** Height of the camera above the middle of the playfield. */
   pitch: 14,
-  /** How quickly the camera catches up with the cannon, per second (see smoothTowards). */
+  /** How quickly the view catches up with the cannon, per second (see smoothTowards). */
   followRate: 2.5,
   /** The camera looks this far below the middle of the playfield, toward the cannon. */
   lookDown: 16,
   /** Room left around the playfield: 1.1 = 10% more than the strict minimum. */
   margin: 1.12,
-  /** On the attract screen the camera sways by itself, this far and this slowly (seconds). */
-  attractSway: 10,
+  /**
+   * On the attract screen the view sways by itself, this share of the playfield's turns
+   * (0 to 1) and this slowly (seconds).
+   */
+  attractSway: 0.6,
   attractSwayPeriod: 12,
   /** Share of the camera movement kept when the system asks for reduced motion. */
   reducedMotion: 0.25,
 };
 
-/** The playfield leans back like a table: the invaders far, the cannon near. */
-const playfield = {
+/**
+ * The playfield leans back like a table: the invaders far, the cannon near. Moving the cannon
+ * turns it around two axes, each with its own maximum, reached at the edge of the screen.
+ */
+const playfield: PlayfieldSettings = {
   tilt: 32,
+  /** Clockwise or counterclockwise, around the axis toward the player (Z): too much is seasickness. */
+  maxRoll: 6,
+  /** Left or right, around the vertical axis (Y): shows the sides of invaders and shields. */
+  maxTurn: 6,
 };
 
 /** The cubes every pixel becomes. */

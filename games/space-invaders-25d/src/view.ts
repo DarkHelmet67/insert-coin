@@ -14,7 +14,7 @@ import { SCREEN_HEIGHT, SCREEN_WIDTH } from '@arcade/space-invaders/src/playfiel
 import { renderGame } from '@arcade/space-invaders/src/render';
 import { createDrawingRecorder, rectsToVoxels } from '@arcade/voxel';
 import { findBursts } from './bursts';
-import { cameraPosition, cameraTarget, targetYaw } from './camera';
+import { cameraPosition, cameraTarget, playfieldAngles, viewLean } from './camera';
 import { addBursts, stepExplosions } from './explosions';
 import { drawHud, type HudContext } from './hud';
 import { particleInstance, voxelInstance } from './instances';
@@ -50,7 +50,6 @@ export const createView = (canvas: HTMLCanvasElement, hud: HudContext, motion: n
     createGradientEnvironment(stage.renderer, tuning.sky, tuning.lights.softboxes),
   );
   addLights(stage.scene, tuning.sky, tuning.lights);
-  stage.tiltPlayfield(degreesToRadians(tuning.playfield.tilt));
   const material = createMetalMaterial(tuning.metal);
   const field = createVoxelLayer(stage.playfield, tuning.voxel, material);
   const pieces = createVoxelLayer(
@@ -60,7 +59,7 @@ export const createView = (canvas: HTMLCanvasElement, hud: HudContext, motion: n
   );
   const recorder = createDrawingRecorder(SCREEN_WIDTH, SCREEN_HEIGHT);
   let particles: readonly Particle[] = [];
-  let yaw = 0;
+  let lean = 0;
   let lastTime: number | undefined;
   let drawn: GameState | undefined;
 
@@ -88,10 +87,20 @@ export const createView = (canvas: HTMLCanvasElement, hud: HudContext, motion: n
       if (state !== drawn) drawScreen(state);
       pieces.write(particles.map(particleInstance));
 
-      const target = targetYaw(state, now, tuning.camera, motion);
-      yaw = smoothTowards(yaw, target, tuning.camera.followRate, dt);
+      lean = smoothTowards(
+        lean,
+        viewLean(state, now, tuning.camera, motion),
+        tuning.camera.followRate,
+        dt,
+      );
+      const angles = playfieldAngles(lean, tuning.playfield);
+      stage.orientPlayfield({
+        tilt: degreesToRadians(angles.tilt),
+        roll: degreesToRadians(angles.roll),
+        turn: degreesToRadians(angles.turn),
+      });
       stage.placeCamera(
-        cameraPosition(yaw, tuning.playfield.tilt, stage.aspect(), tuning.camera),
+        cameraPosition(tuning.playfield.tilt, stage.aspect(), tuning.camera),
         cameraTarget(tuning.camera),
       );
       stage.render();

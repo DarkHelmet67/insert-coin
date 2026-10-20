@@ -30,8 +30,17 @@ export interface Stage {
   readonly placeCamera: (position: Vector3, target: Vector3) => void;
   /** Makes every material of the scene reflect `texture` (see `createGradientEnvironment`). */
   readonly setEnvironment: (texture: Texture) => void;
-  /** Tilts the playfield backward by `angle` radians around its horizontal axis. */
-  readonly tiltPlayfield: (angle: number) => void;
+  /**
+   * Turns the playfield, angles in radians: `tilt` leans it back around the horizontal axis
+   * (X), `roll` turns it clockwise or counterclockwise around the axis toward the player (Z),
+   * `turn` swings it left or right around the vertical axis (Y). They are applied in this
+   * order, so each one keeps its meaning whatever the others are.
+   */
+  readonly orientPlayfield: (angles: {
+    readonly tilt: number;
+    readonly roll: number;
+    readonly turn: number;
+  }) => void;
   /** Draws a frame, first adapting to the size of the canvas on the page. */
   readonly render: () => void;
 }
@@ -76,8 +85,9 @@ export const createStage = (canvas: HTMLCanvasElement, settings: StageSettings):
     setEnvironment: (texture) => {
       scene.environment = texture;
     },
-    tiltPlayfield: (angle) => {
-      playfield.rotation.x = -angle;
+    orientPlayfield: ({ tilt, roll, turn }) => {
+      // 'YZX': X is applied first, then Z, then Y, all around the axes of the world.
+      playfield.rotation.set(-tilt, turn, roll, 'YZX');
     },
     render: () => {
       fitToCanvas();
