@@ -26,6 +26,7 @@ Il codice di questo progetto sarà letto da persone: **code for humans, not for 
 - **Il canvas è lo schermo.** Disegnare significa modificare il contesto 2D (`ctx.fillStyle = ...`), e adattare il canvas allo schermo significa cambiarne le dimensioni (`ctx.canvas.width = ...`): sono le uniche mutazioni ammesse, e il contesto si chiama sempre `ctx`.
 - **I nodi Web Audio.** Come il canvas, si configurano per assegnamento (`oscillator.type = 'square'`): la regola sull'immutabilità è disattivata solo per `packages/audio/src/synth.ts`.
 - **Il "guscio" imperativo.** Il game loop e gli adattatori verso il browser (`requestAnimationFrame`, eventi da tastiera) tengono lo stato in variabili `let` private a una closure. La logica di gioco resta pura.
+- **Gli oggetti Three.js e il registratore.** Three.js si configura per assegnamento (`mesh.count = ...`), come il canvas, e il registratore di `@arcade/voxel` accumula i rettangoli come un canvas accumula pixel: la regola sull'immutabilità è disattivata solo per `packages/scene3d/src/stage.ts`, `packages/scene3d/src/voxel-layer.ts` e `packages/voxel/src/recorder.ts`.
 - **Test.** Nei file `*.test.ts` mock e fixture mutabili sono ammessi.
 
 Se una regola diventa un ostacolo reale, si discute e si aggiorna questo file, invece di aggirarla con `eslint-disable`.
@@ -34,6 +35,7 @@ Se una regola diventa un ostacolo reale, si discute e si aggiorna questo file, i
 
 - Codice e commenti in inglese, documentazione (`README.md`, `docs/`) in italiano.
 - Il codice condiviso sta in `packages/` (`@arcade/*`) e non importa mai da `games/`.
+- Una **remaster** (`games/<gioco>-25d`) importa i moduli del gioco originale (`@arcade/space-invaders/src/game`) e non ne modifica mai la cartella. Three.js sta solo in `@arcade/scene3d`: i giochi classici non devono contenerlo né crescere di peso, lo controlla `pnpm check:bundles` ([guida 20](docs/20-remaster-2-5d.md)).
 - Ogni gioco separa **stato puro** (tipi e funzioni `update`), **disegno** (`render`) e **collegamento** (`main.ts`).
 - Ogni nuovo pacchetto o funzionalità arriva con test Vitest e con la sua guida in `docs/`.
 - Ogni decisione significativa presa con l'AI va nel [diario AI](docs/ai-workflow.md).
@@ -47,5 +49,5 @@ Se una regola diventa un ostacolo reale, si discute e si aggiorna questo file, i
 ## Prima di ogni commit
 
 ```bash
-pnpm typecheck && pnpm lint && pnpm test && pnpm build
+pnpm typecheck && pnpm lint && pnpm test && pnpm build && pnpm check:bundles
 ```

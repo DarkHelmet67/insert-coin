@@ -771,3 +771,21 @@ Il remake ora avanza a 60 passi al secondo: niente scatti sugli schermi a 60 Hz.
 - **Funzioni pure a parte** in `scripts/build-times.js`, con i test Vitest; `vitest.config.ts` ora include anche `scripts/**/*.test.js`.
 
 **Verifica:** `pnpm build` stampa la tabella dei sei giochi ed esce con il codice della build; typecheck, lint, test.
+
+## 2026-10-20 · Space Invaders 2.5D, la prima remaster
+
+**Richiesta (Luca):** prima solo un'analisi di una remaster 2.5D dei giochi, partendo da Space Invaders, sul modello di un Pac-Man 2.5D visto su websim: visuale che cambia spostando il cannone, oggetti metallici con riflessi, esplosioni di particelle, sfondo e aspetto del cannone scelti con un carousel. Vincolo: nessuna modifica alle cartelle dei giochi esistenti. Dopo l'analisi Luca ha deciso: Three.js sì; per ora niente carousel, sfondo procedurale con un gradiente CSS dal terreno al cielo; cartella `space-invaders-25d`; record separato. Poi una domanda: Three.js lascia invariato il peso dei giochi classici? Sì, purché resti fuori dai pacchetti che usano anche loro; per garantirlo, un controllo in CI. Approvata la lista dei passi, eseguiti di fila su un branch con la sua PR.
+
+**Decisioni dell'AI:**
+
+- **Import profondi invece di copie**: il `package.json` di Space Invaders non ha `exports`, quindi la remaster importa `@arcade/space-invaders/src/game` e gli altri moduli. Verificato prima di proporlo, con un pacchetto di prova poi cancellato: TypeScript e Vite risolvono gli import.
+- **Riusare anche il disegno, non solo le regole**: invece di ricostruire in 3D alieni, scudi, scritte e schermate, il `renderGame` originale disegna su un contesto che registra i rettangoli (`@arcade/voxel`), e ogni pixel diventa un cubo. Il codice nuovo decide solo l'aspetto; la remaster mostra tutto ciò che l'originale mostra, compreso il monitor in bianco e nero (tasto V).
+- **Punteggio e vite piatti**: le righe sopra il limite dei colpi e sotto il pavimento vanno su un canvas 2D sopra la scena, così restano leggibili quando la visuale gira.
+- **Tre pacchetti nuovi**: `@arcade/voxel` e `@arcade/particles` puri e senza Three.js, `@arcade/scene3d` l'unico con Three.js. Le mutazioni di Three.js e del registratore sono un'eccezione documentata in CLAUDE.md, come il canvas e Web Audio.
+- **Riflessi senza file**: l'ambiente riflesso è una sfera con lo stesso gradiente dello sfondo e due "softbox" luminosi; i colori stanno solo in `tuning.config.ts` e arrivano al CSS come proprietà personalizzate.
+- **Le esplosioni si deducono dagli stati**, come i suoni dell'originale: la logica di gioco non le conosce.
+- **Controllo dei pesi** (`pnpm check:bundles`): dopo la build, nessun gioco classico deve contenere Three.js né superare il suo budget in kB compressi (`scripts/bundle-budgets.json`).
+
+**Errori corretti lungo la strada:** l'ultima riga della schermata di attesa scende di un pixel sotto il pavimento e finiva nel canvas piatto (il limite del HUD ora è due righe sotto il pavimento); i softbox erano invisibili dall'interno della sfera (`BackSide` invece di `DoubleSide`); i frammenti delle esplosioni erano spessi quanto i voxel e sembravano bastoncini (ora sono cubi); un test ha mostrato che "l'alieno sparito" non si trova quando muore l'ultimo, perché nello stesso passo arriva la formazione nuova: ora l'alieno colpito si trova dalla posizione della sua esplosione, con la stessa `explodeAlien` del gioco. Per le prestazioni: smussatura dei cubi a 1 passo (108 triangoli invece di 300), matrici senza rotazione per i cubi fermi, voxel ricostruiti solo quando lo stato cambia.
+
+**Verifica:** test dei tre pacchetti, della remaster e dello script dei pesi; typecheck, lint, Prettier, build e `check:bundles` (i giochi classici hanno lo stesso peso di `main`, nessuno contiene Three.js; la remaster pesa circa 142 kB compressi); la cartella `games/space-invaders` non ha modifiche. Il gioco è stato provato in un browser senza schermo su desktop e su un iPhone 13 simulato, in verticale e in orizzontale: formazione, scudi rosicchiati, esplosioni, telecamera e pannello touch funzionano, senza errori in console. Quel browser disegna in software, quindi la fluidità va provata su un telefono vero con l'anteprima. Guida [20 · Remaster 2.5D](20-remaster-2-5d.md). Versioni: Space Invaders 2.5D 1.0.0, root 1.8.0.

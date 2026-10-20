@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15 12" width="120" height="96" shape-rendering="crispEdges" role="img" aria-label="Space Invaders 2.5D">
+  <!-- The same crab as the Space Invaders icon, with a darker copy behind it: the voxel depth of the 2.5D remaster. -->
+  <defs>
+    <linearGradient id="sky" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#3b2414"/>
+      <stop offset="0.35" stop-color="#3a1f63"/>
+      <stop offset="1" stop-color="#04040f"/>
+    </linearGradient>
+  </defs>
+  <rect width="15" height="12" rx="1.5" fill="url(#sky)"/>
+  <path fill="#145c14" transform="translate(0.6 0.6)" d="M4 2h1v1h-1zM10 2h1v1h-1zM5 3h1v1h-1zM9 3h1v1h-1zM4 4h7v1h-7zM3 5h2v1h-2zM6 5h3v1h-3zM10 5h2v1h-2zM2 6h11v1h-11zM2 7h1v1h-1zM4 7h7v1h-7zM12 7h1v1h-1zM2 8h1v1h-1zM4 8h1v1h-1zM10 8h1v1h-1zM12 8h1v1h-1zM5 9h2v1h-2zM8 9h2v1h-2z"/>
+  <path fill="#30ff30" d="M4 2h1v1h-1zM10 2h1v1h-1zM5 3h1v1h-1zM9 3h1v1h-1zM4 4h7v1h-7zM3 5h2v1h-2zM6 5h3v1h-3zM10 5h2v1h-2zM2 6h11v1h-11zM2 7h1v1h-1zM4 7h7v1h-7zM12 7h1v1h-1zM2 8h1v1h-1zM4 8h1v1h-1zM10 8h1v1h-1zM12 8h1v1h-1zM5 9h2v1h-2zM8 9h2v1h-2z"/>
+</svg>
