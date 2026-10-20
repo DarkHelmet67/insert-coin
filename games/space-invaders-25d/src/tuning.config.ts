@@ -19,8 +19,11 @@ const sky: GradientSky = {
 
 /** The camera: where it stands and how it follows the cannon. */
 const camera = {
-  /** Vertical field of view: a narrow lens keeps the perspective gentle. */
-  fov: 30,
+  /**
+   * Vertical field of view. A wider lens brings the camera closer, so the side the playfield
+   * turns toward really grows: at 30° a turn on Y only looked like more roll.
+   */
+  fov: 50,
   /** Height of the camera above the middle of the playfield. */
   pitch: 14,
   /** How quickly the view catches up with the cannon, per second (see smoothTowards). */
@@ -48,7 +51,7 @@ const playfield: PlayfieldSettings = {
   /** Clockwise or counterclockwise, around the axis toward the player (Z): too much is seasickness. */
   maxRoll: 6,
   /** Left or right, around the vertical axis (Y): shows the sides of invaders and shields. */
-  maxTurn: 6,
+  maxTurn: 10,
 };
 
 /** The cubes every pixel becomes. */

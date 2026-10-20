@@ -69,7 +69,9 @@ La telecamera sta ferma davanti al campo, un po' più in alto. A muoversi è il 
 - **`maxRoll`**, asse Z: il piano gira in senso orario o antiorario. Dà il senso del movimento, ma se è troppo fa venire il mal di mare.
 - **`maxTurn`**, asse Y: il piano si gira verso sinistra o verso destra e mostra i fianchi di invasori e scudi.
 
-La prima versione faceva invece girare la telecamera intorno al campo inclinato. Luca, provandola, ha visto quasi solo una rotazione sull'asse Z, e troppo ampia: con il campo inclinato, un'orbita della telecamera si vede soprattutto come rotazione del piano (circa 12° sul pavimento a fine corsa). Ora le due rotazioni sono separate e regolabili, entrambe a 6°. `orientPlayfield` di `@arcade/scene3d` le applica in ordine (X, poi Z, poi Y) intorno agli assi del mondo, così ognuna mantiene il suo significato.
+La prima versione faceva invece girare la telecamera intorno al campo inclinato. Luca, provandola, ha visto quasi solo una rotazione sull'asse Z, e troppo ampia: con il campo inclinato, un'orbita della telecamera si vede soprattutto come rotazione del piano (circa 12° sul pavimento a fine corsa). Ora le due rotazioni sono separate e regolabili: 6° su Z e 10° su Y. `orientPlayfield` di `@arcade/scene3d` le applica in ordine (X, poi Z, poi Y) intorno agli assi del mondo, così ognuna mantiene il suo significato.
+
+Una rotazione su Y si vede solo se c'è prospettiva. Con un obiettivo stretto (30°) la telecamera sta lontana e il campo resta quasi piatto: a 6° il lato vicino al cannone era appena il 2-3% più lungo dell'altro, e sul piano inclinato la rotazione sembrava solo un po' di Z in più. Con un campo visivo di 50° la telecamera si avvicina da sola (`fitDistance`) e a 10° la differenza sale al 6-7%: il campo si gira davvero verso il cannone.
 
 Le funzioni pure sono in `camera.ts` e in `@arcade/scene3d`:
 

@@ -37,10 +37,6 @@ describe('playfieldAngles', () => {
     expect(playfieldAngles(1, settings)).toEqual({ tilt: 30, turn: -10, roll: -6 });
     expect(playfieldAngles(-1, settings)).toEqual({ tilt: 30, turn: 10, roll: 6 });
   });
-
-  it('uses the same maximum on both axes in the published settings', () => {
-    expect(playfield.maxTurn).toBe(playfield.maxRoll);
-  });
 });
 
 describe('cameraPosition', () => {
