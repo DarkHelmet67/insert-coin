@@ -64,14 +64,15 @@ I tre colori stanno in un solo posto, la sezione `sky` di `tuning.config.ts`: `p
 
 ## 6. La visuale che segue il cannone
 
-La telecamera sta ferma davanti al campo, un po' più in alto. A muoversi è il **campo di gioco**, che oltre a essere inclinato all'indietro (asse X) ruota su due assi, ognuno con il suo massimo in `tuning.config.ts`:
+La telecamera sta ferma davanti al campo, un po' più in alto. A muoversi è il **campo di gioco**, e gli assi sono i suoi: il piano di gioco è il piano XY, con X da sinistra a destra, Y dal cannone verso gli invasori e Z che esce dal piano verso il giocatore.
 
-- **`maxRoll`**, asse Z: il piano gira in senso orario o antiorario. Dà il senso del movimento, ma se è troppo fa venire il mal di mare.
-- **`maxTurn`**, asse Y: il piano si gira verso sinistra o verso destra e mostra i fianchi di invasori e scudi.
+- **X**, `tilt`: il piano si "impenna", cioè si inclina all'indietro come un tavolo. È fisso.
+- **Y**, `maxTurn`: il piano si gira come la pagina di un libro che si sfoglia. Con il cannone tutto a sinistra il bordo sinistro viene avanti e si vedono i fianchi sinistri di invasori e scudi; a destra il contrario.
+- **Z**, `maxRoll`: il piano gira come le lancette di un orologio appoggiato sopra. È a 0, perché Luca vuole solo la rotazione su Y, ma resta regolabile.
 
-La prima versione faceva invece girare la telecamera intorno al campo inclinato. Luca, provandola, ha visto quasi solo una rotazione sull'asse Z, e troppo ampia: con il campo inclinato, un'orbita della telecamera si vede soprattutto come rotazione del piano (circa 12° sul pavimento a fine corsa). Ora le due rotazioni sono separate e regolabili: 6° su Z e 10° su Y. `orientPlayfield` di `@arcade/scene3d` le applica in ordine (X, poi Z, poi Y) intorno agli assi del mondo, così ognuna mantiene il suo significato.
+Ci sono voluti tre tentativi, e la lezione vale per ogni remaster: **gli assi vanno concordati**, e conviene farlo con un'immagine. Il primo tentativo faceva girare la telecamera intorno al campo; il secondo ruotava il campo intorno agli assi del mondo. In entrambi i casi la rotazione avveniva intorno alla verticale del mondo, e su un piano inclinato questa si vede soprattutto come un giro di lancette: il bordo inferiore del campo pendeva di circa 11° a fine corsa. Ora `orientPlayfield` di `@arcade/scene3d` applica la rotazione su Y intorno all'asse del campo già inclinato (ordine di Eulero `'XYZ'`). Il bordo inferiore resta orizzontale e il piano si gira il doppio verso il cannone.
 
-Una rotazione su Y si vede solo se c'è prospettiva. Con un obiettivo stretto (30°) la telecamera sta lontana e il campo resta quasi piatto: a 6° il lato vicino al cannone era appena il 2-3% più lungo dell'altro, e sul piano inclinato la rotazione sembrava solo un po' di Z in più. Con un campo visivo di 50° la telecamera si avvicina da sola (`fitDistance`) e a 10° la differenza sale al 6-7%: il campo si gira davvero verso il cannone.
+Una rotazione su Y si vede solo se c'è prospettiva. Con un obiettivo stretto (30°) la telecamera sta lontana e il campo resta quasi piatto: a 6° il lato vicino al cannone era appena il 2-3% più lungo dell'altro, e sul piano inclinato la rotazione sembrava solo un po' di Z in più. Con un campo visivo di 50° la telecamera si avvicina da sola (`fitDistance`) e a 10° la differenza sale al 6-7%: il campo si gira davvero verso il cannone (con gli assi del campo, ora l'8%).
 
 Le funzioni pure sono in `camera.ts` e in `@arcade/scene3d`:
 

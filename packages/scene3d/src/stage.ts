@@ -31,10 +31,11 @@ export interface Stage {
   /** Makes every material of the scene reflect `texture` (see `createGradientEnvironment`). */
   readonly setEnvironment: (texture: Texture) => void;
   /**
-   * Turns the playfield, angles in radians: `tilt` leans it back around the horizontal axis
-   * (X), `roll` turns it clockwise or counterclockwise around the axis toward the player (Z),
-   * `turn` swings it left or right around the vertical axis (Y). They are applied in this
-   * order, so each one keeps its meaning whatever the others are.
+   * Turns the playfield, angles in radians, around its own axes: `tilt` leans it back around
+   * its horizontal axis (X), `turn` swings it like the page of a book around its vertical axis
+   * (Y, from the cannon to the invaders), `roll` turns it like clock hands around the axis
+   * that comes out of it (Z). Because the axes are the playfield's own, a turn shows the sides
+   * of the objects even when the playfield leans back.
    */
   readonly orientPlayfield: (angles: {
     readonly tilt: number;
@@ -86,8 +87,8 @@ export const createStage = (canvas: HTMLCanvasElement, settings: StageSettings):
       scene.environment = texture;
     },
     orientPlayfield: ({ tilt, roll, turn }) => {
-      // 'YZX': X is applied first, then Z, then Y, all around the axes of the world.
-      playfield.rotation.set(-tilt, turn, roll, 'YZX');
+      // 'XYZ': first the lean (X), then the turn (Y) and the roll (Z) around the leaned axes.
+      playfield.rotation.set(-tilt, turn, roll, 'XYZ');
     },
     render: () => {
       fitToCanvas();

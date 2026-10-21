@@ -23,9 +23,9 @@ export interface CameraSettings {
 export interface PlayfieldSettings {
   /** Lean backward, around the horizontal axis (X), in degrees. */
   readonly tilt: number;
-  /** Furthest turn clockwise or counterclockwise, around the axis toward the player (Z). */
+  /** Furthest turn like clock hands, around the axis that comes out of the playfield (Z). */
   readonly maxRoll: number;
-  /** Furthest turn to the left or right, around the vertical axis (Y). */
+  /** Furthest turn like the page of a book, around the axis from the cannon to the invaders (Y). */
   readonly maxTurn: number;
 }
 

@@ -44,13 +44,13 @@ const camera = {
 
 /**
  * The playfield leans back like a table: the invaders far, the cannon near. Moving the cannon
- * turns it around two axes, each with its own maximum, reached at the edge of the screen.
+ * turns it around its own axes, each with its own maximum, reached at the edge of the screen.
  */
 const playfield: PlayfieldSettings = {
   tilt: 32,
-  /** Clockwise or counterclockwise, around the axis toward the player (Z): too much is seasickness. */
-  maxRoll: 6,
-  /** Left or right, around the vertical axis (Y): shows the sides of invaders and shields. */
+  /** Like clock hands, around the axis that comes out of the playfield (Z): off, Luca wants Y only. */
+  maxRoll: 0,
+  /** Like the page of a book, around the axis from the cannon to the invaders (Y). */
   maxTurn: 10,
 };
 
