@@ -17,7 +17,27 @@ Il gioco è in [`games/space-invaders-25d`](../games/space-invaders-25d) e si pr
 
 L'analisi che ha portato a queste scelte è nel diario AI, alla data del 20 ottobre 2026.
 
-## 2. Stesso cervello, corpo nuovo
+## 2. Perché una remaster è possibile: presentazione e logica separate
+
+Questa remaster è la prova che una regola di questo progetto vale: **ogni gioco separa lo stato puro (`update`), il disegno (`render`) e il collegamento al browser (`main.ts`)**. Finché la remaster era un'idea, quella separazione era una buona pratica da manuale. Nel momento in cui si è voluto cambiare solo l'aspetto, è diventata la ragione per cui il lavoro riguarda soltanto l'aspetto: nessuna riga di regole di gioco è stata riscritta.
+
+Il confine passa in un punto preciso: `updateGame(state, controls, dt)` calcola lo stato nuovo e **non sa come appare il gioco**; `renderGame(ctx, state)` guarda lo stato e dipinge, e **non decide nulla**. Nessuno dei due conosce il canvas, Three.js o i voxel.
+
+Il guadagno, concreto:
+
+- **Le regole del 1978 non sono state riscritte.** Movimento della formazione, scudi che si sbriciolano, bombe, UFO, punteggi, vite, schermata di attesa, GAME OVER: la remaster importa le stesse funzioni. Non c'è una seconda copia della logica che può divergere dalla prima.
+- **Gli stessi test valgono per due giochi.** I test di Space Invaders provano la logica che la remaster esegue. Il nuovo codice ha i suoi test, ma solo sull'aspetto: voxel, particelle, inquadratura.
+- **Il disegno originale è stato riusato, non reimplementato.** Qui la separazione paga due volte: siccome `renderGame` parla solo attraverso `fillStyle` e `fillRect`, basta dargli un contesto che registra invece di dipingere (sezione 4) e ogni pixel diventa un cubetto. Senza quel confine, il disegno 2.5D avrebbe dovuto conoscere sprite, tavolozza, formazione e scritte: di nuovo tutto il gioco.
+- **Il gioco originale non è stato toccato.** Nessuna modifica in `games/space-invaders`, nessun `if (remaster)` nel codice di un gioco finito e funzionante. La remaster aggiunge, non modifica, quindi non può rompere ciò che c'era.
+- **Le due versioni evolvono insieme.** Una correzione alle regole arriva in entrambe. E se un giorno una funzione di Space Invaders cambia nome, la remaster non compila più: il typecheck in CI lo dice al primo push.
+
+Quello che la remaster ha dovuto costruire è solo il **layer di presentazione**: la scena 3D, i materiali metallici, l'inquadratura, le particelle, l'HUD piatto. Tutto in cartelle nuove.
+
+Il prezzo da pagare c'è, ed è giusto nominarlo. La remaster dipende dai file interni del gioco originale (un _import profondo_, sezione 3), quindi un giorno quei nomi non si potranno più cambiare liberamente: sono diventati un'interfaccia. E due cose che la logica non espone, le esplosioni e la differenza fra campo di gioco e HUD, vanno dedotte confrontando gli stati (sezione 8) o filtrando i rettangoli (sezione 4): un confine pulito costringe a lavorare dall'esterno, invece di aggiungere una comoda riga nel gioco.
+
+La regola per i giochi futuri, allora, non è "prepariamo i giochi per una remaster", perché non si sa quale sarà la prossima idea. È più semplice: **tenere la logica ignara di come appare il gioco**. Chi disegna può cambiare tutto; chi calcola non se ne accorge.
+
+## 3. Stesso cervello, corpo nuovo
 
 Space Invaders separa già lo **stato puro** (`updateGame`) dal **disegno** (`renderGame`). Il `package.json` del gioco originale non ha un campo `exports`, quindi un altro pacchetto del workspace ne può importare i file direttamente, con un _import profondo_:
 
@@ -32,7 +52,7 @@ Il `main.ts` della remaster è quasi uguale a quello originale: stessa tastiera,
 
 Il rischio di questa scelta è l'accoppiamento: se un giorno si rinomina una funzione di Space Invaders, la remaster smette di compilare. Ma il typecheck in CI lo segnala al primo push, non in produzione.
 
-## 3. Il trucco: un contesto che registra
+## 4. Il trucco: un contesto che registra
 
 Tutti i giochi a pixel disegnano attraverso `DrawingContext` di `@arcade/render`, che usa solo `fillStyle` e `fillRect`. Il pacchetto **`@arcade/voxel`** offre un finto contesto che invece di dipingere **ricorda** i rettangoli:
 
@@ -46,7 +66,7 @@ Così la remaster non ridisegna nulla: alieni, scudi rosicchiati, colpi, bombe, 
 
 Una sola cosa la remaster toglie dal disegno: lo sprite dell'esplosione degli alieni, perché al suo posto l'alieno si sbriciola in particelle (`drawableState`).
 
-## 4. La scena: `@arcade/scene3d`
+## 5. La scena: `@arcade/scene3d`
 
 È l'unico pacchetto che dipende da Three.js:
 
@@ -56,13 +76,13 @@ Una sola cosa la remaster toglie dal disegno: lo sprite dell'esplosione degli al
 
 Three.js si configura per assegnamento (`mesh.count = ...`), come il contesto canvas: per `stage.ts`, `voxel-layer.ts` e il registratore la regola sull'immutabilità è spenta, e l'eccezione è scritta in [CLAUDE.md](../CLAUDE.md). Le funzioni di calcolo restano pure e testate.
 
-## 5. Riflessi senza immagini
+## 6. Riflessi senza immagini
 
 Un metallo che non ha nulla da riflettere sembra plastica nera. `createGradientEnvironment` costruisce l'ambiente riflesso senza file: una sfera dipinta con lo stesso gradiente dello sfondo, più due pannelli luminosi come i softbox di un fotografo, filtrati da Three.js (PMREM) per le superfici lucide e per quelle opache.
 
 I tre colori stanno in un solo posto, la sezione `sky` di `tuning.config.ts`: `paintSky` li passa al CSS come proprietà personalizzate (`--ground`, `--horizon`, `--sky`), così sfondo e riflessi non possono divergere.
 
-## 6. La visuale che segue il cannone
+## 7. La visuale che segue il cannone
 
 La telecamera sta ferma davanti al campo, un po' più in alto. A muoversi è il **campo di gioco**, e gli assi sono i suoi: il piano di gioco è il piano XY, con X da sinistra a destra, Y dal cannone verso gli invasori e Z che esce dal piano verso il giocatore.
 
@@ -82,7 +102,7 @@ Le funzioni pure sono in `camera.ts` e in `@arcade/scene3d`:
 
 Se il sistema chiede **meno movimento** (`prefers-reduced-motion`), il campo ruota solo per un quarto.
 
-## 7. Esplosioni di particelle
+## 8. Esplosioni di particelle
 
 Come i suoni dell'originale (`soundsFor(prev, next)`), le esplosioni si trovano **confrontando due stati**: `findBursts` in `bursts.ts`. La logica di gioco non sa che esistono.
 
@@ -92,7 +112,7 @@ Come i suoni dell'originale (`soundsFor(prev, next)`), le esplosioni si trovano 
 
 Il pacchetto **`@arcade/particles`** è puro: `createBurst` lancia ogni frammento lontano dal centro e verso il giocatore, con una rotazione; `stepParticles` li muove, li fa cadere e li elimina a fine vita. Il caso arriva da una funzione passata come parametro, quindi i test sono ripetibili.
 
-## 8. Prestazioni
+## 9. Prestazioni
 
 Misurate sul codice, non stimate:
 
@@ -103,7 +123,7 @@ Misurate sul codice, non stimate:
 
 Il browser senza schermo usato per le prove disegna in software, quindi non dice nulla sulla fluidità reale: va provata su un telefono vero, con l'anteprima della pull request.
 
-## 9. I giochi classici non ingrassano
+## 10. I giochi classici non ingrassano
 
 Il bundle della remaster pesa circa 140 kB compressi, quello di Space Invaders 10 kB. Ogni gioco ha la sua build, e un bundle contiene solo ciò che il gioco importa, quindi Three.js non può finire nei giochi classici, **a patto che non entri nei pacchetti che usano anche loro**. Per questo vive solo in `@arcade/scene3d`.
 
@@ -114,6 +134,6 @@ Perché la regola non dipenda dalla memoria di nessuno, `scripts/check-bundles.j
 
 Un gioco è una remaster se la sua cartella finisce in `-25d`, e allora non ha budget. Lo decide il nome e non le dipendenze: un gioco classico che per sbaglio dipendesse da `@arcade/scene3d` verrebbe controllato lo stesso, invece di passare come remaster. Se un gioco classico deve crescere davvero, si alza il suo budget nella stessa modifica: la crescita diventa una decisione, non un incidente.
 
-## 10. Verso le altre remaster
+## 11. Verso le altre remaster
 
 Il registratore funziona con qualunque gioco che disegna con `fillRect`: per gli altri giochi a pixel la strada è la stessa. I giochi vettoriali (Asteroids, Lunar Lander) disegnano linee invece di rettangoli e chiederanno un registratore di segmenti, per esempio tubi luminosi. Prima di ogni nuova remaster va controllato come quel gioco disegna.
