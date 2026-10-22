@@ -20,10 +20,9 @@ const bundles = readdirSync(GAMES)
   .filter((name) => existsSync(join(GAMES, name, 'dist', 'game.js')))
   .map((name) => {
     const code = readFileSync(join(GAMES, name, 'dist', 'game.js'));
-    const manifest = JSON.parse(readFileSync(join(GAMES, name, 'package.json'), 'utf8'));
     return {
       name,
-      remaster: isRemaster(manifest),
+      remaster: isRemaster(name),
       gzipBytes: gzipSync(code, { level: 9 }).length,
       containsThree: code.includes(THREE_MARKER),
     };

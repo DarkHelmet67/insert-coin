@@ -100,7 +100,7 @@ export const createView = (canvas: HTMLCanvasElement, hud: HudContext, motion: n
         turn: degreesToRadians(angles.turn),
       });
       stage.placeCamera(
-        cameraPosition(tuning.playfield.tilt, stage.aspect(), tuning.camera),
+        cameraPosition(stage.aspect(), tuning.camera, tuning.playfield, tuning.voxel.depth),
         cameraTarget(tuning.camera),
       );
       stage.render();

@@ -1,11 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  degreesToRadians,
-  fitDistance,
-  mapRange,
-  orbitPosition,
-  smoothTowards,
-} from './camera-rig';
+import { degreesToRadians, mapRange, orbitPosition, smoothTowards } from './camera-rig';
 
 describe('mapRange', () => {
   it('maps a value from one range to another', () => {
@@ -51,20 +45,5 @@ describe('orbitPosition', () => {
   it('moves to the right with a positive yaw and up with a positive pitch', () => {
     expect(orbitPosition(degreesToRadians(90), 0, 10).x).toBeCloseTo(10);
     expect(orbitPosition(0, degreesToRadians(90), 10).y).toBeCloseTo(10);
-  });
-});
-
-describe('fitDistance', () => {
-  it('backs off until the height fits in a wide window', () => {
-    // With a 90° field of view the camera sees as high as twice its distance.
-    expect(fitDistance(10, 100, 90, 4, 1)).toBeCloseTo(50);
-  });
-
-  it('backs off until the width fits in a narrow window', () => {
-    expect(fitDistance(100, 10, 90, 0.5, 1)).toBeCloseTo(100);
-  });
-
-  it('adds the margin', () => {
-    expect(fitDistance(10, 100, 90, 4, 1.2)).toBeCloseTo(60);
   });
 });

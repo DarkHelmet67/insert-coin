@@ -48,25 +48,3 @@ export const orbitPosition = (yaw: number, pitch: number, distance: number): Vec
   y: distance * Math.sin(pitch),
   z: distance * Math.cos(yaw) * Math.cos(pitch),
 });
-
-/**
- * The distance at which a perspective camera sees a whole `width` × `height` rectangle,
- * whatever the shape of the window.
- * @param width - width of the rectangle.
- * @param height - height of the rectangle.
- * @param verticalFov - vertical field of view of the camera, in degrees.
- * @param aspect - width divided by height of the picture.
- * @param margin - extra room around the rectangle: 1.1 leaves 10% more.
- */
-export const fitDistance = (
-  width: number,
-  height: number,
-  verticalFov: number,
-  aspect: number,
-  margin: number,
-): number => {
-  const halfTan = Math.tan(degreesToRadians(verticalFov) / 2);
-  const forHeight = height / 2 / halfTan;
-  const forWidth = width / 2 / (halfTan * aspect);
-  return Math.max(forHeight, forWidth) * margin;
-};

@@ -1,11 +1,11 @@
 export {
   degreesToRadians,
-  fitDistance,
   mapRange,
   orbitPosition,
   smoothTowards,
   type Vector3,
 } from './camera-rig';
+export { fitPointsDistance, orientPoint, standBack, type Orientation } from './framing';
 export {
   addLights,
   createGradientEnvironment,

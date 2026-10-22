@@ -1,8 +1,10 @@
 import {
   degreesToRadians,
-  fitDistance,
+  fitPointsDistance,
   mapRange,
   orbitPosition,
+  orientPoint,
+  standBack,
   type Vector3,
 } from '@arcade/scene3d';
 import { CANNON_MAX_X, CANNON_MIN_X } from '@arcade/space-invaders/src/cannon';
@@ -70,19 +72,6 @@ export const playfieldAngles = (lean: number, settings: PlayfieldSettings): Play
 });
 
 /**
- * Where the camera stands: in front of the playfield and a little above it, far enough to see
- * all of it. The tilted playfield looks shorter than it is, by the cosine of its tilt.
- * @param tilt - how far the playfield leans back, in degrees.
- * @param aspect - width divided by height of the picture.
- * @param settings - the camera section of the tuning file.
- */
-export const cameraPosition = (tilt: number, aspect: number, settings: CameraSettings): Vector3 => {
-  const apparentHeight = SCREEN_HEIGHT * Math.cos(degreesToRadians(tilt));
-  const distance = fitDistance(SCREEN_WIDTH, apparentHeight, settings.fov, aspect, settings.margin);
-  return orbitPosition(0, degreesToRadians(settings.pitch), distance);
-};
-
-/**
  * The point the camera looks at: a little below the middle of the playfield, because the
  * tilted playfield comes closer to the camera at the bottom and looks bigger there.
  */
@@ -91,3 +80,63 @@ export const cameraTarget = (settings: CameraSettings): Vector3 => ({
   y: -settings.lookDown,
   z: 0,
 });
+
+/**
+ * The corners of the box the voxels fill: the whole screen, `thickness` deep.
+ * @param thickness - how deep the voxels are.
+ */
+const playfieldCorners = (thickness: number): readonly Vector3[] =>
+  [-1, 1].flatMap((side) =>
+    [-1, 1].flatMap((end) =>
+      [-1, 1].map((face) => ({
+        x: (side * SCREEN_WIDTH) / 2,
+        y: (end * SCREEN_HEIGHT) / 2,
+        z: (face * thickness) / 2,
+      })),
+    ),
+  );
+
+/**
+ * The corners of the playfield in the world, at both ends of the cannon's run and in the
+ * middle: the camera must see all of them, wherever the cannon is.
+ * @param playfield - the playfield section of the tuning file.
+ * @param thickness - how deep the voxels are.
+ */
+const cornersInView = (playfield: PlayfieldSettings, thickness: number): readonly Vector3[] =>
+  [-1, 0, 1].flatMap((lean) => {
+    const angles = playfieldAngles(lean, playfield);
+    const orientation = {
+      tilt: degreesToRadians(angles.tilt),
+      turn: degreesToRadians(angles.turn),
+      roll: degreesToRadians(angles.roll),
+    };
+    return playfieldCorners(thickness).map((corner) => orientPoint(corner, orientation));
+  });
+
+/**
+ * Where the camera stands: in front of the playfield and a little above it, far enough to see
+ * all of it however it turns. The distance does not follow the cannon, so the view does not
+ * zoom in and out while playing.
+ * @param aspect - width divided by height of the picture.
+ * @param settings - the camera section of the tuning file.
+ * @param playfield - the playfield section of the tuning file.
+ * @param thickness - how deep the voxels are.
+ */
+export const cameraPosition = (
+  aspect: number,
+  settings: CameraSettings,
+  playfield: PlayfieldSettings,
+  thickness: number,
+): Vector3 => {
+  const target = cameraTarget(settings);
+  const direction = orbitPosition(0, degreesToRadians(settings.pitch), 1);
+  const distance = fitPointsDistance(
+    cornersInView(playfield, thickness),
+    target,
+    direction,
+    settings.fov,
+    aspect,
+    settings.margin,
+  );
+  return standBack(target, direction, distance);
+};

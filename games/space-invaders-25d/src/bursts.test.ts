@@ -1,8 +1,10 @@
 import { createFleet } from '@arcade/space-invaders/src/fleet';
 import { noControls } from '@arcade/space-invaders/src/controls';
+import { createEffect } from '@arcade/space-invaders/src/effects';
 import { updateGame, type GameState } from '@arcade/space-invaders/src/game';
 import { alienColor, paletteFor } from '@arcade/space-invaders/src/palette';
-import { alienSprites } from '@arcade/space-invaders/src/sprites';
+import { alienSprites, ufoSprite } from '@arcade/space-invaders/src/sprites';
+import { UFO_Y } from '@arcade/space-invaders/src/ufo';
 import { alienAt } from '@arcade/space-invaders/src/test-fixtures';
 import { describe, expect, it } from 'vitest';
 import { findBursts } from './bursts';
@@ -13,6 +15,15 @@ const playingOf = (state: GameState) => {
   if (state.screen === 'attract') throw new Error('not playing');
   return state.playing;
 };
+
+/** The game over screen showing `state`'s playfield, with `framesLeft` of countdown. */
+const gameOverOf = (state: GameState, framesLeft: number): GameState => ({
+  screen: 'gameOver',
+  playing: playingOf(state),
+  framesLeft,
+  hiScore: state.hiScore,
+  colorMode: state.colorMode,
+});
 
 /** Number of lit pixels in a sprite. */
 const litPixels = (pixels: readonly boolean[]): number => pixels.filter(Boolean).length;
@@ -56,6 +67,25 @@ describe('findBursts', () => {
   it('finds nothing when nothing happened', () => {
     const state = playingGame();
     expect(findBursts(state, state)).toEqual({ objects: [], debris: [] });
+  });
+
+  it('blows up the mystery ship hit in the step it appears, where the effect says', () => {
+    const prev = playingGame();
+    expect(playingOf(prev).ufo.saucer).toBeUndefined();
+    const next = playingGame({ effects: [createEffect('ufo', 50, UFO_Y, 100)] });
+    const [ship] = findBursts(prev, next).objects;
+    expect(ship).toHaveLength(litPixels(ufoSprite.pixels));
+    expect(Math.min(...(ship ?? []).map((fragment) => fragment.x))).toBeGreaterThanOrEqual(50);
+  });
+
+  it('blows up an invader hit in the step that ends the game, but not again later', () => {
+    const prev = playingGame({
+      fleet: { ...createFleet(), aliens: [alienAt(100, 100, 'crab'), alienAt(20, 60, 'squid')] },
+      shot: { x: 105, y: 104 },
+    });
+    const last = gameOverOf(updateGame(prev, noControls, 1 / 60), 100);
+    expect(findBursts(prev, last).objects).toHaveLength(1);
+    expect(findBursts(last, gameOverOf(last, 99))).toEqual({ objects: [], debris: [] });
   });
 
   it('finds nothing on the attract screen', () => {

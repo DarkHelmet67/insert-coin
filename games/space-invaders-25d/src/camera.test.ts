@@ -3,7 +3,7 @@ import { cameraPosition, cameraTarget, playfieldAngles, viewLean } from './camer
 import { attractGame, LEFTMOST, playingGame, RIGHTMOST } from './test-fixtures';
 import { tuning } from './tuning.config';
 
-const { camera } = tuning;
+const { camera, playfield, voxel } = tuning;
 
 describe('viewLean', () => {
   it('leans all the way to the side where the cannon is', () => {
@@ -41,13 +41,22 @@ describe('playfieldAngles', () => {
 
 describe('cameraPosition', () => {
   it('stands in front of the playfield, a little above it', () => {
-    const position = cameraPosition(30, 1.5, camera);
+    const position = cameraPosition(1.5, camera, playfield, voxel.depth);
     expect(position.x).toBeCloseTo(0);
     expect(position.y).toBeGreaterThan(0);
   });
 
   it('backs off on a narrow phone screen to keep the whole playfield in view', () => {
-    expect(cameraPosition(30, 0.5, camera).z).toBeGreaterThan(cameraPosition(30, 1.6, camera).z);
+    expect(cameraPosition(0.5, camera, playfield, voxel.depth).z).toBeGreaterThan(
+      cameraPosition(1.6, camera, playfield, voxel.depth).z,
+    );
+  });
+
+  it('backs off further when the playfield turns, so its near edge is not cut', () => {
+    const still = { ...playfield, maxTurn: 0 };
+    expect(cameraPosition(1, camera, playfield, voxel.depth).z).toBeGreaterThan(
+      cameraPosition(1, camera, still, voxel.depth).z,
+    );
   });
 });
 

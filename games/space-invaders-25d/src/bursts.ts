@@ -7,7 +7,6 @@ import { alienColor, paletteFor, type Palette } from '@arcade/space-invaders/src
 import type { PlayingState } from '@arcade/space-invaders/src/playing';
 import type { Shield } from '@arcade/space-invaders/src/shields';
 import { alienSprites, cannonSprite, ufoSprite } from '@arcade/space-invaders/src/sprites';
-import { UFO_Y } from '@arcade/space-invaders/src/ufo';
 import { spriteVoxels } from '@arcade/voxel';
 
 /**
@@ -28,6 +27,13 @@ const NO_BURSTS: Bursts = { objects: [], debris: [] };
 /** The playing data of a state that has it: during play and on the game over screen. */
 const playingOf = (state: GameState): PlayingState | undefined =>
   state.screen === 'attract' ? undefined : state.playing;
+
+/**
+ * Explosions start only in a step that begins during play, like the sounds of the original.
+ * On the game over screen the playing data stays frozen, so an effect created in the last
+ * step would look new at every step of the countdown.
+ */
+const stepStartsInPlay = (prev: GameState): boolean => prev.screen === 'playing';
 
 /** The effects of `kind` that appeared in this step. */
 const startedEffects = (state: PlayingState, kind: Effect['kind']): readonly Effect[] =>
@@ -75,15 +81,14 @@ const alienBursts = (
     .filter((alien) => alien !== undefined)
     .map((alien) => alienFragments(alien, palette));
 
-/** The mystery ship, if it was hit in this step. */
-const ufoBursts = (
-  prev: PlayingState,
-  next: PlayingState,
-  palette: Palette,
-): readonly (readonly Fragment[])[] =>
-  prev.ufo.saucer && startedEffects(next, 'ufo').length > 0
-    ? [spriteVoxels(ufoSprite, prev.ufo.saucer.x, UFO_Y, palette.ufo)]
-    : [];
+/**
+ * The mystery ship, if it was hit in this step, where the effect says it was hit. The state
+ * before is no help: the ship can appear and be hit in the same step.
+ */
+const ufoBursts = (next: PlayingState, palette: Palette): readonly (readonly Fragment[])[] =>
+  startedEffects(next, 'ufo').map((effect) =>
+    spriteVoxels(ufoSprite, effect.x, effect.y, palette.ufo),
+  );
 
 /** The cannon, if it was hit in this step. */
 const cannonBursts = (
@@ -123,12 +128,12 @@ const shieldDebris = (
 export const findBursts = (prev: GameState, next: GameState): Bursts => {
   const before = playingOf(prev);
   const after = playingOf(next);
-  if (!before || !after) return NO_BURSTS;
+  if (!stepStartsInPlay(prev) || !before || !after) return NO_BURSTS;
   const palette = paletteFor(next.colorMode);
   return {
     objects: [
       ...alienBursts(before, after, palette),
-      ...ufoBursts(before, after, palette),
+      ...ufoBursts(after, palette),
       ...cannonBursts(before, after, palette),
     ],
     debris: shieldDebris(before, after, palette),

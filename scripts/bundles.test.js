@@ -18,10 +18,9 @@ const bundle = (changes = {}) => ({
 });
 
 describe('isRemaster', () => {
-  it('recognises a remaster by its 3D stage', () => {
-    expect(isRemaster({ dependencies: { '@arcade/scene3d': 'workspace:*' } })).toBe(true);
-    expect(isRemaster({ dependencies: { '@arcade/render': 'workspace:*' } })).toBe(false);
-    expect(isRemaster({})).toBe(false);
+  it('recognises a remaster by its folder name', () => {
+    expect(isRemaster('space-invaders-25d')).toBe(true);
+    expect(isRemaster('space-invaders')).toBe(false);
   });
 });
 
@@ -36,6 +35,16 @@ describe('bundleProblems', () => {
 
   it('rejects a classic game that contains Three.js', () => {
     expect(bundleProblems(bundle({ containsThree: true }), budgets)[0]).toMatch(/Three\.js/);
+  });
+
+  it('keeps checking a classic game that picked up the 3D stage by mistake', () => {
+    const heavy = bundle({
+      name: 'space-invaders',
+      remaster: isRemaster('space-invaders'),
+      containsThree: true,
+      gzipBytes: 150 * 1024,
+    });
+    expect(bundleProblems(heavy, budgets)).toHaveLength(2);
   });
 
   it('asks for a budget for a new classic game', () => {

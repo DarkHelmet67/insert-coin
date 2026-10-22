@@ -72,13 +72,13 @@ La telecamera sta ferma davanti al campo, un po' più in alto. A muoversi è il 
 
 Ci sono voluti tre tentativi, e la lezione vale per ogni remaster: **gli assi vanno concordati**, e conviene farlo con un'immagine. Il primo tentativo faceva girare la telecamera intorno al campo; il secondo ruotava il campo intorno agli assi del mondo. In entrambi i casi la rotazione avveniva intorno alla verticale del mondo, e su un piano inclinato questa si vede soprattutto come un giro di lancette: il bordo inferiore del campo pendeva di circa 11° a fine corsa. Ora `orientPlayfield` di `@arcade/scene3d` applica la rotazione su Y intorno all'asse del campo già inclinato (ordine di Eulero `'XYZ'`). Il bordo inferiore resta orizzontale e il piano si gira il doppio verso il cannone.
 
-Una rotazione su Y si vede solo se c'è prospettiva. Con un obiettivo stretto (30°) la telecamera sta lontana e il campo resta quasi piatto: a 6° il lato vicino al cannone era appena il 2-3% più lungo dell'altro, e sul piano inclinato la rotazione sembrava solo un po' di Z in più. Con un campo visivo di 50° la telecamera si avvicina da sola (`fitDistance`) e a 10° la differenza sale al 6-7%: il campo si gira davvero verso il cannone (con gli assi del campo, ora l'8%).
+Una rotazione su Y si vede solo se c'è prospettiva. Con un obiettivo stretto (30°) la telecamera sta lontana e il campo resta quasi piatto: a 6° il lato vicino al cannone era appena il 2-3% più lungo dell'altro, e sul piano inclinato la rotazione sembrava solo un po' di Z in più. Con un campo visivo di 50° la telecamera si avvicina da sola (`fitPointsDistance`) e a 10° la differenza sale al 6-7%: il campo si gira davvero verso il cannone (con gli assi del campo, ora l'8%).
 
 Le funzioni pure sono in `camera.ts` e in `@arcade/scene3d`:
 
 - **`viewLean`**: quanto la visuale pende verso un lato, da -1 (cannone tutto a sinistra) a 1 (tutto a destra). Nella schermata di attesa oscilla da sola. `playfieldAngles` lo traduce nei due angoli.
 - **`smoothTowards`**: lo smorzamento esponenziale. A ogni frame si copre una parte della distanza che dipende dal tempo trascorso, `1 - e^(-rate·dt)`, quindi il movimento è uguale a 30, 60 o 144 fotogrammi al secondo. Un "10% a frame" andrebbe al doppio della velocità su uno schermo a 120 Hz.
-- **`fitDistance`**: la distanza a cui l'intero campo sta nell'inquadratura, che sia la finestra larga di un PC o lo schermo stretto di un telefono.
+- **`fitPointsDistance`**: la distanza a cui l'intero campo sta nell'inquadratura, che sia la finestra larga di un PC o lo schermo stretto di un telefono. Non basta inquadrare un rettangolo piatto: quando il campo si gira, il bordo vicino viene verso la telecamera e sembra più grande. Per questo `cameraPosition` gira gli angoli del campo con `orientPoint` (la stessa rotazione di `orientPlayfield`, verificata in un test contro Three.js), alle due estremità della corsa e al centro, e per ogni angolo calcola la distanza minima. La distanza poi resta fissa, così la visuale non si avvicina e allontana durante il gioco.
 
 Se il sistema chiede **meno movimento** (`prefers-reduced-motion`), il campo ruota solo per un quarto.
 
@@ -112,7 +112,7 @@ Perché la regola non dipenda dalla memoria di nessuno, `scripts/check-bundles.j
 - nessun gioco classico contenga Three.js (la stringa `__THREE__`, con cui la libreria registra la sua versione);
 - ogni gioco classico stia nel suo **budget** in kB compressi, scritto in [`scripts/bundle-budgets.json`](../scripts/bundle-budgets.json).
 
-Un gioco è una remaster se dipende da `@arcade/scene3d`, e allora non ha budget. Se un gioco classico deve crescere davvero, si alza il suo budget nella stessa modifica: la crescita diventa una decisione, non un incidente.
+Un gioco è una remaster se la sua cartella finisce in `-25d`, e allora non ha budget. Lo decide il nome e non le dipendenze: un gioco classico che per sbaglio dipendesse da `@arcade/scene3d` verrebbe controllato lo stesso, invece di passare come remaster. Se un gioco classico deve crescere davvero, si alza il suo budget nella stessa modifica: la crescita diventa una decisione, non un incidente.
 
 ## 10. Verso le altre remaster
 

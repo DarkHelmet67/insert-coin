@@ -23,10 +23,12 @@ export const THREE_MARKER = '__THREE__';
 
 /**
  * Whether a game is a 2.5D remaster: only remasters may use the 3D stage, and Three.js with it.
- * @param {{ readonly dependencies?: Readonly<Record<string, string>> }} manifest the game's package.json
+ * The folder name decides (`games/<game>-25d`), not the dependencies: a classic game that
+ * picked up the 3D stage by mistake must still be checked, not let through.
+ * @param {string} name the game's folder
  * @returns {boolean}
  */
-export const isRemaster = (manifest) => '@arcade/scene3d' in (manifest.dependencies ?? {});
+export const isRemaster = (name) => name.endsWith('-25d');
 
 /**
  * The problems of one classic game's bundle; remasters have none to report.
