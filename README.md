@@ -7,6 +7,7 @@
   <a href="https://darkhelmet67.github.io/insert-coin/lunar-lander/"><img src="docs/images/games/lunar-lander.svg" alt="Lunar Lander" title="Lunar Lander (Atari, 1979): gioca online" width="120"></a>
   <a href="https://darkhelmet67.github.io/insert-coin/galaga/"><img src="docs/images/games/galaga.svg" alt="Galaga" title="Galaga (Namco, 1981): gioca online" width="120"></a>
   <a href="https://darkhelmet67.github.io/insert-coin/pacman/"><img src="docs/images/games/pacman.svg" alt="Pac-Man" title="Pac-Man (Namco, 1980): gioca online" width="120"></a>
+  <a href="https://darkhelmet67.github.io/insert-coin/space-invaders-25d/"><img src="docs/images/games/space-invaders-25d.svg" alt="Space Invaders 2.5D" title="Space Invaders 2.5D (remaster): gioca online" width="120"></a>
 </p>
 
 <p align="center">
@@ -42,15 +43,17 @@ Il progetto ha due obiettivi:
 ![Lunar Lander in gioco](docs/images/lunar-lander-gameplay.png)
 ![Galaga in gioco](docs/images/galaga-gameplay.png)
 ![Pac-Man in gioco](docs/images/pacman-gameplay.png)
+![Space Invaders 2.5D in gioco](docs/images/space-invaders-25d-gameplay.png)
 
-| Gioco                                   | Anno originale | Stato    |
-| --------------------------------------- | -------------- | -------- |
-| [Space Invaders](games/space-invaders/) | 1978, Taito    | Completo |
-| [Breakout](games/breakout/)             | 1976, Atari    | Completo |
-| [Asteroids](games/asteroids/)           | 1979, Atari    | Completo |
-| [Lunar Lander](games/lunar-lander/)     | 1979, Atari    | Completo |
-| [Galaga](games/galaga/)                 | 1981, Namco    | Completo |
-| [Pac-Man](games/pacman/)                | 1980, Namco    | Completo |
+| Gioco                                            | Anno originale | Stato    |
+| ------------------------------------------------ | -------------- | -------- |
+| [Space Invaders](games/space-invaders/)          | 1978, Taito    | Completo |
+| [Breakout](games/breakout/)                      | 1976, Atari    | Completo |
+| [Asteroids](games/asteroids/)                    | 1979, Atari    | Completo |
+| [Lunar Lander](games/lunar-lander/)              | 1979, Atari    | Completo |
+| [Galaga](games/galaga/)                          | 1981, Namco    | Completo |
+| [Pac-Man](games/pacman/)                         | 1980, Namco    | Completo |
+| [Space Invaders 2.5D](games/space-invaders-25d/) | Remaster, 2026 | Completo |
 
 ## Avvio rapido
 
@@ -64,6 +67,7 @@ pnpm dev:asteroids # avvia Asteroids
 pnpm dev:lunar-lander # avvia Lunar Lander
 pnpm dev:galaga  # avvia Galaga
 pnpm dev:pacman  # avvia Pac-Man
+pnpm dev:space-invaders-25d  # avvia la remaster 2.5D di Space Invaders
 pnpm build    # build di produzione di tutti i giochi (games/*/dist), con i tempi in fondo
 pnpm build:site  # build + sito completo in _site/, come su GitHub Pages
 ```
@@ -92,6 +96,9 @@ insert-coin/
 │   ├── collision/        AABB e collisione pixel-perfect
 │   ├── storage/          record salvato nel browser
 │   ├── debug/            modalità debug: interruttore, scritta DEBUG, record non salvato
+│   ├── voxel/            dal disegno 2D ai voxel: un contesto che registra i rettangoli
+│   ├── particles/        esplosioni di particelle, pure e testabili
+│   ├── scene3d/          la scena 3D delle remaster (l'unico pacchetto con Three.js)
 │   └── math/             vettori, clamp, random con seed
 ├── games/
 │   ├── space-invaders/   un gioco = un'app Vite che usa i pacchetti @arcade/*
@@ -99,9 +106,10 @@ insert-coin/
 │   ├── asteroids/        il terzo gioco: grafica vettoriale e programma 6502 riprodotto
 │   ├── lunar-lander/     il quarto gioco: dal sorgente originale Atari, su branch e pull request
 │   ├── galaga/           il quinto gioco: tre processori Z80, voli e suoni eseguiti dalla ROM
-│   └── pacman/           il sesto gioco: labirinto, fantasmi e intermezzi portati dalla ROM
+│   ├── pacman/           il sesto gioco: labirinto, fantasmi e intermezzi portati dalla ROM
+│   └── space-invaders-25d/ la prima remaster 2.5D: il gioco originale, intatto, in voxel metallici
 ├── site/                 pagina iniziale del sito pubblicato
-├── scripts/              script di build del sito
+├── scripts/              script di build del sito e controllo del peso dei giochi
 ├── .claude/skills/       skill di Claude Code: /pr-review e /pr-resolve
 └── .github/            controlli, deploy su GitHub Pages e anteprime delle pull request
 ```
@@ -111,6 +119,7 @@ Ogni pacchetto ha una sola responsabilità e non conosce i giochi: i giochi dipe
 ## Scelte tecniche
 
 - **Canvas "puro" invece di un framework come Phaser.** Lo scopo è mostrare come funzionano game loop, input e collisioni, non nasconderli. I giochi anni '80 non hanno bisogno di fisica o WebGL, e il bundle resta di pochi KB.
+- **Three.js solo per le remaster 2.5D.** Le remaster riusano la logica e il disegno dei giochi originali e cambiano solo l'aspetto; Three.js vive nel pacchetto `@arcade/scene3d`, e un controllo in CI garantisce che i giochi classici non lo contengano e non crescano di peso ([guida 20](docs/20-remaster-2-5d.md)).
 - **pnpm workspaces** per il monorepo: i pacchetti condivisi sono collegati localmente, senza pubblicarli.
 - **TypeScript strict** con target ES2022: nessuna compatibilità con browser legacy.
 - **Vite** per sviluppo e build; **Vitest** per i test.
@@ -122,36 +131,37 @@ Il codice è scritto per essere letto da persone (_code for humans, not for AI_)
 
 ## Documentazione
 
-| Guida                                                                            | Argomento                                                                     |
-| -------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| [00 · Introduzione](docs/00-introduzione.md)                                     | Obiettivi e metodo di lavoro con l'AI                                         |
-| [01 · Setup del monorepo](docs/01-setup-monorepo.md)                             | Creare il monorepo da zero, passo per passo                                   |
-| [02 · Game loop](docs/02-game-loop.md)                                           | Loop a timestep fisso, testabile senza timer reali                            |
-| [03 · Input da tastiera](docs/03-input-tastiera.md)                              | Stato della tastiera, azioni, un poll per passo                               |
-| [04 · Rendering e sprite](docs/04-rendering-sprite.md)                           | Sprite come testo, font bitmap, test senza browser                            |
-| [05 · Collisioni](docs/05-collisioni.md)                                         | Rettangoli, pixel per pixel, tunneling                                        |
-| [06 · Audio](docs/06-audio.md)                                                   | Suoni sintetizzati con Web Audio, autoplay, suoni dedotti dallo stato         |
-| [07 · Build e deploy](docs/07-build-deploy.md)                                   | Build di produzione, sito multi-gioco, GitHub Actions e Pages                 |
-| [08 · Comandi touch](docs/08-comandi-touch.md)                                   | Pannello di comandi per smartphone, tasti virtuali, multitouch                |
-| [09 · Record salvato](docs/09-record-salvato.md)                                 | Record in localStorage senza errori, fanfara del nuovo record                 |
-| [10 · Un secondo gioco: Breakout](docs/10-secondo-gioco.md)                      | Cosa si riusa, cosa si aggiunge, pixel non quadrati, valori incerti           |
-| [11 · Grafica vettoriale](docs/11-grafica-vettoriale.md)                         | Monitor vettoriali, disegni a passi del fascio, linee luminose nitide         |
-| [12 · Un terzo gioco: Asteroids](docs/12-terzo-gioco.md)                         | Aritmetica del 6502, caso nello stato, tipi con casi, gamepad touch           |
-| [13 · Un quarto gioco: Lunar Lander](docs/13-quarto-gioco.md)                    | Branch e PR, sorgente originale, telecamera, dati generati, leva della spinta |
-| [14 · Pull request](docs/14-pull-request.md)                                     | Anteprima di ogni PR su Pages, skill /pr-review e /pr-resolve                 |
-| [15 · Il chip sonoro Namco](docs/15-chip-sonoro-namco.md)                        | Forme d'onda, programma del suono dalla ROM, campioni in coda                 |
-| [16 · Un quinto gioco: Galaga](docs/16-quinto-gioco.md)                          | Tre processori, interprete dei voli, dati generati, suono emulato             |
-| [17 · Il sesto gioco: Pac-Man](docs/17-sesto-gioco.md)                           | Memoria video, fantasmi dalla ROM, tile condivisi, demo e intermezzi          |
-| [18 · Modalità debug](docs/18-modalita-debug.md)                                 | Livello di partenza, immortalità e facilitazioni da tuning.config.ts          |
-| [19 · Joystick virtuale](docs/19-joystick-virtuale.md)                           | Joystick fisso al posto delle frecce, pointer capture, scelta nel file tuning |
-| [Space Invaders · meccaniche](games/space-invaders/docs/meccaniche-originali.md) | Marcia, bombe, bunker, UFO: come funzionava l'originale                       |
-| [Breakout · meccaniche](games/breakout/docs/meccaniche-originali.md)             | Mattoni, pallina, suoni: il circuito senza processore                         |
-| [Asteroids · meccaniche](games/asteroids/docs/meccaniche-originali.md)           | Nave, asteroidi, dischi volanti: il programma 6502 letto riga per riga        |
-| [Lunar Lander · meccaniche](games/lunar-lander/docs/meccaniche-originali.md)     | Modulo, missioni, terreno e zoom, atterraggio: dal sorgente Atari             |
-| [Galaga · meccaniche](games/galaga/docs/meccaniche-originali.md)                 | Voli, formazione, raggio traente, stage bonus, suoni: dal sorgente Z80        |
-| [Pac-Man · meccaniche](games/pacman/docs/meccaniche-originali.md)                | Labirinto, fantasmi, velocità, frutta, suoni, demo e intermezzi: dalla ROM    |
-| [Prompt unico](docs/prompt-unico.md)                                             | Un solo prompt per ricreare l'intero progetto con un assistente AI            |
-| [Diario AI](docs/ai-workflow.md)                                                 | Prompt, decisioni e correzioni durante lo sviluppo                            |
+| Guida                                                                            | Argomento                                                                           |
+| -------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| [00 · Introduzione](docs/00-introduzione.md)                                     | Obiettivi e metodo di lavoro con l'AI                                               |
+| [01 · Setup del monorepo](docs/01-setup-monorepo.md)                             | Creare il monorepo da zero, passo per passo                                         |
+| [02 · Game loop](docs/02-game-loop.md)                                           | Loop a timestep fisso, testabile senza timer reali                                  |
+| [03 · Input da tastiera](docs/03-input-tastiera.md)                              | Stato della tastiera, azioni, un poll per passo                                     |
+| [04 · Rendering e sprite](docs/04-rendering-sprite.md)                           | Sprite come testo, font bitmap, test senza browser                                  |
+| [05 · Collisioni](docs/05-collisioni.md)                                         | Rettangoli, pixel per pixel, tunneling                                              |
+| [06 · Audio](docs/06-audio.md)                                                   | Suoni sintetizzati con Web Audio, autoplay, suoni dedotti dallo stato               |
+| [07 · Build e deploy](docs/07-build-deploy.md)                                   | Build di produzione, sito multi-gioco, GitHub Actions e Pages                       |
+| [08 · Comandi touch](docs/08-comandi-touch.md)                                   | Pannello di comandi per smartphone, tasti virtuali, multitouch                      |
+| [09 · Record salvato](docs/09-record-salvato.md)                                 | Record in localStorage senza errori, fanfara del nuovo record                       |
+| [10 · Un secondo gioco: Breakout](docs/10-secondo-gioco.md)                      | Cosa si riusa, cosa si aggiunge, pixel non quadrati, valori incerti                 |
+| [11 · Grafica vettoriale](docs/11-grafica-vettoriale.md)                         | Monitor vettoriali, disegni a passi del fascio, linee luminose nitide               |
+| [12 · Un terzo gioco: Asteroids](docs/12-terzo-gioco.md)                         | Aritmetica del 6502, caso nello stato, tipi con casi, gamepad touch                 |
+| [13 · Un quarto gioco: Lunar Lander](docs/13-quarto-gioco.md)                    | Branch e PR, sorgente originale, telecamera, dati generati, leva della spinta       |
+| [14 · Pull request](docs/14-pull-request.md)                                     | Anteprima di ogni PR su Pages, skill /pr-review e /pr-resolve                       |
+| [15 · Il chip sonoro Namco](docs/15-chip-sonoro-namco.md)                        | Forme d'onda, programma del suono dalla ROM, campioni in coda                       |
+| [16 · Un quinto gioco: Galaga](docs/16-quinto-gioco.md)                          | Tre processori, interprete dei voli, dati generati, suono emulato                   |
+| [17 · Il sesto gioco: Pac-Man](docs/17-sesto-gioco.md)                           | Memoria video, fantasmi dalla ROM, tile condivisi, demo e intermezzi                |
+| [18 · Modalità debug](docs/18-modalita-debug.md)                                 | Livello di partenza, immortalità e facilitazioni da tuning.config.ts                |
+| [19 · Joystick virtuale](docs/19-joystick-virtuale.md)                           | Joystick fisso al posto delle frecce, pointer capture, scelta nel file tuning       |
+| [20 · Remaster 2.5D](docs/20-remaster-2-5d.md)                                   | Il gioco originale intatto, un contesto che registra, voxel, telecamera, particelle |
+| [Space Invaders · meccaniche](games/space-invaders/docs/meccaniche-originali.md) | Marcia, bombe, bunker, UFO: come funzionava l'originale                             |
+| [Breakout · meccaniche](games/breakout/docs/meccaniche-originali.md)             | Mattoni, pallina, suoni: il circuito senza processore                               |
+| [Asteroids · meccaniche](games/asteroids/docs/meccaniche-originali.md)           | Nave, asteroidi, dischi volanti: il programma 6502 letto riga per riga              |
+| [Lunar Lander · meccaniche](games/lunar-lander/docs/meccaniche-originali.md)     | Modulo, missioni, terreno e zoom, atterraggio: dal sorgente Atari                   |
+| [Galaga · meccaniche](games/galaga/docs/meccaniche-originali.md)                 | Voli, formazione, raggio traente, stage bonus, suoni: dal sorgente Z80              |
+| [Pac-Man · meccaniche](games/pacman/docs/meccaniche-originali.md)                | Labirinto, fantasmi, velocità, frutta, suoni, demo e intermezzi: dalla ROM          |
+| [Prompt unico](docs/prompt-unico.md)                                             | Un solo prompt per ricreare l'intero progetto con un assistente AI                  |
+| [Diario AI](docs/ai-workflow.md)                                                 | Prompt, decisioni e correzioni durante lo sviluppo                                  |
 
 ## Licenza e diritti
 

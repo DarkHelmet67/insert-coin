@@ -1,0 +1,10 @@
+{
+  "name": "@arcade/particles",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Pure particle bursts: explosions made of small pieces that fly, spin, fall and fade.",
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

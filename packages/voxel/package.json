@@ -1,0 +1,13 @@
+{
+  "name": "@arcade/voxel",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Turns the 2D drawing of a pixel game into voxels: a recording canvas context and sprite-to-voxel helpers.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@arcade/render": "workspace:*"
+  }
+}

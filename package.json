@@ -1,6 +1,6 @@
 {
   "name": "insert-coin",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "private": true,
   "type": "module",
   "description": "1980s coin-op arcade games rebuilt from scratch in TypeScript on HTML5 Canvas.",
@@ -10,7 +10,8 @@
   },
   "scripts": {
     "build": "node scripts/build.js",
-    "build:site": "pnpm build && node scripts/assemble-site.js",
+    "build:site": "pnpm build && pnpm check:bundles && node scripts/assemble-site.js",
+    "check:bundles": "node scripts/check-bundles.js",
     "clean": "rm -rf node_modules packages/*/node_modules games/*/node_modules",
     "clean:all": "pnpm clean && rm -f pnpm-lock.yaml",
     "dev:asteroids": "pnpm --filter @arcade/asteroids dev",
@@ -19,6 +20,7 @@
     "dev:lunar-lander": "pnpm --filter @arcade/lunar-lander dev",
     "dev:pacman": "pnpm --filter @arcade/pacman dev",
     "dev:space-invaders": "pnpm --filter @arcade/space-invaders dev",
+    "dev:space-invaders-25d": "pnpm --filter @arcade/space-invaders-25d dev",
     "format": "prettier --write .",
     "lint": "eslint .",
     "test": "vitest run",

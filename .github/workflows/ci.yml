@@ -27,3 +27,5 @@ jobs:
       - uses: ./.github/actions/checks
       # The production build too: a game that does not build would break the next deploy.
       - run: pnpm build
+      # The 2.5D remasters must leave the classic games as light as they were.
+      - run: pnpm check:bundles

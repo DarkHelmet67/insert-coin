@@ -1,0 +1,24 @@
+{
+  "name": "@arcade/space-invaders-25d",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Space Invaders 2.5D: the 1978 game, rules untouched, redrawn in metallic voxels with Three.js.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@arcade/audio": "workspace:*",
+    "@arcade/debug": "workspace:*",
+    "@arcade/engine-core": "workspace:*",
+    "@arcade/input": "workspace:*",
+    "@arcade/particles": "workspace:*",
+    "@arcade/render": "workspace:*",
+    "@arcade/scene3d": "workspace:*",
+    "@arcade/space-invaders": "workspace:*",
+    "@arcade/storage": "workspace:*",
+    "@arcade/voxel": "workspace:*"
+  }
+}

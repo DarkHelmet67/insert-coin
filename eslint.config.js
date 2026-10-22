@@ -69,6 +69,18 @@ export default tseslint.config(
     rules: { 'functional/immutable-data': 'off' },
   },
 
+  // Three.js objects are configured by assignment (`mesh.count = ...`), like the canvas context,
+  // and the drawing recorder grows its list of rectangles in place, like a canvas fills pixels:
+  // only the files that talk to the 3D library and the recorder are exempt.
+  {
+    files: [
+      'packages/scene3d/src/stage.ts',
+      'packages/scene3d/src/voxel-layer.ts',
+      'packages/voxel/src/recorder.ts',
+    ],
+    rules: { 'functional/immutable-data': 'off' },
+  },
+
   // Tests may use mocks and mutable fixtures.
   {
     files: TESTS,
