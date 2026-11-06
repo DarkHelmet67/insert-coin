@@ -44,7 +44,7 @@ Lavora per FASI, nell'ordine indicato in fondo. Alla fine di ogni fase: esegui t
 - Vitest 5, un solo vitest.config.ts nella root che include packages/*/src/**/*.test.ts e games/*/src/**/*.test.ts.
 - ESLint 10 flat config con typescript-eslint strict, eslint-plugin-functional, eslint-plugin-jsdoc. Prettier con { "singleQuote": true, "printWidth": 100 }; .prettierignore con pnpm-lock.yaml e _site.
 - I pacchetti @arcade/* sono sorgenti TypeScript collegati con "workspace:*" (niente build dei pacchetti: il campo exports punta a src/index.ts).
-- Script nella root: build (pnpm -r --filter "./games/*" build), build:site, clean (cancella tutti i node_modules), clean:all (clean + cancella pnpm-lock.yaml), dev (avvia Space Invaders), dev:breakout, dev:asteroids, dev:lunar-lander, dev:galaga, dev:pacman, format, lint, test (vitest run), typecheck (pnpm -r exec tsc -p tsconfig.json).
+- Script nella root: build (pnpm -r --filter "./games/*" build), build:site, clean (cancella tutti i node_modules), clean:all (clean + cancella pnpm-lock.yaml), check:bundles, dev:space-invaders, dev:breakout, dev:asteroids, dev:lunar-lander, dev:galaga, dev:pacman, dev:space-invaders-25d, format, lint, test (vitest run), typecheck (pnpm -r exec tsc -p tsconfig.json).
 - Nel README ricorda di eseguire "pnpm install" dopo ogni git pull: un nuovo pacchetto @arcade/* non viene collegato finché non lo si fa (errore tipico: "Rolldown failed to resolve import @arcade/...").
 
 =====================================================================

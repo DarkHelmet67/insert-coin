@@ -61,7 +61,7 @@ Servono **Node.js 22.13+ o 24 LTS** (consigliato; con nvm basta `nvm use`, la ve
 
 ```bash
 pnpm install
-pnpm dev      # avvia Space Invaders con hot reload su http://localhost:5173
+pnpm dev:space-invaders  # avvia Space Invaders con hot reload su http://localhost:5173
 pnpm dev:breakout  # avvia Breakout
 pnpm dev:asteroids # avvia Asteroids
 pnpm dev:lunar-lander # avvia Lunar Lander

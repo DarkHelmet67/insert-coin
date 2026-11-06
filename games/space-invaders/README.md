@@ -19,8 +19,8 @@ Su smartphone e tablet sotto lo schermo compare un pannello come quello del cabi
 Il gioco è completo: la formazione di 55 alieni marcia e accelera come nell'originale, lancia tre tipi di bombe, i quattro bunker si sgretolano colpo dopo colpo, l'UFO passa ogni 25 secondi con il suo punteggio "misterioso". Tre vite, una vita extra a 1500 punti, ondate che partono sempre più in basso. Il record resta salvato nel browser e, quando lo superi, suona una fanfara ([guida 09](../../docs/09-record-salvato.md)).
 
 ```bash
-pnpm dev     # dalla root del monorepo
-pnpm build   # output in games/space-invaders/dist: index.html + game.css + game.js
+pnpm dev:space-invaders  # dalla root del monorepo
+pnpm build              # output in games/space-invaders/dist: index.html + game.css + game.js
 ```
 
 ## Modalità debug

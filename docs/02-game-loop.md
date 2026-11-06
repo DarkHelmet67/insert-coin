@@ -126,7 +126,7 @@ Lo stato cambia solo in `update`, `render` si limita a leggerlo: è la regola da
 
 ```bash
 pnpm test   # test di engine-core (orologio e ciclo) e della schermata d'attesa
-pnpm dev    # "INSERT COIN" lampeggia una volta al secondo
+pnpm dev:space-invaders  # "INSERT COIN" lampeggia una volta al secondo
 ```
 
 Prossima guida: [03 · Input da tastiera](03-input-tastiera.md).

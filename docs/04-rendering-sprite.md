@@ -110,7 +110,7 @@ L'animazione degli alieni è logica pura, in `attract.ts`: `alienFrame(state)` r
 
 ```bash
 pnpm test   # test di sprite, run, font e disegno con il contesto finto
-pnpm dev    # tabella dei punteggi animata; con C appare il cannone
+pnpm dev:space-invaders  # tabella dei punteggi animata; con C appare il cannone
 ```
 
 Prossima guida: [05 · Collisioni](05-collisioni.md).

@@ -1,6 +1,6 @@
 # 01 · Setup del monorepo
 
-Obiettivo: un monorepo con pacchetti condivisi e un primo gioco che mostra "INSERT COIN" su un canvas. Alla fine `pnpm dev`, `pnpm test` e `pnpm build` funzionano.
+Obiettivo: un monorepo con pacchetti condivisi e un primo gioco che mostra "INSERT COIN" su un canvas. Alla fine `pnpm dev:space-invaders`, `pnpm test` e `pnpm build` funzionano.
 
 ## 1. Prerequisiti
 
@@ -11,7 +11,7 @@ corepack enable     # attiva pnpm alla versione dichiarata in package.json
 
 ### Perché una versione minima di Node
 
-Vite 8, Vitest e ESLint usano API recenti di Node, per esempio `styleText` di `node:util`. Con Node 18 o con un Node 20/22 non aggiornato, `pnpm dev` fallisce con un errore poco chiaro:
+Vite 8, Vitest e ESLint usano API recenti di Node, per esempio `styleText` di `node:util`. Con Node 18 o con un Node 20/22 non aggiornato, `pnpm dev:space-invaders` fallisce con un errore poco chiaro:
 
 ```
 SyntaxError: The requested module 'node:util' does not provide an export named 'styleText'
@@ -23,7 +23,7 @@ Per trasformarlo in un messaggio esplicito già durante `pnpm install`:
 - `.npmrc` contiene `engine-strict=true`;
 - `.nvmrc` indica la versione consigliata, così con nvm basta `nvm use`.
 
-Se hai già eseguito `pnpm install` con un Node troppo vecchio, aggiornare Node non basta. pnpm aveva saltato in silenzio i pacchetti opzionali incompatibili, tra cui il motore nativo di Rolldown (`@rolldown/binding-darwin-arm64` su Mac Apple Silicon), che richiede Node 20.19+ o 22.12+. Il sintomo è `Error: Cannot find native binding` all'avvio di `pnpm dev`. La soluzione è reinstallare da zero:
+Se hai già eseguito `pnpm install` con un Node troppo vecchio, aggiornare Node non basta. pnpm aveva saltato in silenzio i pacchetti opzionali incompatibili, tra cui il motore nativo di Rolldown (`@rolldown/binding-darwin-arm64` su Mac Apple Silicon), che richiede Node 20.19+ o 22.12+. Il sintomo è `Error: Cannot find native binding` all'avvio di `pnpm dev:space-invaders`. La soluzione è reinstallare da zero:
 
 ```bash
 pnpm clean     # cancella tutti i node_modules (il lockfile resta)
@@ -123,7 +123,7 @@ dist/game.js
 
 ```bash
 pnpm install && pnpm typecheck && pnpm lint && pnpm test && pnpm build
-pnpm dev   # apri http://localhost:5173: deve comparire "INSERT COIN"
+pnpm dev:space-invaders  # apri http://localhost:5173: deve comparire "INSERT COIN"
 ```
 
 Prossima guida: [02 · Game loop](02-game-loop.md).

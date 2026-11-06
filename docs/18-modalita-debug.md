@@ -96,6 +96,6 @@ pnpm test                                   # i test "debug spento" e quelli di 
 VITE_ARCADE_DEBUG=on pnpm build:site        # il sito come un'anteprima: la scritta DEBUG in ogni gioco
 ```
 
-Oppure si accende `enabled: true` in un `tuning.config.ts`, si avvia `pnpm dev`, e si prova: con `godMode` le bombe non distruggono il cannone, e la scritta DEBUG resta in alto a sinistra.
+Oppure si accende `enabled: true` in un `tuning.config.ts`, si avvia il gioco con `pnpm dev:<gioco>` e si prova: con `godMode` le bombe non distruggono il cannone, e la scritta DEBUG resta in alto a sinistra.
 
 Torna all'[indice delle guide](../README.md#documentazione).

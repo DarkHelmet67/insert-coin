@@ -98,7 +98,7 @@ Gli alieni per ora restano fermi: la marcia della formazione, le bombe e i bunke
 
 ```bash
 pnpm test   # test di rettangoli, collisione pixel per pixel e logica di gioco
-pnpm dev    # C per la moneta, frecce per muoversi, spazio per sparare
+pnpm dev:space-invaders  # C per la moneta, frecce per muoversi, spazio per sparare
 ```
 
 Prossima guida: [06 · Audio](06-audio.md).

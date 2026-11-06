@@ -119,7 +119,7 @@ In verticale lo schermo 4:3 è largo quanto il telefono: lì il limite è la lar
 
 ```bash
 pnpm test   # test di pointer-keys, merge-key-states e touch-buttons
-pnpm dev    # poi, negli strumenti per sviluppatori del browser, attiva l'emulazione di un telefono
+pnpm dev:space-invaders  # poi, negli strumenti per sviluppatori del browser, attiva l'emulazione di un telefono
 ```
 
 Sul telefono: premi MONETA, tieni ◀ con un pollice e spara con l'altro, poi fai scivolare il pollice su ▶ senza staccarlo. Ruotando il telefono i comandi passano ai lati dello schermo. Su un computer con il mouse il pannello non compare.
